@@ -1,6 +1,6 @@
 {
  "tanggal": "2026-10-20",
- "diperbarui_pada": "2026-10-20T19:24:12+07:00",
+ "diperbarui_pada": "2026-10-20T21:58:04+07:00",
  "emiten": [
   {
    "kode": "KINO",
@@ -46,7 +46,7 @@
    "waspada": false,
    "harga": 3250.0,
    "chg_pct": 3.5,
-   "rsi": 50.3,
+   "rsi": 50.2,
    "per": 6.4870257,
    "pbv": 0.9795763,
    "roe": 0.15295,

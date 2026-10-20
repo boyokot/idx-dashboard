@@ -155,6 +155,8 @@ tbody tr:hover td.stick{background:var(--accent-soft)}
 
 /* misc */
 .note{font-size:12px;color:var(--muted);line-height:1.6}
+.warnbox{margin-top:8px;padding:8px 11px;background:var(--warnbg);color:var(--warn);
+  border:1px solid var(--warn);border-radius:8px;font-size:12px;line-height:1.5;font-weight:600}
 .tag{display:inline-block;font-size:10px;padding:1px 6px;border-radius:5px;
   background:var(--bg);border:1px solid var(--border);color:var(--muted);margin-left:4px}
 .disclaimer{margin-top:16px;padding:11px 14px;background:var(--warnbg);color:var(--warn);
@@ -174,6 +176,7 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
   <div>
     <h1>IDX Stock Screener</h1>
     <div class="sub" id="lastUpdate">Memuat data…</div>
+    <div class="warnbox" id="staleWarn" style="display:none">⚠️ Data mungkin sudah kedaluwarsa</div>
   </div>
   <div class="hdr-right">
     <button id="btnInfo" title="Penjelasan skor">ℹ️ Skor</button>
@@ -350,6 +353,16 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
 <script>
 'use strict';
 const DATA_URL = 'data/latest.json';
+/* Fallback kalender libur bursa IDX 2026/2027 — dipakai kalau latest.json
+   belum memuat field hari_libur_bursa. Sumber: SK Bursa Efek Indonesia. */
+const LIBUR_BURSA_FALLBACK = [
+  '2026-01-01','2026-01-16','2026-02-16','2026-02-17','2026-03-18','2026-03-19',
+  '2026-03-20','2026-03-23','2026-03-24','2026-04-03','2026-05-01','2026-05-14',
+  '2026-05-15','2026-05-27','2026-05-28','2026-06-01','2026-06-16','2026-08-17',
+  '2026-08-25','2026-12-25','2026-12-31',
+  '2027-01-01','2027-01-05','2027-03-10','2027-03-11','2027-03-26','2027-05-06',
+  '2027-05-17','2027-06-01','2027-08-17','2027-09-15',
+];
 const SNAP_INDEX_URL = 'data/snapshots/index.json';
 let DATA = null;
 let SORT = {key:'skor', dir:-1};
@@ -370,12 +383,18 @@ function pct(v,d=2){ if(v==null||Number.isNaN(v)) return '<span class="na">–</
   return `<span class="${c}">${s}</span>`; }
 function num(v,d=1){ if(v==null||Number.isNaN(v)) return '<span class="na">–</span>'; return nf(v,d); }
 function ratio(v,d=2){ if(v==null||Number.isNaN(v)) return '<span class="na">–</span>'; return nf(v,d); }
-function roePct(v){ if(v==null) return '<span class="na">–</span>'; return nf(v*100,1)+'%'; }
+/* ROE: satuan baku = FRAKSI (0.12814 = 12,814%). Pipeline menormalisasi
+   Sectors & yfinance ke satuan yang sama. Lihat README.md -> "Satuan data". */
+function roePct(v){ if(v==null||Number.isNaN(v)) return '<span class="na">–</span>'; return nf(v*100,1)+'%'; }
+/* toFixed aman: null/undefined/NaN -> "–" (dipakai di KPI & teks apa pun) */
+function fx(v,d=2){ if(v==null||v===''||Number.isNaN(Number(v))) return '–'; return Number(v).toFixed(d); }
+/*-badge angka desimal dengan presisi, null-safe (bukan string HTML) */
+function fxNum(v,d=2){ const s=fx(v,d); return s==='–'?null:Number(s); }
 
 function skorCell(v){
   if(v==null) return '<span class="skor sk-no" title="data tidak tersedia">n/a</span>';
   const cls = v>=70?'sk-hi':(v>=50?'sk-md':'sk-lo');
-  return `<span class="skor ${cls}">${v.toFixed(1)}</span>`;
+  return `<span class="skor ${cls}">${fx(v,1)}</span>`;
 }
 function sinyalPill(s){
   if(!s) return '';
@@ -422,24 +441,90 @@ function showApp(){ $('#stateBox').style.display='none'; $('#app').style.display
 /* ---------- load ---------- */
 async function load(){
   showState('loading','Memuat data…','Mengambil data screening terakhir.');
+  let j;
   try{
     const r = await fetch(DATA_URL+'?_='+Date.now(),{cache:'no-store'});
     if(!r.ok) throw new Error('HTTP '+r.status);
-    const j = await r.json();
+    j = await r.json();
     if(!j || !Array.isArray(j.emiten) || !j.emiten.length)
       throw new Error('Data kosong: tidak ada emiten pada respons.');
-    DATA=j;
-    const tgl=j.diperbarui_pada_teks || j.diperbarui_pada || '–';
-    $('#lastUpdate').textContent = 'Terakhir diperbarui: '+tgl;
-    showApp(); renderAll();
-    loadBacktest();
   }catch(e){
+    /* (A2) GAGAL MEMUAT DATA — fetch/parse/payload bermasalah */
     const msg = String(e.message||e);
     let hint = 'Periksa koneksi lalu coba lagi.';
     if(/Failed to fetch|NetworkError/i.test(msg)) hint='Tidak bisa menghubungi server. Periksa koneksi internet.';
     if(/404/.test(msg)) hint='File data belum tersedia (data/latest.json). Pipeline mungkin belum dijalankan.';
     showState('error','Gagal memuat data', msg+' — '+hint, true);
+    return;
   }
+
+  /* Data sudah berhasil dimuat. Kegagalan berikutnya = masalah RENDER,
+     bukan masalah pemuatan — jangan samakan pesannya (A2). */
+  DATA=j;
+  const tgl=j.diperbarui_pada_teks || j.diperbarui_pada || '–';
+  $('#lastUpdate').textContent = 'Terakhir diperbarui: '+tgl;
+  cekKedaluwarsa(j.diperbarui_pada);
+  try{
+    showApp(); renderAll();
+  }catch(e){
+    console.error('[IDX] Render gagal setelah data termuat:', e);
+    showState('error','Data termuat, tetapi tampilan gagal dirender',
+      (String(e&&e.message||e))+' — detail error ada di console browser (F12).', true);
+    return;
+  }
+  loadBacktest();
+}
+
+/* (A7) Peringatan data basi: lebih tua dari 1 hari bursa (akhir pekan + libur bursa diabaikan). */
+function cekKedaluwarsa(timestamp){
+  const box=$('#staleWarn'); if(!box) return false;
+  box.style.display='none';
+  if(!timestamp) return false;
+  const t=new Date(timestamp);
+  if(isNaN(t.getTime())) return false;
+
+  // Hari libur bursa (dari latest.json -> pipeline). Kalau belum ada, fallback
+  // ke kalender hardcoded 2026/2027 di bawah.
+  const LIBUR=(DATA&&DATA.hari_libur_bursa&&DATA.hari_libur_bursa.length)?DATA.hari_libur_bursa:LIBUR_BURSA_FALLBACK;
+  const LIBUR_SET=new Set(LIBUR);
+  const hari=(d)=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  const iso=(d)=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  // bursa buka: bukan akhir pekan dan bukan hari libur
+  const isBursaDay=(d)=>{ const dow=d.getDay(); return dow!==0 && dow!==6 && !LIBUR_SET.has(iso(d)); };
+  // mundur ke hari bursa terakhir yang <= d
+  const prevBursaDay=(d)=>{
+    const x=hari(d);
+    for(let i=0;i<15;i++){ if(isBursaDay(x)) return x; x.setDate(x.getDate()-1); }
+    return x;
+  };
+  // hitung JUMLAH sesi bursa yang SUDAH lewat sejak data terakhir
+  // (bukan selisih kalender, supaya Jumat->Senin tidak dihitung 3 hari).
+  // Sesi hari ini hanya dihitung kalau sudah lewat jam tutup (~16:30 WIB).
+  const hitungHariBursa=(a,b)=>{
+    let n=0; const x=hari(a);
+    while(x<b){ x.setDate(x.getDate()+1); if(isBursaDay(x)) n++; }
+    return n;
+  };
+
+  const now=new Date();
+  const dataDay=prevBursaDay(t);
+  // batas = hari bursa terakhir yang sesinya sudah selesai
+  let batas=hari(now);
+  const menitSekarang=now.getHours()*60+now.getMinutes();
+  if(isBursaDay(batas) && menitSekarang < 16*60+30){
+    batas.setDate(batas.getDate()-1);   // sesi hari ini belum tutup
+  }
+  const todayBursa=prevBursaDay(batas);
+  const diff=hitungHariBursa(dataDay,todayBursa);
+  if(diff>=1){
+    box.style.display='block';
+    box.textContent='⚠️ Data mungkin sudah kedaluwarsa — data terakhir tertinggal '
+      + diff+' sesi bursa ('
+      + dataDay.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})
+      + ').';
+    return true;
+  }
+  return false;
 }
 
 /* ---------- KPI ---------- */
@@ -469,15 +554,15 @@ function renderKPI(){
   const brk=e.filter(x=>x.sinyal==='Breakout').length;
   const wst=e.filter(x=>x.waspada).length;
   const ihsg=mp.ihsg||{};
+  const st=mp.sektor_terkuat;
   const k=[
-    {l:'IHSG',v:ihsg.tersedia?nf(ihsg.nilai,2):'–',s:ihsg.tersedia?('Chg '+(ihsg.chg_pct!=null?ihsg.chg_pct.toFixed(2)+'%':'–')):'data tidak tersedia'},
+    {l:'IHSG',v:ihsg.tersedia?nf(ihsg.nilai,2):'–',s:ihsg.tersedia?(ihsg.chg_pct!=null?('Chg '+fx(ihsg.chg_pct,2)+'%'):'Chg –'):'data tidak tersedia'},
     {l:'Emiten dinilai',v:nf(skor.length,0),s:'dari '+nf(e.length,0)+' di universe'},
-    {l:'Skor tertinggi',v:top!=null?top.toFixed(1):'–',s:avg!=null?('rata-rata '+avg.toFixed(1)):'–'},
+    {l:'Skor tertinggi',v:top!=null?fx(top,1):'–',s:avg!=null?('rata-rata '+fx(avg,1)):'–'},
     {l:'Breakout',v:nf(brk,0),s:'volume >1,5× rata-rata'},
     {l:'Waspada',v:nf(wst,0),s:'tidak masuk Top 10'},
-    {l:'Sektor terkuat',v:(mp.sektor_terkuat?mp.sektor_terkuat.sektor:'–'),s:(mp.sektor_terkuat?mp.sektor_terkuat.chg_pct.toFixed(2)+'%':'–')},
+    {l:'Sektor terkuat',v:(st&&st.sektor)?st.sektor:'–',s:(st&&st.chg_pct!=null)?(fx(st.chg_pct,2)+'%'):'–'},
   ];
-  if(mp.ihsg && mp.ihsg.chg_pct!=null) k[0].s='Chg '+mp.ihsg.chg_pct.toFixed(2)+'%';
   $('#kpis').innerHTML = k.map(x=>`<div class="kpi"><div class="l">${esc(x.l)}</div><div class="v">${esc(String(x.v))}</div><div class="s">${esc(String(x.s))}</div></div>`).join('');
 }
 
@@ -586,7 +671,7 @@ function bukaDetail(kode){
     if(!c.tersedia||c.skor==null) return `<div class="stat"><span>${label}</span><span class="na">tidak tersedia</span></div>`;
     const w=Math.round((c.bobot_efektif||0)*100);
     return `<div class="stat"><span>${label} <span class="tag">bobot ${w}%</span></span>
-      <span><b>${c.skor.toFixed(0)}</b>/100</span></div>
+      <span><b>${fx(c.skor,0)}</b>/100</span></div>
       <div class="bar"><i style="width:${c.skor}%;background:${c.skor>=70?'var(--up)':(c.skor>=50?'var(--accent)':'var(--muted)')}"></i></div>`;
   };
   const det=(n)=>{
@@ -620,7 +705,7 @@ function bukaDetail(kode){
         <div class="stat"><span>ROE / DER</span><span>${roePct(r.roe)} / ${ratio(r.der,2)}</span></div>
       </div>
       <div>
-        <div style="font-weight:600;margin-bottom:6px">Skor ${sd.total!=null?sd.total.toFixed(1):'–'}/100</div>
+        <div style="font-weight:600;margin-bottom:6px">Skor ${fx(sd.total,1)}/100</div>
         ${comp('teknikal','Teknikal')}
         ${comp('fundamental','Fundamental')}
         ${comp('katalis','Katalis')}
@@ -628,9 +713,9 @@ function bukaDetail(kode){
         <div style="margin-top:12px">
           <div class="stat"><span>Saran target</span><b>${tgt!=null?nf(tgt,0):'–'}</b></div>
           <div class="stat"><span>Saran cut loss</span><b>${cut!=null?nf(cut,0):'–'}</b></div>
-          <div class="stat"><span>Risk/Reward</span><b>${rr!=null?rr.toFixed(2)+'×':'–'}</b></div>
+          <div class="stat"><span>Risk/Reward</span><b>${rr!=null?fx(rr,2)+'×':'–'}</b></div>
         </div>
-        <div class="note" style="margin-top:6px">Target = resistance 20-hari (min +3%), cut = support 20-hari (maks −3%). Bukan rekomendasi.</div>
+        <div class="note" style="margin-top:6px">Target = nilai terbesar antara resistance 20 hari dan harga +3%. Cut loss = nilai terkecil antara support 20 hari dan harga -3% (minimal 3% di bawah harga).</div>
       </div>
     </div>
 
@@ -704,7 +789,7 @@ async function gambarTrenSkor(kode){
   ctx.fillText(pts[0].t,pad.l,H-5);
   ctx.textAlign='right'; ctx.fillText(pts[pts.length-1].t,W-pad.r,H-5);
   const delta=pts[pts.length-1].v-pts[0].v;
-  $('#skorTrendInfo').textContent=`${pts.length} snapshot · skor ${pts[0].v.toFixed(1)} → ${pts[pts.length-1].v.toFixed(1)} (${delta>=0?'+':''}${delta.toFixed(1)})`;
+  $('#skorTrendInfo').textContent=`${pts.length} snapshot · skor ${fx(pts[0].v,1)} → ${fx(pts[pts.length-1].v,1)} (${delta>=0?'+':''}${fx(delta,1)})`;
 }
 
 /* grafik sederhana pakai canvas, data dari snapshot */
@@ -770,7 +855,7 @@ function renderWL(){
   const rows=WATCHLIST.map(k=>cari(k)||{kode:k,_missing:true});
   $('#wlBody').innerHTML=rows.map(r=>{
     if(r._missing) return `<tr><td class="stick"><span class="kode">${esc(r.kode)}</span></td>
-      <td colspan="${cols.length}" class="na">tidak ada di universitas screening</td>
+      <td colspan="${cols.length}" class="na">tidak ada di universe screening</td>
       <td><button data-del="${esc(r.kode)}">Hapus</button></td></tr>`;
     const cells=cols.map(c=>{
       let v='';
@@ -843,7 +928,7 @@ async function loadBacktest(){
       const wr=(a.up/a.n*100);
       return `<tr><td style="text-align:left">${esc(sig)}</td><td>${h} hari</td><td>${a.n}</td>
         <td class="up">${a.up}</td><td class="down">${a.dn}</td>
-        <td><b>${wr.toFixed(1)}%</b></td><td>${pct(a.sum/a.n)}</td></tr>`;
+        <td><b>${fx(wr,1)}%</b></td><td>${pct(a.sum/a.n)}</td></tr>`;
     }).join('');
   }catch(e){
     $('#btInfo').textContent='Backtest tidak bisa dihitung: '+e.message;
@@ -872,10 +957,10 @@ function renderRisiko(){
     <div class="stat"><span>Risiko per saham</span><b>Rp ${nf(perSaham,0)}</b></div>
     <div class="stat"><span>Ukuran posisi</span><b>${nf(lot,0)} lot (${nf(saham,0)} saham)</b></div>
     <div class="stat"><span>Nilai posisi</span><b>Rp ${nf(nilai,0)}</b></div>
-    <div class="stat"><span>% dari modal</span><b>${dipakai.toFixed(1)}%</b></div>
+    <div class="stat"><span>% dari modal</span><b>${fx(dipakai,1)}%</b></div>
     ${maksLot>lot?`<div class="note" style="margin-top:6px">Maksimal mampu ${nf(maksLot,0)} lot dengan modal ini — posisi di atas dibatasi oleh aturan risiko, bukan modal.</div>`:''}
     ${lot===0?`<div class="disclaimer" style="margin-top:8px">Dengan risiko ${risk}%, modal ini belum cukup untuk 1 lot pada harga tersebut. Naikkan modal, turunkan entry, atau perlebar toleransi risiko.</div>`:''}
-    ${rr!=null?`<div class="stat" style="margin-top:8px"><span>Risk/Reward ke target</span><b>${rr.toFixed(2)}×</b></div>
+    ${rr!=null?`<div class="stat" style="margin-top:8px"><span>Risk/Reward ke target</span><b>${fx(rr,2)}×</b></div>
       <div class="note">${rr<1.5?'⚠️ R/R di bawah 1,5× — target terlalu dekat dibanding risiko.':(rr<2?'R/R cukup.':'R/R baik.')}</div>`:''}
   `;
 }
@@ -896,7 +981,10 @@ function unduhCSV(){
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
   a.download=`idx-screener-${(DATA.diperbarui_pada||'').slice(0,10)}.csv`;
-  a.click(); URL.revokeObjectURL(a.href);
+  a.click();
+ // (A6) Tunda revoke 1 detik: browser butuh waktu untuk memulai unduhan,
+ // revoke langsung bisa membatalkan file sehingga unduhan CSV gagal.
+ setTimeout(()=>{ URL.revokeObjectURL(a.href); },1000);
 }
 
 /* ---------- init ---------- */

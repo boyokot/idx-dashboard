@@ -1,0 +1,10 @@
+# File uji / sementara — jangan pernah di-commit
+data/uji*.json
+data/*.tmp.json
+data/.pipeline.lock
+_mobile_test.html
+
+# Cache lokal
+.cache/
+__pycache__/
+*.pyc

@@ -1,0 +1,5855 @@
+{
+ "diperbarui_pada": "2026-10-20T18:56:29+07:00",
+ "emiten": [
+  {
+   "kode": "AADI",
+   "nama": "ADARO ANDALAN INDONESIA Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Coal"
+  },
+  {
+   "kode": "AALI",
+   "nama": "ASTRA AGRO LESTARI Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "ABBA",
+   "nama": "MAHAKA MEDIA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": ""
+  },
+  {
+   "kode": "ABDA",
+   "nama": "ASURANSI BINA DANA ARTA Tbk",
+   "sektor": "INSURANCE",
+   "industri": "Property/Casualty Insurance"
+  },
+  {
+   "kode": "ABMM",
+   "nama": "ABM INVESTAMA Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "ACES",
+   "nama": "ASPIRASI HIDUP INDONESIA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Home Improvement Chains"
+  },
+  {
+   "kode": "ACRO",
+   "nama": "SAMCRO HYOSUNG ADILESTARI Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Textiles"
+  },
+  {
+   "kode": "ACST",
+   "nama": "ACSET INDONUSA Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "ADCP",
+   "nama": "ADHI COMMUTER PROPERTI Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": ""
+  },
+  {
+   "kode": "ADES",
+   "nama": "AKASHA WIRA INTERNATIONAL Tbk",
+   "sektor": "COSMETICS AND HOUSEHOLD",
+   "industri": "Beverages: Non-Alcoholic"
+  },
+  {
+   "kode": "ADHI",
+   "nama": "ADHI KARYA (PERSERO) Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": ""
+  },
+  {
+   "kode": "ADMF",
+   "nama": "ADIRA DINAMIKA MULTI FINANCE Tbk",
+   "sektor": "FINANCIAL INSTITUTION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "ADMG",
+   "nama": "POLYCHEM INDONESIA Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": "Textiles"
+  },
+  {
+   "kode": "ADMR",
+   "nama": "ALAMTRI MINERALS INDONESIA Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "ADRO",
+   "nama": "ALAMTRI RESOURCES INDONESIA Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "AEGS",
+   "nama": "ANUGERAH SPAREPARTS SEJAHTERA Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Auto Parts: OEM"
+  },
+  {
+   "kode": "AGAR",
+   "nama": "ASIA SEJAHTERA MINA Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": "Food Distributors"
+  },
+  {
+   "kode": "AGII",
+   "nama": "SAMATOR INDO GAS Tbk",
+   "sektor": "ENERGY",
+   "industri": "Chemicals: Specialty"
+  },
+  {
+   "kode": "AGRO",
+   "nama": "BANK RAYA INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "AGRS",
+   "nama": "BANK IBK INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "AHAP",
+   "nama": "ASURANSI HARTA AMAN PRATAMA Tbk",
+   "sektor": "INSURANCE",
+   "industri": "Multi-Line Insurance"
+  },
+  {
+   "kode": "AIMS",
+   "nama": "ARTHA MAHIYA INVESTAMA Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Medical Distributors"
+  },
+  {
+   "kode": "AISA",
+   "nama": "FKS FOOD SEJAHTERA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "AKKU",
+   "nama": "ANUGERAH KAGUM KARYA UTAMA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "AKPI",
+   "nama": "ARGHA KARYA PRIMA INDUSTRY Tbk",
+   "sektor": "PLASTICS & PACKAGING",
+   "industri": "Containers/Packaging"
+  },
+  {
+   "kode": "AKRA",
+   "nama": "AKR CORPORINDO Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "AKSI",
+   "nama": "MINERAL SUMBERDAYA MANDIRI Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Financial Conglomerates"
+  },
+  {
+   "kode": "ALDO",
+   "nama": "ALKINDO NARATAMA Tbk",
+   "sektor": "PULP & PAPER",
+   "industri": "Containers/Packaging"
+  },
+  {
+   "kode": "ALII",
+   "nama": "ANCARA LOGISTICS INDONESIA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "ALKA",
+   "nama": "ALAKASA INDUSTRINDO Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Aluminum"
+  },
+  {
+   "kode": "ALMI",
+   "nama": "ALUMINDO LIGHT METAL INDUSTRY Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": ""
+  },
+  {
+   "kode": "ALTO",
+   "nama": "TRI BANYAN TIRTA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": ""
+  },
+  {
+   "kode": "AMAG",
+   "nama": "ASURANSI MULTI ARTHA GUNA Tbk",
+   "sektor": "INSURANCE",
+   "industri": "Property/Casualty Insurance"
+  },
+  {
+   "kode": "AMAR",
+   "nama": "BANK AMAR INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "AMFG",
+   "nama": "ASAHIMAS FLAT GLASS Tbk",
+   "sektor": "CERAMICS, GLASS, PORCELAIN",
+   "industri": "Industrial Specialties"
+  },
+  {
+   "kode": "AMIN",
+   "nama": "ATELIERS MECANIQUES D`INDONESIE Tbk",
+   "sektor": "MACHINERY AND HEAVY EQUIPMENT",
+   "industri": "Industrial Machinery"
+  },
+  {
+   "kode": "AMMN",
+   "nama": "AMMAN MINERAL INTERNASIONAL Tbk",
+   "sektor": "LAND/STONE QUARRYING",
+   "industri": "Precious Metals"
+  },
+  {
+   "kode": "AMMS",
+   "nama": "AGUNG MENJANGAN MAS Tbk",
+   "sektor": "FISHERY",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "AMOR",
+   "nama": "ASHMORE ASSET MANAGEMENT INDONESIA Tbk",
+   "sektor": "FINANCIAL INSTITUTION",
+   "industri": "Investment Managers"
+  },
+  {
+   "kode": "AMRT",
+   "nama": "SUMBER ALFARIA TRIJAYA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Food Retail"
+  },
+  {
+   "kode": "ANDI",
+   "nama": "ANDIRA AGRO Tbk",
+   "sektor": "FORESTRY",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "ANJT",
+   "nama": "AUSTINDO NUSANTARA JAYA Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "ANTM",
+   "nama": "ANEKA TAMBANG (PERSERO) Tbk",
+   "sektor": "METAL AND MINERAL MINING",
+   "industri": "Precious Metals"
+  },
+  {
+   "kode": "APEX",
+   "nama": "APEXINDO PRATAMA DUTA Tbk",
+   "sektor": "CRUDE PETROLEUM & NATURAL GAS PROD.",
+   "industri": "Contract Drilling"
+  },
+  {
+   "kode": "APIC",
+   "nama": "PACIFIC STRATEGIC FINANCIAL Tbk",
+   "sektor": "OTHERS - FINANCE",
+   "industri": "Investment Banks/Brokers"
+  },
+  {
+   "kode": "APII",
+   "nama": "ARITA PRIMA INDONESIA Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Industrial Machinery"
+  },
+  {
+   "kode": "APLI",
+   "nama": "ASIAPLAST INDUSTRIES Tbk",
+   "sektor": "PLASTICS & PACKAGING",
+   "industri": "Industrial Specialties"
+  },
+  {
+   "kode": "APLN",
+   "nama": "AGUNG PODOMORO LAND Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "ARCI",
+   "nama": "ARCHI INDONESIA Tbk",
+   "sektor": "METAL AND MINERAL MINING",
+   "industri": "Precious Metals"
+  },
+  {
+   "kode": "AREA",
+   "nama": "DUNIA VIRTUAL ONLINE Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Data Processing Services"
+  },
+  {
+   "kode": "ARGO",
+   "nama": "ARGO PANTES Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": "Textiles"
+  },
+  {
+   "kode": "ARII",
+   "nama": "ATLAS RESOURCES Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "ARKA",
+   "nama": "ARKHA JAYANTI PERSADA Tbk",
+   "sektor": "MACHINERY AND HEAVY EQUIPMENT",
+   "industri": ""
+  },
+  {
+   "kode": "ARKO",
+   "nama": "ARKORA HYDRO Tbk",
+   "sektor": "ENERGY",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "ARMY",
+   "nama": "ARMIDIAN KARYATAMA Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": ""
+  },
+  {
+   "kode": "ARNA",
+   "nama": "ARWANA CITRAMULIA Tbk",
+   "sektor": "CERAMICS, GLASS, PORCELAIN",
+   "industri": "Building Products"
+  },
+  {
+   "kode": "ARTA",
+   "nama": "ARTHAVEST Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "ARTI",
+   "nama": "RATU PRABU ENERGI Tbk",
+   "sektor": "OTHERS - MINING",
+   "industri": ""
+  },
+  {
+   "kode": "ARTO",
+   "nama": "BANK JAGO Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "ASBI",
+   "nama": "ASURANSI BINTANG Tbk",
+   "sektor": "INSURANCE",
+   "industri": "Property/Casualty Insurance"
+  },
+  {
+   "kode": "ASDM",
+   "nama": "ASURANSI DAYIN MITRA Tbk",
+   "sektor": "INSURANCE",
+   "industri": "Multi-Line Insurance"
+  },
+  {
+   "kode": "ASGR",
+   "nama": "ASTRA GRAPHIA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Data Processing Services"
+  },
+  {
+   "kode": "ASHA",
+   "nama": "CILACAP SAMUDERA FISHING INDUSTRY Tbk",
+   "sektor": "FISHERY",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "ASII",
+   "nama": "ASTRA INTERNATIONAL Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Information Technology Services"
+  },
+  {
+   "kode": "ASJT",
+   "nama": "ASURANSI JASA TANIA Tbk",
+   "sektor": "INSURANCE",
+   "industri": "Multi-Line Insurance"
+  },
+  {
+   "kode": "ASLC",
+   "nama": "AUTOPEDIA SUKSES LESTARI Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "ASLI",
+   "nama": "ASRI KARYA LESTARI Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "ASMI",
+   "nama": "ASURANSI MAXIMUS GRAHA PERSADA Tbk",
+   "sektor": "INSURANCE",
+   "industri": "Life/Health Insurance"
+  },
+  {
+   "kode": "ASPI",
+   "nama": "ANDALAN SAKTI PRIMAINDO Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "ASPR",
+   "nama": "ASIA PRAMULIA Tbk",
+   "sektor": "PLASTICS & PACKAGING",
+   "industri": "Miscellaneous Manufacturing"
+  },
+  {
+   "kode": "ASRI",
+   "nama": "ALAM SUTERA REALTY Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "ASRM",
+   "nama": "ASURANSI RAMAYANA Tbk",
+   "sektor": "INSURANCE",
+   "industri": "Property/Casualty Insurance"
+  },
+  {
+   "kode": "ASSA",
+   "nama": "ADI SARANA ARMADA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "ATAP",
+   "nama": "TRIMITRA PRAWARA GOLDLAND Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "ATIC",
+   "nama": "ANABATIC TECHNOLOGIES Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Information Technology Services"
+  },
+  {
+   "kode": "ATLA",
+   "nama": "ATLANTIS SUBSEA INDONESIA Tbk",
+   "sektor": "ENERGY",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "ATPK",
+   "nama": "BARA JAYA INTERNASIONAL Tbk",
+   "sektor": "COAL MINING",
+   "industri": ""
+  },
+  {
+   "kode": "AUTO",
+   "nama": "ASTRA OTOPARTS Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Auto Parts: OEM"
+  },
+  {
+   "kode": "AVIA",
+   "nama": "AVIA AVIAN Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Industrial Specialties"
+  },
+  {
+   "kode": "AWAN",
+   "nama": "ERA DIGITAL MEDIA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Internet Software/Services"
+  },
+  {
+   "kode": "AXIO",
+   "nama": "TERA DATA INDONUSA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Computer Processing Hardware"
+  },
+  {
+   "kode": "AYAM",
+   "nama": "JANU PUTRA SEJAHTERA Tbk",
+   "sektor": "ANIMAL HUSBANDRY",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "AYLS",
+   "nama": "AGRO YASA LESTARI Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Textiles"
+  },
+  {
+   "kode": "BABP",
+   "nama": "BANK MNC INTERNASIONAL Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "BABY",
+   "nama": "MULTITREND INDO Tbk",
+   "sektor": "OTHERS - CONSUMER GOODS INDUSTRY",
+   "industri": "Apparel/Footwear Retail"
+  },
+  {
+   "kode": "BACA",
+   "nama": "BANK CAPITAL INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "BACH",
+   "nama": "BACH MULTI GLOBAL Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "BAIK",
+   "nama": "BERSAMA MENCAPAI PUNCAK Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Restaurants"
+  },
+  {
+   "kode": "BAJA",
+   "nama": "SARANACENTRAL BAJATAMA Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Steel"
+  },
+  {
+   "kode": "BALI",
+   "nama": "BALI TOWERINDO SENTRA Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "BANK",
+   "nama": "BANK ALADIN SYARIAH Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "BAPA",
+   "nama": "BEKASI ASRI PEMULA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Homebuilding"
+  },
+  {
+   "kode": "BAPI",
+   "nama": "BHAKTI AGUNG PROPERTINDO Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "BATA",
+   "nama": "SEPATU BATA Tbk",
+   "sektor": "FOOTWEAR",
+   "industri": ""
+  },
+  {
+   "kode": "BATR",
+   "nama": "BENTENG API TECHNIC Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Construction Materials"
+  },
+  {
+   "kode": "BAUT",
+   "nama": "MITRA ANGKASA SEJAHTERA Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "BAYU",
+   "nama": "BAYU BUANA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Other Consumer Services"
+  },
+  {
+   "kode": "BBCA",
+   "nama": "BANK CENTRAL ASIA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BBHI",
+   "nama": "ALLO BANK INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "BBKP",
+   "nama": "BANK KB INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BBLD",
+   "nama": "BUANA FINANCE Tbk",
+   "sektor": "FINANCIAL INSTITUTION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "BBMD",
+   "nama": "BANK MESTIKA DHARMA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BBNI",
+   "nama": "BANK NEGARA INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BBRI",
+   "nama": "BANK RAKYAT INDONESIA (PERSERO) Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "BBRM",
+   "nama": "PELAYARAN NASIONAL BINA BUANA RAYA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "BBSI",
+   "nama": "KROM BANK INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "BBSS",
+   "nama": "BUMI BENOWO SUKSES SEJAHTERA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "BBTN",
+   "nama": "BANK TABUNGAN NEGARA (PERSERO) Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BBYB",
+   "nama": "BANK NEO COMMERCE Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BCAP",
+   "nama": "MNC KAPITAL INDONESIA Tbk",
+   "sektor": "OTHERS - FINANCE",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "BCIC",
+   "nama": "BANK JTRUST INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BCIP",
+   "nama": "BUMI CITRA PERMAI Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "BDKR",
+   "nama": "BERDIKARI PONDASI PERKASA Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "BDMN",
+   "nama": "BANK DANAMON INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BEBS",
+   "nama": "BERKAH BETON SADAYA Tbk",
+   "sektor": "CEMENT",
+   "industri": ""
+  },
+  {
+   "kode": "BEEF",
+   "nama": "ESTIKA TATA TIARA Tbk",
+   "sektor": "ANIMAL HUSBANDRY",
+   "industri": "Food: Meat/Fish/Dairy"
+  },
+  {
+   "kode": "BEER",
+   "nama": "JOBUBU JARUM MINAHASA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Beverages: Alcoholic"
+  },
+  {
+   "kode": "BEKS",
+   "nama": "BANK PEMBANGUNAN DAERAH BANTEN Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "BELI",
+   "nama": "GLOBAL DIGITAL NIAGA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Specialty Stores"
+  },
+  {
+   "kode": "BELL",
+   "nama": "TRISULA TEXTILE INDUSTRIES Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": "Apparel/Footwear"
+  },
+  {
+   "kode": "BESS",
+   "nama": "BATULICIN NUSANTARA MARITIM Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "BEST",
+   "nama": "BEKASI FAJAR INDUSTRIAL ESTATE Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "BFIN",
+   "nama": "BFI FINANCE INDONESIA Tbk",
+   "sektor": "FINANCIAL INSTITUTION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "BGTG",
+   "nama": "BANK GANESHA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BHAT",
+   "nama": "BHAKTI MULTI ARTHA Tbk",
+   "sektor": "OTHERS - MISCELLANENEOUS INDUSTRY",
+   "industri": ""
+  },
+  {
+   "kode": "BHIT",
+   "nama": "MNC ASIA HOLDING Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Movies/Entertainment"
+  },
+  {
+   "kode": "BIKA",
+   "nama": "BINAKARYA JAYA ABADI Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": ""
+  },
+  {
+   "kode": "BIKE",
+   "nama": "BHINEKA INOVASI KETAHANAN ENERGI Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "BIMA",
+   "nama": "PRIMARINDO ASIA INFRASTRUCTURE Tbk",
+   "sektor": "FOOTWEAR",
+   "industri": ""
+  },
+  {
+   "kode": "BINA",
+   "nama": "BANK INA PERDANA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BINO",
+   "nama": "PERMA PLASINDO Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Office Equipment/Supplies"
+  },
+  {
+   "kode": "BIPI",
+   "nama": "ASTRINDO NUSANTARA INFRASTRUKTUR Tbk",
+   "sektor": "CRUDE PETROLEUM & NATURAL GAS PROD.",
+   "industri": "Coal"
+  },
+  {
+   "kode": "BIPP",
+   "nama": "BHUWANATALA INDAH PERMAI Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "BIRD",
+   "nama": "BLUE BIRD Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "BISI",
+   "nama": "BISI INTERNATIONAL Tbk",
+   "sektor": "CROPS",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "BJBR",
+   "nama": "BANK JABAR BANTEN Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BJTM",
+   "nama": "BANK PEMBANGUNAN DAERAH JAWA TIMUR Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BKDP",
+   "nama": "BUKIT DARMO PROPERTY Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "BKSL",
+   "nama": "SENTUL CITY Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "BKSW",
+   "nama": "BANK QNB INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BLES",
+   "nama": "SUPERIOR PRIMA SUKSES Tbk",
+   "sektor": "CEMENT",
+   "industri": "Construction Materials"
+  },
+  {
+   "kode": "BLOG",
+   "nama": "TRIMITRA TRANS PERSADA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Trucking"
+  },
+  {
+   "kode": "BLTA",
+   "nama": "BERLIAN LAJU TANKER Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Air Freight/Couriers"
+  },
+  {
+   "kode": "BLTZ",
+   "nama": "GRAHA LAYAR PRIMA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Movies/Entertainment"
+  },
+  {
+   "kode": "BLUE",
+   "nama": "BERKAH PRIMA PERKASA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Electronics Distributors"
+  },
+  {
+   "kode": "BMAS",
+   "nama": "BANK KASIKORN INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BMBL",
+   "nama": "LAVENDER BINA CENDIKIA Tbk",
+   "sektor": "OTHERS - CONSUMER GOODS INDUSTRY",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "BMHS",
+   "nama": "BUNDAMEDIK Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Hospital/Nursing Management"
+  },
+  {
+   "kode": "BMRI",
+   "nama": "BANK MANDIRI ( PERSERO ) Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "BMSR",
+   "nama": "BINTANG MITRA SEMESTARAYA Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "BMTR",
+   "nama": "GLOBAL MEDIACOM Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Broadcasting"
+  },
+  {
+   "kode": "BNBA",
+   "nama": "BANK BUMI ARTA Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "BNBR",
+   "nama": "BAKRIE AND BROTHERS Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "BNGA",
+   "nama": "BANK CIMB NIAGA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BNII",
+   "nama": "BANK MAYBANK INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BNLI",
+   "nama": "BANK PERMATA Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "BOAT",
+   "nama": "NEWPORT MARINE SERVICES Tbk",
+   "sektor": "OTHERS - MISCELLANENEOUS INDUSTRY",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "BOBA",
+   "nama": "FORMOSA INGREDIENT FACTORY Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "BOGA",
+   "nama": "APOLLO GLOBAL INTERACTIVE Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Specialty Stores"
+  },
+  {
+   "kode": "BOLA",
+   "nama": "BALI BINTANG SEJAHTERA Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": "Movies/Entertainment"
+  },
+  {
+   "kode": "BOLT",
+   "nama": "GARUDA METALINDO Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Auto Parts: OEM"
+  },
+  {
+   "kode": "BOSS",
+   "nama": "BORNEO OLAH SARANA SUKSES Tbk",
+   "sektor": "COAL MINING",
+   "industri": ""
+  },
+  {
+   "kode": "BPFI",
+   "nama": "WOORI FINANCE INDONESIA Tbk",
+   "sektor": "FINANCIAL INSTITUTION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "BPII",
+   "nama": "BATAVIA PROSPERINDO INTERNASIONAL Tbk",
+   "sektor": "OTHERS - FINANCE",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "BPTR",
+   "nama": "BATAVIA PROSPERINDO TRANS Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "BRAM",
+   "nama": "INDO KORDSA Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Textiles"
+  },
+  {
+   "kode": "BREN",
+   "nama": "BARITO RENEWABLES ENERGY Tbk",
+   "sektor": "OTHERS - FINANCE",
+   "industri": "Electric Utilities"
+  },
+  {
+   "kode": "BRIS",
+   "nama": "BANK SYARIAH INDONESIA (PERSERO) Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BRMS",
+   "nama": "BUMI RESOURCES MINERALS Tbk",
+   "sektor": "METAL AND MINERAL MINING",
+   "industri": "Precious Metals"
+  },
+  {
+   "kode": "BRNA",
+   "nama": "BERLINA Tbk",
+   "sektor": "PLASTICS & PACKAGING",
+   "industri": "Containers/Packaging"
+  },
+  {
+   "kode": "BRPT",
+   "nama": "BARITO PACIFIC Tbk",
+   "sektor": "CHEMICALS",
+   "industri": "Forest Products"
+  },
+  {
+   "kode": "BRRC",
+   "nama": "RAJA ROTI CEMERLANG Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Major Diversified"
+  },
+  {
+   "kode": "BSBK",
+   "nama": "WULANDARI BANGUN LAKSANA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "BSDE",
+   "nama": "BUMI SERPONG DAMAI Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "BSIM",
+   "nama": "BANK SINAR MAS Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BSML",
+   "nama": "BINTANG SAMUDERA MANDIRI LINES Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "BSSR",
+   "nama": "BARAMULTI SUKSESSARANA Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "BSWD",
+   "nama": "BANK OF INDIA INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BTEK",
+   "nama": "BUMI TEKNOKULTURA UNGGUL Tbk",
+   "sektor": "FORESTRY",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "BTEL",
+   "nama": "BAKRIE TELECOM Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": ""
+  },
+  {
+   "kode": "BTON",
+   "nama": "BETONJAYA MANUNGGAL Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Steel"
+  },
+  {
+   "kode": "BTPN",
+   "nama": "BANK SMBC INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BTPS",
+   "nama": "BANK BTPN SYARIAH Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "BUAH",
+   "nama": "SEGAR KUMALA INDONESIA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food Distributors"
+  },
+  {
+   "kode": "BUDI",
+   "nama": "BUDI STARCH & SWEETENER Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "BUKA",
+   "nama": "BUKALAPAK.COM Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Internet Retail"
+  },
+  {
+   "kode": "BUKK",
+   "nama": "BUKAKA TEKNIK UTAMA Tbk",
+   "sektor": "TOLL ROAD, AIRPORT, HARBOR & ALLIED PROD.",
+   "industri": "Electrical Products"
+  },
+  {
+   "kode": "BULL",
+   "nama": "BUANA LINTAS LAUTAN Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "BUMI",
+   "nama": "BUMI RESOURCES Tbk",
+   "sektor": "METAL AND MINERAL MINING",
+   "industri": "Precious Metals"
+  },
+  {
+   "kode": "BUVA",
+   "nama": "BUKIT ULUWATU VILLA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Movies/Entertainment"
+  },
+  {
+   "kode": "BVIC",
+   "nama": "BANK VICTORIA INTERNATIONAL  Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "BWPT",
+   "nama": "EAGLE HIGH PLANTATIONS, Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "BYAN",
+   "nama": "BAYAN RESOURCES Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "CAKK",
+   "nama": "CAHAYAPUTRA ASA KERAMIK Tbk",
+   "sektor": "CERAMICS, GLASS, PORCELAIN",
+   "industri": "Home Furnishings"
+  },
+  {
+   "kode": "CAMP",
+   "nama": "CAMPINA ICE CREAM INDUSTRY Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Meat/Fish/Dairy"
+  },
+  {
+   "kode": "CANI",
+   "nama": "CAPITOL NUSANTARA INDONESIA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": ""
+  },
+  {
+   "kode": "CARE",
+   "nama": "METRO HEALTHCARE INDONESIA Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Medical/Nursing Services"
+  },
+  {
+   "kode": "CARS",
+   "nama": "INDUSTRI DAN PERDAGANGAN BINTRACO DHARMA Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Specialty Stores"
+  },
+  {
+   "kode": "CASA",
+   "nama": "CAPITAL FINANCIAL INDONESIA Tbk",
+   "sektor": "FINANCIAL INSTITUTION",
+   "industri": "Life/Health Insurance"
+  },
+  {
+   "kode": "CASH",
+   "nama": "CASHLEZ WORLDWIDE INDONESIA Tbk",
+   "sektor": "OTHERS - FINANCE",
+   "industri": "Packaged Software"
+  },
+  {
+   "kode": "CASS",
+   "nama": "CAHAYA AERO SERVICES Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "CBDK",
+   "nama": "BANGUN KOSAMBI SUKSES Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "CBMF",
+   "nama": "CAHAYA BINTANG MEDAN Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": ""
+  },
+  {
+   "kode": "CBPE",
+   "nama": "CITRA BUANA PRASIDA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "CBRE",
+   "nama": "CAKRA BUANA RESOURCES ENERGI Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "CBUT",
+   "nama": "CITRA BORNEO UTAMA Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "CCSI",
+   "nama": "COMMUNICATION CABLE SYSTEMS INDONESIA Tbk",
+   "sektor": "CABLE",
+   "industri": "Electrical Products"
+  },
+  {
+   "kode": "CDIA",
+   "nama": "CHANDRA DAYA INVESTASI Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Electric Utilities"
+  },
+  {
+   "kode": "CEKA",
+   "nama": "WILMAR CAHAYA INDONESIA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "CENT",
+   "nama": "CENTRATAMA TELEKOMUNIKASI INDONESIA Tbk",
+   "sektor": "NON BUILDING CONSTRUCTION",
+   "industri": "Major Telecommunications"
+  },
+  {
+   "kode": "CFIN",
+   "nama": "CLIPAN FINANCE INDONESIA Tbk",
+   "sektor": "FINANCIAL INSTITUTION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "CGAS",
+   "nama": "CITRA NUSANTARA GEMILANG Tbk",
+   "sektor": "CRUDE PETROLEUM & NATURAL GAS PROD.",
+   "industri": "Gas Distributors"
+  },
+  {
+   "kode": "CHEK",
+   "nama": "DIASTIKA BIOTEKINDO Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Medical Specialties"
+  },
+  {
+   "kode": "CHEM",
+   "nama": "CHEMSTAR INDONESIA Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": "Chemicals: Major Diversified"
+  },
+  {
+   "kode": "CHIP",
+   "nama": "PELITA TEKNOLOGI GLOBAL Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Packaged Software"
+  },
+  {
+   "kode": "CINT",
+   "nama": "CHITOSE INTERNASIONAL Tbk",
+   "sektor": "HOUSEWARE",
+   "industri": "Office Equipment/Supplies"
+  },
+  {
+   "kode": "CITA",
+   "nama": "CITA MINERAL INVESTINDO Tbk",
+   "sektor": "METAL AND MINERAL MINING",
+   "industri": "Home Furnishings"
+  },
+  {
+   "kode": "CITY",
+   "nama": "NATURA CITY DEVELOPMENTS Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "CLAY",
+   "nama": "CITRA PUTRA REALTY Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "CLEO",
+   "nama": "SARIGUNA PRIMATIRTA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Beverages: Non-Alcoholic"
+  },
+  {
+   "kode": "CLPI",
+   "nama": "COLORPAK INDONESIA Tbk",
+   "sektor": "CHEMICALS",
+   "industri": "Industrial Specialties"
+  },
+  {
+   "kode": "CMNP",
+   "nama": "CITRA MARGA NUSAPHALA PERSADA Tbk",
+   "sektor": "TOLL ROAD, AIRPORT, HARBOR & ALLIED PROD.",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "CMNT",
+   "nama": "CEMINDO GEMILANG Tbk",
+   "sektor": "OTHERS - INFRASTRUCTURE, UTILITIES & TRANSPORTATIO",
+   "industri": "Construction Materials"
+  },
+  {
+   "kode": "CMPP",
+   "nama": "AIRASIA INDONESIA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": ""
+  },
+  {
+   "kode": "CMRY",
+   "nama": "CISARUA MOUNTAIN DAIRY Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food Distributors"
+  },
+  {
+   "kode": "CNKO",
+   "nama": "EXPLOITASI ENERGI INDONESIA Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": ""
+  },
+  {
+   "kode": "CNMA",
+   "nama": "NUSANTARA SEJAHTERA RAYA Tbk",
+   "sektor": "OTHERS - CONSUMER GOODS INDUSTRY",
+   "industri": "Movies/Entertainment"
+  },
+  {
+   "kode": "COAL",
+   "nama": "BLACK DIAMOND RESOURCES Tbk",
+   "sektor": "COAL MINING",
+   "industri": ""
+  },
+  {
+   "kode": "COCO",
+   "nama": "WAHANA INTERFOOD NUSANTARA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "COIN",
+   "nama": "INDOKRIPTO KOIN SEMESTA Tbk",
+   "sektor": "OTHERS - FINANCE",
+   "industri": "Miscellaneous"
+  },
+  {
+   "kode": "COWL",
+   "nama": "COWELL DEVELOPMENT Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": ""
+  },
+  {
+   "kode": "CPIN",
+   "nama": "CHAROEN POKPHAND INDONESIA Tbk",
+   "sektor": "ANIMAL FEED",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "CPRI",
+   "nama": "CAPRI NUSA SATU PROPERTI Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": ""
+  },
+  {
+   "kode": "CPRO",
+   "nama": "CENTRAL PROTEINAPRIMA Tbk",
+   "sektor": "FISHERY",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "CRAB",
+   "nama": "TOBA SURIMI INDUSTRIES Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Meat/Fish/Dairy"
+  },
+  {
+   "kode": "CRSN",
+   "nama": "CARSURIN Tbk",
+   "sektor": "OTHER SECTORS",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "CSAP",
+   "nama": "CATUR SENTOSA ADIPRANA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "CSIS",
+   "nama": "CAHAYASAKTI INVESTINDO SUKSES Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "CSMI",
+   "nama": "CIPTA SELERA MURNI Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Restaurants"
+  },
+  {
+   "kode": "CSRA",
+   "nama": "CISADANE SAWIT RAYA Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "CTBN",
+   "nama": "CITRA TUBINDO Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Oilfield Services/Equipment"
+  },
+  {
+   "kode": "CTRA",
+   "nama": "CIPUTRA DEVELOPMENT Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "CTTH",
+   "nama": "CITATAH  Tbk",
+   "sektor": "LAND/STONE QUARRYING",
+   "industri": "Construction Materials"
+  },
+  {
+   "kode": "CUAN",
+   "nama": "PETRINDO JAYA KREASI Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Other Metals/Minerals"
+  },
+  {
+   "kode": "CYBR",
+   "nama": "ITSEC ASIA Tbk",
+   "sektor": "OTHERS - INFRASTRUCTURE, UTILITIES & TRANSPORTATIO",
+   "industri": "Information Technology Services"
+  },
+  {
+   "kode": "DAAZ",
+   "nama": "DAAZ BARA LESTARI Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "DADA",
+   "nama": "DIAMOND CITRA PROPERTINDO Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "DART",
+   "nama": "DUTA ANGGADA REALTY Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Homebuilding"
+  },
+  {
+   "kode": "DATA",
+   "nama": "REMALA ABADI Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Major Telecommunications"
+  },
+  {
+   "kode": "DAYA",
+   "nama": "DUTA INTIDAYA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Drugstore Chains"
+  },
+  {
+   "kode": "DCII",
+   "nama": "DCI INDONESIA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Data Processing Services"
+  },
+  {
+   "kode": "DEAL",
+   "nama": "DEWATA FREIGHTINTERNATIONAL Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": ""
+  },
+  {
+   "kode": "DEFI",
+   "nama": "DANASUPRA ERAPACIFIC Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "DEPO",
+   "nama": "CATURKARDA DEPO BANGUNAN Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Home Improvement Chains"
+  },
+  {
+   "kode": "DEWA",
+   "nama": "DARMA HENWA Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "DEWI",
+   "nama": "DEWI SHRI FARMINDO Tbk",
+   "sektor": "OTHERS - CONSUMER GOODS INDUSTRY",
+   "industri": "Food Retail"
+  },
+  {
+   "kode": "DFAM",
+   "nama": "DAFAM PROPERTY INDONESIA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "DGIK",
+   "nama": "NUSA KONSTRUKSI ENJINIRING Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "DGNS",
+   "nama": "DIAGNOS LABORATORIUM UTAMA Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Medical/Nursing Services"
+  },
+  {
+   "kode": "DGWG",
+   "nama": "DELTA GIRI WACANA Tbk",
+   "sektor": "CHEMICALS",
+   "industri": "Chemicals: Agricultural"
+  },
+  {
+   "kode": "DIGI",
+   "nama": "ARKADIA DIGITAL MEDIA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": ""
+  },
+  {
+   "kode": "DILD",
+   "nama": "INTILAND DEVELOPMENT Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "DIVA",
+   "nama": "DISTRIBUSI VOUCHER NUSANTARA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Packaged Software"
+  },
+  {
+   "kode": "DKFT",
+   "nama": "CENTRAL OMEGA RESOURCES Tbk",
+   "sektor": "METAL AND MINERAL MINING",
+   "industri": "Other Metals/Minerals"
+  },
+  {
+   "kode": "DKHH",
+   "nama": "CIPTA SARANA MEDIKA Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Hospital/Nursing Management"
+  },
+  {
+   "kode": "DLTA",
+   "nama": "DELTA DJAKARTA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Beverages: Alcoholic"
+  },
+  {
+   "kode": "DMAS",
+   "nama": "PURADELTA LESTARI Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "DMMX",
+   "nama": "DIGITAL MEDIATAMA MAXIMA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Advertising/Marketing Services"
+  },
+  {
+   "kode": "DMND",
+   "nama": "DIAMOND FOOD INDONESIA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Meat/Fish/Dairy"
+  },
+  {
+   "kode": "DNAR",
+   "nama": "BANK OKE INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "DNET",
+   "nama": "INDORITEL MAKMUR INTERNASIONAL Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Wireless Telecommunications"
+  },
+  {
+   "kode": "DOID",
+   "nama": "BUMA INTERNASIONAL GRUP Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "DOOH",
+   "nama": "ERA MEDIA SEJAHTERA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Advertising/Marketing Services"
+  },
+  {
+   "kode": "DOSS",
+   "nama": "GLOBAL SUKSES DIGITAL Tbk",
+   "sektor": "ELECTRONICS",
+   "industri": "Electronics/Appliance Stores"
+  },
+  {
+   "kode": "DPNS",
+   "nama": "DUTA PERTIWI NUSANTARA",
+   "sektor": "CHEMICALS",
+   "industri": ""
+  },
+  {
+   "kode": "DPUM",
+   "nama": "DUA PUTRA UTAMA MAKMUR Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food Distributors"
+  },
+  {
+   "kode": "DRMA",
+   "nama": "DHARMA POLIMETAL Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Auto Parts: OEM"
+  },
+  {
+   "kode": "DSFI",
+   "nama": "DHARMA SAMUDERA FISHING INDUSTRIES Tbk",
+   "sektor": "FISHERY",
+   "industri": "Food: Meat/Fish/Dairy"
+  },
+  {
+   "kode": "DSNG",
+   "nama": "DHARMA SATYA NUSANTARA Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Forest Products"
+  },
+  {
+   "kode": "DSSA",
+   "nama": "DIAN SWASTATIKA SENTOSA Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "DUCK",
+   "nama": "JAYA BERSAMA INDO Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": ""
+  },
+  {
+   "kode": "DUTI",
+   "nama": "DUTA PERTIWI Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "DVLA",
+   "nama": "DARYA - VARIA LABORATORIA Tbk",
+   "sektor": "PHARMACEUTICALS",
+   "industri": "Pharmaceuticals: Major"
+  },
+  {
+   "kode": "DWGL",
+   "nama": "DWI GUNA LAKSANA Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "DYAN",
+   "nama": "DYANDRA MEDIA INTERNATIONAL Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "EAST",
+   "nama": "EASTPARC HOTEL Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "ECII",
+   "nama": "ELECTRONIC CITY INDONESIA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Electronics/Appliance Stores"
+  },
+  {
+   "kode": "EDGE",
+   "nama": "INDOINTERNET Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": ""
+  },
+  {
+   "kode": "EKAD",
+   "nama": "EKADHARMA INTERNATIONAL Tbk",
+   "sektor": "CHEMICALS",
+   "industri": "Pulp & Paper"
+  },
+  {
+   "kode": "ELIT",
+   "nama": "DATA SINERGITAMA JAYA Tbk",
+   "sektor": "OTHERS - INFRASTRUCTURE, UTILITIES & TRANSPORTATIO",
+   "industri": "Information Technology Services"
+  },
+  {
+   "kode": "ELPI",
+   "nama": "PELAYARAN NASIONAL EKALYA PURNAMASARI Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Air Freight/Couriers"
+  },
+  {
+   "kode": "ELSA",
+   "nama": "ELNUSA Tbk",
+   "sektor": "CRUDE PETROLEUM & NATURAL GAS PROD.",
+   "industri": "Oil & Gas Production"
+  },
+  {
+   "kode": "ELTY",
+   "nama": "BAKRIELAND DEVELOPMENT Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "EMAS",
+   "nama": "MERDEKA GOLD RESOURCES Tbk",
+   "sektor": "METAL AND MINERAL MINING",
+   "industri": "Precious Metals"
+  },
+  {
+   "kode": "EMDE",
+   "nama": "MEGAPOLITAN DEVELOPMENTS Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "EMMI",
+   "nama": "ESA MEDIKA MANDIRI Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Medical Specialties"
+  },
+  {
+   "kode": "EMTK",
+   "nama": "ELANG MAHKOTA TEKNOLOGI Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Broadcasting"
+  },
+  {
+   "kode": "ENAK",
+   "nama": "CHAMP RESTO INDONESIA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "ENRG",
+   "nama": "ENERGI MEGA PERSADA Tbk",
+   "sektor": "CRUDE PETROLEUM & NATURAL GAS PROD.",
+   "industri": "Oil & Gas Production"
+  },
+  {
+   "kode": "ENVY",
+   "nama": "ENVY TECHNOLOGIES INDONESIA Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": ""
+  },
+  {
+   "kode": "ENZO",
+   "nama": "MORENZO ABADI PERKASA Tbk",
+   "sektor": "FISHERY",
+   "industri": "Food: Meat/Fish/Dairy"
+  },
+  {
+   "kode": "EPAC",
+   "nama": "MEGALESTARI EPACK SENTOSARAYA Tbk",
+   "sektor": "PLASTICS & PACKAGING",
+   "industri": "Internet Software/Services"
+  },
+  {
+   "kode": "EPMT",
+   "nama": "ENSEVAL PUTERA MEGATRADING Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Medical Distributors"
+  },
+  {
+   "kode": "ERAA",
+   "nama": "ERAJAYA SWASEMBADA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Electronics Distributors"
+  },
+  {
+   "kode": "ERAL",
+   "nama": "SINAR EKA SELARAS Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Electronics/Appliance Stores"
+  },
+  {
+   "kode": "ERTX",
+   "nama": "ERATEX DJAJA Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": "Textiles"
+  },
+  {
+   "kode": "ESIP",
+   "nama": "SINERGI INTI PLASTINDO Tbk",
+   "sektor": "PLASTICS & PACKAGING",
+   "industri": "Miscellaneous Manufacturing"
+  },
+  {
+   "kode": "ESSA",
+   "nama": "ESSA INDUSTRIES INDONESIA Tbk",
+   "sektor": "CHEMICALS",
+   "industri": "Oil Refining/Marketing"
+  },
+  {
+   "kode": "ESTA",
+   "nama": "ESTA MULTI USAHA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "ESTI",
+   "nama": "EVER SHINE TEXTILE INDUSTRY",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": "Textiles"
+  },
+  {
+   "kode": "ETWA",
+   "nama": "ETERINDO WAHANATAMA Tbk",
+   "sektor": "CHEMICALS",
+   "industri": ""
+  },
+  {
+   "kode": "EURO",
+   "nama": "ESTEE GOLD FEET Tbk",
+   "sektor": "COSMETICS AND HOUSEHOLD",
+   "industri": "Household/Personal Care"
+  },
+  {
+   "kode": "EXCL",
+   "nama": "XLSMART TELECOM SEJAHTERA Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": "Major Telecommunications"
+  },
+  {
+   "kode": "FAPA",
+   "nama": "FAP AGRI Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "FAST",
+   "nama": "FAST FOOD INDONESIA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Restaurants"
+  },
+  {
+   "kode": "FASW",
+   "nama": "FAJAR SURYA WISESA Tbk",
+   "sektor": "PULP & PAPER",
+   "industri": ""
+  },
+  {
+   "kode": "FILM",
+   "nama": "MD ENTERTAINMENT Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Movies/Entertainment"
+  },
+  {
+   "kode": "FIMP",
+   "nama": "FIMPERKASA UTAMA Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": ""
+  },
+  {
+   "kode": "FIRE",
+   "nama": "ALFA ENERGI INVESTAMA Tbk",
+   "sektor": "ENERGY",
+   "industri": "Coal"
+  },
+  {
+   "kode": "FISH",
+   "nama": "FKS MULTI AGRO Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Food: Meat/Fish/Dairy"
+  },
+  {
+   "kode": "FITT",
+   "nama": "HOTEL FITRA INTERNATIONAL Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "FLMC",
+   "nama": "FALMACO NONWOVEN INDUSTRI Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Textiles"
+  },
+  {
+   "kode": "FMII",
+   "nama": "FORTUNE MATE INDONESIA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "FOLK",
+   "nama": "MULTI GARAM UTAMA Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "FOOD",
+   "nama": "SENTRA FOOD INDONESIA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": ""
+  },
+  {
+   "kode": "FORE",
+   "nama": "FORE KOPI INDONESIA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Restaurants"
+  },
+  {
+   "kode": "FORU",
+   "nama": "FORTUNE INDONESIA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Advertising/Marketing Services"
+  },
+  {
+   "kode": "FORZ",
+   "nama": "FORZA LAND INDONESIA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": ""
+  },
+  {
+   "kode": "FPNI",
+   "nama": "LOTTE CHEMICAL TITAN Tbk",
+   "sektor": "PLASTICS & PACKAGING",
+   "industri": "Chemicals: Specialty"
+  },
+  {
+   "kode": "FUJI",
+   "nama": "FUJI FINANCE INDONESIA Tbk",
+   "sektor": "FINANCIAL INSTITUTION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "FUTR",
+   "nama": "FUTURA ENERGI GLOBAL Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Advertising/Marketing Services"
+  },
+  {
+   "kode": "FWCT",
+   "nama": "WIJAYA CAHAYA TIMBER Tbk",
+   "sektor": "WOOD INDUSTRIES",
+   "industri": "Forest Products"
+  },
+  {
+   "kode": "GAMA",
+   "nama": "AKSARA GLOBAL DEVELOPMENT Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": ""
+  },
+  {
+   "kode": "GDST",
+   "nama": "GUNAWAN DIANJAYA STEEL Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Steel"
+  },
+  {
+   "kode": "GDYR",
+   "nama": "GOODYEAR INDONESIA Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Automotive Aftermarket"
+  },
+  {
+   "kode": "GEMA",
+   "nama": "GEMA GRAHASARANA Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Office Equipment/Supplies"
+  },
+  {
+   "kode": "GEMS",
+   "nama": "GOLDEN ENERGY MINES Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "GGRM",
+   "nama": "GUDANG GARAM Tbk",
+   "sektor": "TOBACCO MANUFACTURERS",
+   "industri": "Tobacco"
+  },
+  {
+   "kode": "GGRP",
+   "nama": "GUNUNG RAJA PAKSI Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Steel"
+  },
+  {
+   "kode": "GHON",
+   "nama": "GIHON TELEKOMUNIKASI INDONESIA Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": "Specialty Telecommunications"
+  },
+  {
+   "kode": "GIAA",
+   "nama": "GARUDA INDONESIA (PERSERO) Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Airlines"
+  },
+  {
+   "kode": "GJTL",
+   "nama": "GAJAH TUNGGAL Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Automotive Aftermarket"
+  },
+  {
+   "kode": "GLOB",
+   "nama": "GLOBE KITA TERANG Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": ""
+  },
+  {
+   "kode": "GLVA",
+   "nama": "GALVA TECHNOLOGIES Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Electronics Distributors"
+  },
+  {
+   "kode": "GMFI",
+   "nama": "GARUDA MAINTENANCE FACILITY AERO ASIA Tbk",
+   "sektor": "MACHINERY AND HEAVY EQUIPMENT",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "GMTD",
+   "nama": "GOWA MAKASSAR TOURISM DEVELOPMENT Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "GOLD",
+   "nama": "VISI TELEKOMUNIKASI INFRASTRUKTUR Tbk, PT",
+   "sektor": "TELECOMUNICATION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "GOLF",
+   "nama": "INTRA GOLFLINK RESORTS Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "GOLL",
+   "nama": "GOLDEN PLANTATION Tbk",
+   "sektor": "PLANTATION",
+   "industri": ""
+  },
+  {
+   "kode": "GOOD",
+   "nama": "GARUDAFOOD PUTRA PUTRI JAYA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "GOTO",
+   "nama": "GOTO GOJEK TOKOPEDIA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Packaged Software"
+  },
+  {
+   "kode": "GOTOM",
+   "nama": "MVS GOTO GOJEK TOKOPEDIA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": ""
+  },
+  {
+   "kode": "GPRA",
+   "nama": "PERDANA GAPURAPRIMA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Homebuilding"
+  },
+  {
+   "kode": "GPSO",
+   "nama": "GEOPRIMA SOLUSI Tbk",
+   "sektor": "MACHINERY AND HEAVY EQUIPMENT",
+   "industri": "Information Technology Services"
+  },
+  {
+   "kode": "GRIA",
+   "nama": "INGRIA PRATAMA CAPITALINDO Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "GRPH",
+   "nama": "GRIPTHA PUTRA PERSADA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "GRPM",
+   "nama": "GRAHA PRIMA MENTARI Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Food Distributors"
+  },
+  {
+   "kode": "GSMF",
+   "nama": "EQUITY DEVELOPMENT INVESTMENT Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Property/Casualty Insurance"
+  },
+  {
+   "kode": "GTBO",
+   "nama": "GARDA TUJUH BUANA Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "GTRA",
+   "nama": "GRAHAPRIMA SUKSESMANDIRI Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Trucking"
+  },
+  {
+   "kode": "GTSI",
+   "nama": "GTS INTERNASIONAL Tbk",
+   "sektor": "OTHER SECTORS",
+   "industri": "Air Freight/Couriers"
+  },
+  {
+   "kode": "GULA",
+   "nama": "AMAN AGRINDO Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "GUNA",
+   "nama": "GUNANUSA ERAMANDIRI Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "GWSA",
+   "nama": "GREENWOOD SEJAHTERA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "GZCO",
+   "nama": "GOZCO PLANTATIONS Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "HADE",
+   "nama": "HIMALAYA ENERGI PERKASA Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "HAIS",
+   "nama": "HASNUR INTERNASIONAL SHIPPING Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "HAJJ",
+   "nama": "ARSY BUANA TRAVELINDO Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Other Consumer Services"
+  },
+  {
+   "kode": "HALO",
+   "nama": "HALONI JANE Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Miscellaneous Manufacturing"
+  },
+  {
+   "kode": "HATM",
+   "nama": "HABCO TRANS MARITIMA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "HBAT",
+   "nama": "MINAHASA MEMBANGUN HEBAT Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "HDFA",
+   "nama": "RADANA BHASKARA FINANCE Tbk",
+   "sektor": "FINANCIAL INSTITUTION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "HDIT",
+   "nama": "HENSEL DAVEST INDONESIA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "HDTX",
+   "nama": "PANASIA INDO RESOURCES Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": ""
+  },
+  {
+   "kode": "HEAL",
+   "nama": "MEDIKALOKA HERMINA Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Hospital/Nursing Management"
+  },
+  {
+   "kode": "HELI",
+   "nama": "JAYA TRISHINDO Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Airlines"
+  },
+  {
+   "kode": "HERO",
+   "nama": "DFI RETAIL NUSANTARA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Drugstore Chains"
+  },
+  {
+   "kode": "HEXA",
+   "nama": "HEXINDO ADIPERKASA Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "HGII",
+   "nama": "HERO GLOBAL INVESTMENT Tbk",
+   "sektor": "FINANCIAL INSTITUTION",
+   "industri": "Electric Utilities"
+  },
+  {
+   "kode": "HILL",
+   "nama": "HILLCON Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": ""
+  },
+  {
+   "kode": "HITS",
+   "nama": "HUMPUSS INTERMODA TRANSPORTASI Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": ""
+  },
+  {
+   "kode": "HKMU",
+   "nama": "HK METALS UTAMA Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": ""
+  },
+  {
+   "kode": "HMSP",
+   "nama": "HANJAYA MANDALA SAMPOERNA Tbk",
+   "sektor": "TOBACCO MANUFACTURERS",
+   "industri": "Tobacco"
+  },
+  {
+   "kode": "HOKI",
+   "nama": "BUYUNG POETRA SEMBADA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "HOME",
+   "nama": "HOTEL MANDARINE REGENCY Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": ""
+  },
+  {
+   "kode": "HOMI",
+   "nama": "GRAND HOUSE MULIA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "HOPE",
+   "nama": "HARAPAN DUTA PERTIWI Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Trucks/Construction/Farm Machinery"
+  },
+  {
+   "kode": "HOTL",
+   "nama": "SARASWATI GRIYA LESTARI Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": ""
+  },
+  {
+   "kode": "HRME",
+   "nama": "MENTENG HERITAGE REALTY Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "HRTA",
+   "nama": "HARTADINATA ABADI Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Other Consumer Specialties"
+  },
+  {
+   "kode": "HRUM",
+   "nama": "HARUM ENERGY Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "HUMI",
+   "nama": "HUMPUSS MARITIM INTERNASIONAL Tbk",
+   "sektor": "ENERGY",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "HYGN",
+   "nama": "ECOCARE INDO PASIFIK Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "IATA",
+   "nama": "KARYA PACIFIC ENERGY Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "IBFN",
+   "nama": "INTAN BARU PRANA Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": ""
+  },
+  {
+   "kode": "IBOS",
+   "nama": "INDO BOGA SUKSES Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Restaurants"
+  },
+  {
+   "kode": "IBST",
+   "nama": "INTI BANGUN SEJAHTERA Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": ""
+  },
+  {
+   "kode": "ICBP",
+   "nama": "INDOFOOD CBP SUKSES MAKMUR Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "ICON",
+   "nama": "ISLAND CONCEPTS INDONESIA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Restaurants"
+  },
+  {
+   "kode": "IDEA",
+   "nama": "IDEA INDONESIA AKADEMI Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "IDPR",
+   "nama": "INDONESIA PONDASI RAYA Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "IFII",
+   "nama": "INDONESIA FIBREBOARD INDUSTRY Tbk",
+   "sektor": "WOOD INDUSTRIES",
+   "industri": "Forest Products"
+  },
+  {
+   "kode": "IFSH",
+   "nama": "IFISHDECO Tbk",
+   "sektor": "METAL AND MINERAL MINING",
+   "industri": "Other Metals/Minerals"
+  },
+  {
+   "kode": "IGAR",
+   "nama": "CHAMPION PACIFIC INDONESIA Tbk",
+   "sektor": "PLASTICS & PACKAGING",
+   "industri": "Containers/Packaging"
+  },
+  {
+   "kode": "IIKP",
+   "nama": "INTI AGRI RESOURCES Tbk",
+   "sektor": "FISHERY",
+   "industri": ""
+  },
+  {
+   "kode": "IKAI",
+   "nama": "INTIKERAMIK ALAMASRI INDUSTRI Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Building Products"
+  },
+  {
+   "kode": "IKAN",
+   "nama": "ERA MANDIRI CEMERLANG Tbk",
+   "sektor": "FISHERY",
+   "industri": "Food: Meat/Fish/Dairy"
+  },
+  {
+   "kode": "IKBI",
+   "nama": "SUMI INDO KABEL Tbk",
+   "sektor": "CABLE",
+   "industri": "Telecommunications Equipment"
+  },
+  {
+   "kode": "IKPM",
+   "nama": "IKAPHARMINDO PUTRAMAS Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Pharmaceuticals: Major"
+  },
+  {
+   "kode": "IMAS",
+   "nama": "INDOMOBIL SUKSES INTERNASIONAL Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Motor Vehicles"
+  },
+  {
+   "kode": "IMJS",
+   "nama": "INDOMOBIL MULTI JASA Tbk",
+   "sektor": "FINANCIAL INSTITUTION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "IMPC",
+   "nama": "IMPACK PRATAMA INDUSTRI Tbk",
+   "sektor": "PLASTICS & PACKAGING",
+   "industri": "Miscellaneous Manufacturing"
+  },
+  {
+   "kode": "INAF",
+   "nama": "INDOFARMA Tbk",
+   "sektor": "PHARMACEUTICALS",
+   "industri": ""
+  },
+  {
+   "kode": "INAI",
+   "nama": "INDAL ALUMINIUM INDUSTRY Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Aluminum"
+  },
+  {
+   "kode": "INCF",
+   "nama": "INDO KOMODITI KORPORA Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": ""
+  },
+  {
+   "kode": "INCI",
+   "nama": "INTANWIJAYA INTERNASIONAL Tbk",
+   "sektor": "CHEMICALS",
+   "industri": "Chemicals: Specialty"
+  },
+  {
+   "kode": "INCO",
+   "nama": "VALE INDONESIA Tbk",
+   "sektor": "METAL AND MINERAL MINING",
+   "industri": "Other Metals/Minerals"
+  },
+  {
+   "kode": "INDF",
+   "nama": "INDOFOOD SUKSES MAKMUR Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "INDO",
+   "nama": "ROYALINDO INVESTA WIJAYA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "INDR",
+   "nama": "INDO-RAMA SYNTHETICS Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": "Textiles"
+  },
+  {
+   "kode": "INDS",
+   "nama": "INDOSPRING Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Auto Parts: OEM"
+  },
+  {
+   "kode": "INDX",
+   "nama": "TANAH LAUT Tbk",
+   "sektor": "OTHERS - MISCELLANENEOUS INDUSTRY",
+   "industri": ""
+  },
+  {
+   "kode": "INDY",
+   "nama": "INDIKA ENERGY Tbk",
+   "sektor": "NON BUILDING CONSTRUCTION",
+   "industri": "Coal"
+  },
+  {
+   "kode": "INET",
+   "nama": "SINERGI INTI ANDALAN PRIMA Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": "Specialty Telecommunications"
+  },
+  {
+   "kode": "INKP",
+   "nama": "INDAH KIAT PULP AND PAPER Tbk",
+   "sektor": "PULP & PAPER",
+   "industri": "Pulp & Paper"
+  },
+  {
+   "kode": "INOV",
+   "nama": "INOCYCLE TECHNOLOGY GROUP Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Textiles"
+  },
+  {
+   "kode": "INPC",
+   "nama": "BANK ARTHA GRAHA INTERNASIONAL Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "INPP",
+   "nama": "INDONESIAN PARADISE PROPERTY Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "INPS",
+   "nama": "INDAH PRAKASA SENTOSA Tbk",
+   "sektor": "CRUDE PETROLEUM & NATURAL GAS PROD.",
+   "industri": ""
+  },
+  {
+   "kode": "INRU",
+   "nama": "TOBA PULP LESTARI Tbk",
+   "sektor": "PULP & PAPER",
+   "industri": ""
+  },
+  {
+   "kode": "INTA",
+   "nama": "INTRACO PENTA Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": ""
+  },
+  {
+   "kode": "INTD",
+   "nama": "INTER DELTA Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Electronics/Appliances"
+  },
+  {
+   "kode": "INTP",
+   "nama": "INDOCEMENT TUNGGAL PRAKARSA Tbk",
+   "sektor": "CEMENT",
+   "industri": "Construction Materials"
+  },
+  {
+   "kode": "IOTF",
+   "nama": "SUMBER SINERGI MAKMUR Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Electronics Distributors"
+  },
+  {
+   "kode": "IPAC",
+   "nama": "ERA GRAHAREALTY Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": ""
+  },
+  {
+   "kode": "IPCC",
+   "nama": "INDONESIA KENDARAAN TERMINAL Tbk",
+   "sektor": "TOLL ROAD, AIRPORT, HARBOR & ALLIED PROD.",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "IPCM",
+   "nama": "JASA ARMADA INDONESIA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "IPOL",
+   "nama": "INDOPOLY SWAKARSA INDUSTRY Tbk",
+   "sektor": "PLASTICS & PACKAGING",
+   "industri": "Containers/Packaging"
+  },
+  {
+   "kode": "IPPE",
+   "nama": "INDO PURECO PRATAMA Tbk",
+   "sektor": "PLANTATION",
+   "industri": ""
+  },
+  {
+   "kode": "IPTV",
+   "nama": "MNC VISION NETWORKS Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Cable/Satellite TV"
+  },
+  {
+   "kode": "IRRA",
+   "nama": "ITAMA RANORAYA Tbk",
+   "sektor": "PHARMACEUTICALS",
+   "industri": "Medical Distributors"
+  },
+  {
+   "kode": "IRSX",
+   "nama": "FOLAGO GLOBAL NUSANTARA Tbk",
+   "sektor": "OTHERS - INFRASTRUCTURE, UTILITIES & TRANSPORTATIO",
+   "industri": "Packaged Software"
+  },
+  {
+   "kode": "ISAP",
+   "nama": "ISRA PRESISI INDONESIA Tbk",
+   "sektor": "MACHINERY AND HEAVY EQUIPMENT",
+   "industri": "Industrial Machinery"
+  },
+  {
+   "kode": "ISAT",
+   "nama": "INDOSAT Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": "Wireless Telecommunications"
+  },
+  {
+   "kode": "ISEA",
+   "nama": "INDO AMERICAN SEAFOODS Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Meat/Fish/Dairy"
+  },
+  {
+   "kode": "ISSP",
+   "nama": "STEEL PIPE INDUSTRY OF INDONESIA Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Steel"
+  },
+  {
+   "kode": "ITIC",
+   "nama": "INDONESIAN TOBACCO Tbk",
+   "sektor": "TOBACCO MANUFACTURERS",
+   "industri": "Tobacco"
+  },
+  {
+   "kode": "ITMA",
+   "nama": "SUMBER ENERGI ANDALAN Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": "Coal"
+  },
+  {
+   "kode": "ITMG",
+   "nama": "INDO TAMBANGRAYA MEGAH Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "JARR",
+   "nama": "JHONLIN AGRO RAYA Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "JASS",
+   "nama": "JASA ANGKASA SEMESTA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": ""
+  },
+  {
+   "kode": "JAST",
+   "nama": "JASNITA TELEKOMINDO Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": "Specialty Telecommunications"
+  },
+  {
+   "kode": "JATI",
+   "nama": "INFORMASI TEKNOLOGI INDONESIA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Information Technology Services"
+  },
+  {
+   "kode": "JAWA",
+   "nama": "JAYA AGRA WATTIE Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "JAYA",
+   "nama": "ARMADA BERJAYA TRANS Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Trucking"
+  },
+  {
+   "kode": "JECC",
+   "nama": "JEMBO CABLE COMPANY Tbk",
+   "sektor": "CABLE",
+   "industri": "Electrical Products"
+  },
+  {
+   "kode": "JECX",
+   "nama": "NITRASANATA DHARMA Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Medical/Nursing Services"
+  },
+  {
+   "kode": "JELI",
+   "nama": "NIRAMAS UTAMA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Major Diversified"
+  },
+  {
+   "kode": "JGLE",
+   "nama": "GRAHA ANDRASENTRA PROPERTINDO Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "JIHD",
+   "nama": "JAKARTA INTERNATIONAL HOTELS & DEVELOPMENT Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "JKON",
+   "nama": "JAYA KONSTRUKSI MANGGALA PRATAMA Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "JKSW",
+   "nama": "JAKARTA KYOEI STEEL WORKS Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": ""
+  },
+  {
+   "kode": "JMAS",
+   "nama": "ASURANSI JIWA SYARIAH JASA MITRA ABADI Tbk",
+   "sektor": "INSURANCE",
+   "industri": ""
+  },
+  {
+   "kode": "JPFA",
+   "nama": "JAPFA COMFEED INDONESIA Tbk",
+   "sektor": "ANIMAL FEED",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "JRPT",
+   "nama": "JAYA REAL PROPERTY Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "JSKY",
+   "nama": "SKY ENERGY INDONESIA Tbk",
+   "sektor": "ENERGY",
+   "industri": ""
+  },
+  {
+   "kode": "JSMR",
+   "nama": "JASA MARGA (PERSERO) Tbk",
+   "sektor": "TOLL ROAD, AIRPORT, HARBOR & ALLIED PROD.",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "JSPT",
+   "nama": "JAKARTA SETIABUDI INTERNASIONAL Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "JTPE",
+   "nama": "JASUINDO TIGA PERKASA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Commercial Printing/Forms"
+  },
+  {
+   "kode": "KAEF",
+   "nama": "KIMIA FARMA Tbk",
+   "sektor": "PHARMACEUTICALS",
+   "industri": "Pharmaceuticals: Major"
+  },
+  {
+   "kode": "KAQI",
+   "nama": "JANTRA GRUPO INDONESIA Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Other Consumer Services"
+  },
+  {
+   "kode": "KARW",
+   "nama": "MERATUS JASA PRIMA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": ""
+  },
+  {
+   "kode": "KAYU",
+   "nama": "DARMI BERSAUDARA Tbk",
+   "sektor": "WOOD INDUSTRIES",
+   "industri": ""
+  },
+  {
+   "kode": "KBAG",
+   "nama": "KARYA BERSAMA ANUGERAH Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "KBLI",
+   "nama": "KMI Wire and Cable Tbk",
+   "sektor": "CABLE",
+   "industri": "Electrical Products"
+  },
+  {
+   "kode": "KBLM",
+   "nama": "KABELINDO MURNI Tbk",
+   "sektor": "CABLE",
+   "industri": "Electrical Products"
+  },
+  {
+   "kode": "KBLV",
+   "nama": "FIRST MEDIA Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": "Cable/Satellite TV"
+  },
+  {
+   "kode": "KBRI",
+   "nama": "KERTAS BASUKI RACHMAT INDONESIA Tbk",
+   "sektor": "PULP & PAPER",
+   "industri": ""
+  },
+  {
+   "kode": "KDSI",
+   "nama": "KEDAWUNG SETIA INDUSTRIAL Tbk",
+   "sektor": "PULP & PAPER",
+   "industri": "Containers/Packaging"
+  },
+  {
+   "kode": "KDTN",
+   "nama": "PURI SENTUL PERMAI Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "KEEN",
+   "nama": "KENCANA ENERGI LESTARI Tbk",
+   "sektor": "OTHERS - INFRASTRUCTURE, UTILITIES & TRANSPORTATIO",
+   "industri": "Electric Utilities"
+  },
+  {
+   "kode": "KEJU",
+   "nama": "MULIA BOGA RAYA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Meat/Fish/Dairy"
+  },
+  {
+   "kode": "KETR",
+   "nama": "KETROSDEN TRIASMITRA Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "KIAS",
+   "nama": "KERAMIKA INDONESIA ASSOSIASI Tbk",
+   "sektor": "CERAMICS, GLASS, PORCELAIN",
+   "industri": ""
+  },
+  {
+   "kode": "KICI",
+   "nama": "KEDAUNG INDAH CAN Tbk",
+   "sektor": "HOUSEWARE",
+   "industri": "Home Furnishings"
+  },
+  {
+   "kode": "KIJA",
+   "nama": "KAWASAN INDUSTRI JABABEKA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "KING",
+   "nama": "HOFFMEN CLEANINDO Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "KINO",
+   "nama": "KINO INDONESIA Tbk",
+   "sektor": "COSMETICS AND HOUSEHOLD",
+   "industri": "Household/Personal Care"
+  },
+  {
+   "kode": "KIOS",
+   "nama": "KIOSON KOMERSIAL INDONESIA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Department Stores"
+  },
+  {
+   "kode": "KJEN",
+   "nama": "KRIDA JARINGAN NUSANTARA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Air Freight/Couriers"
+  },
+  {
+   "kode": "KKES",
+   "nama": "KUSUMA KEMINDO SENTOSA Tbk",
+   "sektor": "CHEMICALS",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "KKGI",
+   "nama": "RESOURCE ALAM INDONESIA Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "KLAS",
+   "nama": "PELAYARAN KURNIA LAUTAN SEMESTA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "KLBF",
+   "nama": "KALBE FARMA Tbk",
+   "sektor": "PHARMACEUTICALS",
+   "industri": "Pharmaceuticals: Major"
+  },
+  {
+   "kode": "KLIN",
+   "nama": "KLINKO KARYA IMAJI Tbk",
+   "sektor": "HOUSEWARE",
+   "industri": "Household/Personal Care"
+  },
+  {
+   "kode": "KMDS",
+   "nama": "KURNIAMITRA DUTA SENTOSA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food Distributors"
+  },
+  {
+   "kode": "KMTR",
+   "nama": "KIRANA MEGATARA Tbk",
+   "sektor": "OTHERS - MISCELLANENEOUS INDUSTRY",
+   "industri": "Miscellaneous Manufacturing"
+  },
+  {
+   "kode": "KOBX",
+   "nama": "KOBEXINDO TRACTORS Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "KOCI",
+   "nama": "KOKOH EXA NUSANTARA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "KOIN",
+   "nama": "KOKOH INTI AREBAMA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": ""
+  },
+  {
+   "kode": "KOKA",
+   "nama": "KOKA INDONESIA Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "KONI",
+   "nama": "PERDANA BANGUN PUSAKA Tbk",
+   "sektor": "OTHER SECTORS",
+   "industri": "Electronics/Appliance Stores"
+  },
+  {
+   "kode": "KOTA",
+   "nama": "DMS PROPERTINDO Tbk",
+   "sektor": "NON BUILDING CONSTRUCTION",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "KPAL",
+   "nama": "STEADFAST MARINE Tbk",
+   "sektor": "MACHINERY AND HEAVY EQUIPMENT",
+   "industri": ""
+  },
+  {
+   "kode": "KPAS",
+   "nama": "COTTONINDO ARIESTA Tbk",
+   "sektor": "PHARMACEUTICALS",
+   "industri": ""
+  },
+  {
+   "kode": "KPIG",
+   "nama": "MNC TOURISM INDONESIA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "KRAH",
+   "nama": "GRAND KARTECH Tbk",
+   "sektor": "MACHINERY AND HEAVY EQUIPMENT",
+   "industri": ""
+  },
+  {
+   "kode": "KRAS",
+   "nama": "KRAKATAU STEEL Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Steel"
+  },
+  {
+   "kode": "KREN",
+   "nama": "QUANTUM CLOVERA INVESTAMA Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Investment Banks/Brokers"
+  },
+  {
+   "kode": "KRYA",
+   "nama": "BANGUN KARYA PERKASA JAYA Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Building Products"
+  },
+  {
+   "kode": "KSIX",
+   "nama": "KENTANIX SUPRA INTERNATIONAL Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Homebuilding"
+  },
+  {
+   "kode": "KUAS",
+   "nama": "ACE OLDFIELDS Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Miscellaneous Manufacturing"
+  },
+  {
+   "kode": "LABA",
+   "nama": "GREEN POWER GROUP Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Steel"
+  },
+  {
+   "kode": "LABS",
+   "nama": "UBC MEDICAL INDONESIA Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Medical Distributors"
+  },
+  {
+   "kode": "LAJU",
+   "nama": "JASA BERDIKARI LOGISTICS Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": "Air Freight/Couriers"
+  },
+  {
+   "kode": "LAND",
+   "nama": "TRIMITRA PROPERTINDO Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": "Homebuilding"
+  },
+  {
+   "kode": "LAPD",
+   "nama": "LEYAND INTERNATIONAL Tbk",
+   "sektor": "OTHER SECTORS",
+   "industri": "Electric Utilities"
+  },
+  {
+   "kode": "LCGP",
+   "nama": "EUREKA PRIMA JAKARTA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": ""
+  },
+  {
+   "kode": "LCKM",
+   "nama": "LCK GLOBAL KEDATON Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": ""
+  },
+  {
+   "kode": "LEAD",
+   "nama": "LOGINDO SAMUDRAMAKMUR Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Oilfield Services/Equipment"
+  },
+  {
+   "kode": "LFLO",
+   "nama": "IMAGO MULIA PERSADA Tbk",
+   "sektor": "HOUSEWARE",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "LIFE",
+   "nama": "MSIG LIFE INSURANCE INDONESIA Tbk",
+   "sektor": "INSURANCE",
+   "industri": "Life/Health Insurance"
+  },
+  {
+   "kode": "LINK",
+   "nama": "LINK NET Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Major Telecommunications"
+  },
+  {
+   "kode": "LION",
+   "nama": "LION METAL WORKS Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Office Equipment/Supplies"
+  },
+  {
+   "kode": "LIVE",
+   "nama": "HOMECO VICTORIA MAKMUR Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "LMAS",
+   "nama": "LIMAS INDONESIA MAKMUR Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": ""
+  },
+  {
+   "kode": "LMAX",
+   "nama": "LUPROMAX PELUMAS INDONESIA Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Industrial Specialties"
+  },
+  {
+   "kode": "LMPI",
+   "nama": "LANGGENG MAKMUR INDUSTRI Tbk",
+   "sektor": "HOUSEWARE",
+   "industri": "Home Furnishings"
+  },
+  {
+   "kode": "LMSH",
+   "nama": "LIONMESH PRIMA Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": ""
+  },
+  {
+   "kode": "LOPI",
+   "nama": "LOGISTICSPLUS INTERNATIONAL Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Air Freight/Couriers"
+  },
+  {
+   "kode": "LPCK",
+   "nama": "LIPPO CIKARANG Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "LPGI",
+   "nama": "LIPPO GENERAL INSURANCE Tbk",
+   "sektor": "INSURANCE",
+   "industri": "Multi-Line Insurance"
+  },
+  {
+   "kode": "LPIN",
+   "nama": "MULTI PRIMA SEJAHTERA Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Electronic Components"
+  },
+  {
+   "kode": "LPKR",
+   "nama": "LIPPO KARAWACI Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "LPLI",
+   "nama": "STAR PACIFIC Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Internet Software/Services"
+  },
+  {
+   "kode": "LPPF",
+   "nama": "MDS RETAILING Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Department Stores"
+  },
+  {
+   "kode": "LPPS",
+   "nama": "LENOX PASIFIK INVESTAMA Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Investment Managers"
+  },
+  {
+   "kode": "LRNA",
+   "nama": "EKA SARI LORENA TRANSPORT Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "LSIP",
+   "nama": "PP LONDON SUMATRA INDONESIA Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "LTLS",
+   "nama": "LAUTAN LUAS Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "LUCK",
+   "nama": "SENTRAL MITRA INFORMATIKA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Electronics Distributors"
+  },
+  {
+   "kode": "LUCY",
+   "nama": "LIMA DUA LIMA TIGA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "MABA",
+   "nama": "MARGA ABHINAYA ABADI Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": ""
+  },
+  {
+   "kode": "MAGP",
+   "nama": "MULTI AGRO GEMILANG PLANTATION Tbk",
+   "sektor": "PLANTATION",
+   "industri": ""
+  },
+  {
+   "kode": "MAHA",
+   "nama": "MANDIRI HERINDO ADIPERKASA Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "MAIN",
+   "nama": "MALINDO FEEDMILL Tbk",
+   "sektor": "ANIMAL FEED",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "MAMI",
+   "nama": "MAS MURNI INDONESIA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": ""
+  },
+  {
+   "kode": "MAMIP",
+   "nama": "MAS MURNI INDONESIA Tbk PREFEREN",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": ""
+  },
+  {
+   "kode": "MANG",
+   "nama": "MANGGUNG POLAHRAYA Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": "Homebuilding"
+  },
+  {
+   "kode": "MAPA",
+   "nama": "MAP AKTIF ADIPERKASA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Specialty Stores"
+  },
+  {
+   "kode": "MAPB",
+   "nama": "MAP BOGA ADIPERKASA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Restaurants"
+  },
+  {
+   "kode": "MAPI",
+   "nama": "MITRA ADIPERKASA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Department Stores"
+  },
+  {
+   "kode": "MARI",
+   "nama": "MAHAKA RADIO INTEGRA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": ""
+  },
+  {
+   "kode": "MARK",
+   "nama": "MARK DYNAMICS INDONESIA Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Other Metals/Minerals"
+  },
+  {
+   "kode": "MASB",
+   "nama": "BANK MULTIARTA SENTOSA Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "MAXI",
+   "nama": "MAXINDO KARYA ANUGERAH Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "MAYA",
+   "nama": "BANK MAYAPADA INTERNASIONAL Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "MBAP",
+   "nama": "MITRABARA ADIPERDANA Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "MBMA",
+   "nama": "MERDEKA BATTERY MATERIALS Tbk",
+   "sektor": "METAL AND MINERAL MINING",
+   "industri": "Other Metals/Minerals"
+  },
+  {
+   "kode": "MBSS",
+   "nama": "MITRABAHTERA SEGARA SEJATI Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "MBTO",
+   "nama": "MARTINA BERTO Tbk",
+   "sektor": "COSMETICS AND HOUSEHOLD",
+   "industri": "Household/Personal Care"
+  },
+  {
+   "kode": "MCAS",
+   "nama": "M CASH INTEGRASI Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Information Technology Services"
+  },
+  {
+   "kode": "MCOL",
+   "nama": "PRIMA ANDALAN MANDIRI Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "MCOR",
+   "nama": "BANK CHINA CONSTRUCTION BANK INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "MDIA",
+   "nama": "INTERMEDIA CAPITAL Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Broadcasting"
+  },
+  {
+   "kode": "MDIY",
+   "nama": "DAYA INTIGUNA YASA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Electronics/Appliance Stores"
+  },
+  {
+   "kode": "MDKA",
+   "nama": "MERDEKA COPPER GOLD Tbk",
+   "sektor": "METAL AND MINERAL MINING",
+   "industri": "Precious Metals"
+  },
+  {
+   "kode": "MDKI",
+   "nama": "EMDEKI UTAMA Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Chemicals: Specialty"
+  },
+  {
+   "kode": "MDLA",
+   "nama": "MEDELA POTENTIA Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Medical Distributors"
+  },
+  {
+   "kode": "MDLN",
+   "nama": "MODERNLAND REALTY Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "MDRN",
+   "nama": "MODERN INTERNASIONAL Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": ""
+  },
+  {
+   "kode": "MEDC",
+   "nama": "MEDCO ENERGI INTERNASIONAL Tbk",
+   "sektor": "CRUDE PETROLEUM & NATURAL GAS PROD.",
+   "industri": "Oil & Gas Production"
+  },
+  {
+   "kode": "MEDS",
+   "nama": "HETZER MEDICAL INDONESIA Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Medical Specialties"
+  },
+  {
+   "kode": "MEGA",
+   "nama": "BANK MEGA Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "MEJA",
+   "nama": "HARTA DJAYA KARYA Tbk",
+   "sektor": "NON BUILDING CONSTRUCTION",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "MENN",
+   "nama": "MENN TEKNOLOGI INDONESIA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": ""
+  },
+  {
+   "kode": "MERI",
+   "nama": "MERRY RIANA EDUKASI Tbk",
+   "sektor": "OTHER SECTORS",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "MERK",
+   "nama": "MERCK Tbk",
+   "sektor": "PHARMACEUTICALS",
+   "industri": "Pharmaceuticals: Major"
+  },
+  {
+   "kode": "META",
+   "nama": "NUSANTARA INFRASTRUCTURE Tbk",
+   "sektor": "TOLL ROAD, AIRPORT, HARBOR & ALLIED PROD.",
+   "industri": ""
+  },
+  {
+   "kode": "MFMI",
+   "nama": "MULTIFILING MITRA INDONESIA Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": ""
+  },
+  {
+   "kode": "MGLV",
+   "nama": "NEXAI DIGITAL INFRASTRUKTUR Tbk",
+   "sektor": "HOUSEWARE",
+   "industri": "Home Furnishings"
+  },
+  {
+   "kode": "MGNA",
+   "nama": "MAGNA INVESTAMA MANDIRI Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "MGRO",
+   "nama": "MAHKOTA GROUP Tbk",
+   "sektor": "OTHERS - AGRICULTURE",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "MHKI",
+   "nama": "MULTI HANNA KREASINDO Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Environmental Services"
+  },
+  {
+   "kode": "MICE",
+   "nama": "MULTI INDOCITRA Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Medical Distributors"
+  },
+  {
+   "kode": "MIDI",
+   "nama": "MIDI UTAMA INDONESIA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Food Retail"
+  },
+  {
+   "kode": "MIKA",
+   "nama": "MITRA KELUARGA KARYASEHAT Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Hospital/Nursing Management"
+  },
+  {
+   "kode": "MINA",
+   "nama": "SANURHASTA MITRA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "MINE",
+   "nama": "SINAR TERANG MANDIRI Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": "Precious Metals"
+  },
+  {
+   "kode": "MIRA",
+   "nama": "MITRA INTERNATIONAL RESOURCES Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Oilfield Services/Equipment"
+  },
+  {
+   "kode": "MITI",
+   "nama": "MITRA INVESTINDO Tbk",
+   "sektor": "LAND/STONE QUARRYING",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "MKAP",
+   "nama": "MULTIKARYA ASIA PASIFIK RAYA Tbk",
+   "sektor": "OTHERS - MINING",
+   "industri": "Industrial Machinery"
+  },
+  {
+   "kode": "MKNT",
+   "nama": "MITRA KOMUNIKASI NUSANTARA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": ""
+  },
+  {
+   "kode": "MKPI",
+   "nama": "METROPOLITAN KENTJANA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "MKTR",
+   "nama": "MENTHOBI KARYATAMA RAYA Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "MLBI",
+   "nama": "MULTI BINTANG INDONESIA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Beverages: Alcoholic"
+  },
+  {
+   "kode": "MLIA",
+   "nama": "MULIA INDUSTRINDO Tbk",
+   "sektor": "CERAMICS, GLASS, PORCELAIN",
+   "industri": "Industrial Specialties"
+  },
+  {
+   "kode": "MLPL",
+   "nama": "MULTIPOLAR Tbk",
+   "sektor": "OTHERS - MISCELLANENEOUS INDUSTRY",
+   "industri": "Department Stores"
+  },
+  {
+   "kode": "MLPT",
+   "nama": "MULTIPOLAR TECHNOLOGY Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Information Technology Services"
+  },
+  {
+   "kode": "MMIX",
+   "nama": "MULTI MEDIKA INTERNASIONAL Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Medical Distributors"
+  },
+  {
+   "kode": "MMLP",
+   "nama": "MEGA MANUNGGAL PROPERTY Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "MNCN",
+   "nama": "MEDIA NUSANTARA CITRA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Commercial Printing/Forms"
+  },
+  {
+   "kode": "MOLI",
+   "nama": "MADUSARI MURNI INDAH Tbk",
+   "sektor": "CHEMICALS",
+   "industri": "Chemicals: Specialty"
+  },
+  {
+   "kode": "MORA",
+   "nama": "EKAMAS MORA REPUBLIK Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": "Specialty Telecommunications"
+  },
+  {
+   "kode": "MPIX",
+   "nama": "MITRA PEDAGANG INDONESIA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "MPMX",
+   "nama": "MITRA PINASTHIKA MUSTIKA Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "MPOW",
+   "nama": "MEGAPOWER MAKMUR Tbk",
+   "sektor": "ENERGY",
+   "industri": "Electric Utilities"
+  },
+  {
+   "kode": "MPPA",
+   "nama": "MATAHARI PUTRA PRIMA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Department Stores"
+  },
+  {
+   "kode": "MPRO",
+   "nama": "MAHA PROPERTI INDONESIA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "MPXL",
+   "nama": "MPX LOGISTICS INTERNATIONAL Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Air Freight/Couriers"
+  },
+  {
+   "kode": "MRAT",
+   "nama": "MUSTIKA RATU Tbk",
+   "sektor": "COSMETICS AND HOUSEHOLD",
+   "industri": "Medical Distributors"
+  },
+  {
+   "kode": "MREI",
+   "nama": "MASKAPAI REASURANSI INDONESIA Tbk",
+   "sektor": "INSURANCE",
+   "industri": ""
+  },
+  {
+   "kode": "MSIE",
+   "nama": "MULTISARANA INTAN EDUKA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "MSIN",
+   "nama": "MNC DIGITAL ENTERTAINMENT Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Movies/Entertainment"
+  },
+  {
+   "kode": "MSJA",
+   "nama": "MULTI SPUNINDO JAYA Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": "Textiles"
+  },
+  {
+   "kode": "MSKY",
+   "nama": "MNC SKY VISION Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Specialty Telecommunications"
+  },
+  {
+   "kode": "MSTI",
+   "nama": "MASTERSYSTEM INFOTAMA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Information Technology Services"
+  },
+  {
+   "kode": "MTDL",
+   "nama": "METRODATA ELECTRONICS Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Computer Peripherals"
+  },
+  {
+   "kode": "MTEL",
+   "nama": "DAYAMITRA TELEKOMUNIKASI Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": "Specialty Telecommunications"
+  },
+  {
+   "kode": "MTFN",
+   "nama": "CAPITALINC INVESTMENT Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": ""
+  },
+  {
+   "kode": "MTLA",
+   "nama": "METROPOLITAN LAND Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "MTMH",
+   "nama": "MURNI SADAR Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Medical/Nursing Services"
+  },
+  {
+   "kode": "MTPS",
+   "nama": "META EPSI Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": ""
+  },
+  {
+   "kode": "MTRA",
+   "nama": "MITRA PEMUDA Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": ""
+  },
+  {
+   "kode": "MTSM",
+   "nama": "METRO REALTY Tbk, PT",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": ""
+  },
+  {
+   "kode": "MTWI",
+   "nama": "MALACCA TRUST WUWUNGAN INSURANCE Tbk",
+   "sektor": "INSURANCE",
+   "industri": "Multi-Line Insurance"
+  },
+  {
+   "kode": "MUTU",
+   "nama": "MUTUAGUNG LESTARI Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "MYOH",
+   "nama": "SAMINDO RESOURCES Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "MYOR",
+   "nama": "MAYORA INDAH Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "MYRX",
+   "nama": "HANSON INTERNATIONAL Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": ""
+  },
+  {
+   "kode": "MYRXP",
+   "nama": "HANSON INTERNATIONAL Tbk - SERI B",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": ""
+  },
+  {
+   "kode": "MYTX",
+   "nama": "ASIA PACIFIC INVESTAMA Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": ""
+  },
+  {
+   "kode": "NAIK",
+   "nama": "ADIWARNA ANUGERAH ABADI Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "NANO",
+   "nama": "NANOTECH INDONESIA GLOBAL Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "NASA",
+   "nama": "ANDALAN PERKASA ABADI  Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "NASI",
+   "nama": "WAHANA INTI MAKMUR Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Major Diversified"
+  },
+  {
+   "kode": "NATO",
+   "nama": "OLYMPUS STRATEGIC INDONESIA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "NAYZ",
+   "nama": "HASSANA BOGA SEJAHTERA TBK",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Major Diversified"
+  },
+  {
+   "kode": "NCKL",
+   "nama": "TRIMEGAH BANGUN PERSADA Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Other Metals/Minerals"
+  },
+  {
+   "kode": "NELY",
+   "nama": "PELAYARAN NELLY DWI PUTRI Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "NEST",
+   "nama": "ESTA INDONESIA Tbk",
+   "sektor": "ANIMAL HUSBANDRY",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "NETV",
+   "nama": "MDTV MEDIA TECHNOLOGIES Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Advertising/Marketing Services"
+  },
+  {
+   "kode": "NFCX",
+   "nama": "NFC INDONESIA Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": "Internet Software/Services"
+  },
+  {
+   "kode": "NICE",
+   "nama": "ADHI KARTIKO PRATAMA Tbk",
+   "sektor": "METAL AND MINERAL MINING",
+   "industri": "Other Metals/Minerals"
+  },
+  {
+   "kode": "NICK",
+   "nama": "CHARNIC CAPITAL Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Financial Conglomerates"
+  },
+  {
+   "kode": "NICL",
+   "nama": "PAM MINERAL Tbk",
+   "sektor": "METAL AND MINERAL MINING",
+   "industri": "Precious Metals"
+  },
+  {
+   "kode": "NIKL",
+   "nama": "PELAT TIMAH NUSANTARA Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Containers/Packaging"
+  },
+  {
+   "kode": "NINE",
+   "nama": "TECHNO9 INDONESIA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Information Technology Services"
+  },
+  {
+   "kode": "NIPS",
+   "nama": "NIPRESS Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": ""
+  },
+  {
+   "kode": "NIRO",
+   "nama": "CITY RETAIL DEVELOPMENTS Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "NISP",
+   "nama": "BANK OCBC NISP Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "NOBU",
+   "nama": "BANK NATIONALNOBU Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "NPGF",
+   "nama": "NUSA PALAPA GEMILANG Tbk",
+   "sektor": "CHEMICALS",
+   "industri": "Chemicals: Agricultural"
+  },
+  {
+   "kode": "NRCA",
+   "nama": "NUSA RAYA CIPTA Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "NSSS",
+   "nama": "NUSANTARA SAWIT SEJAHTERA Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "NTBK",
+   "nama": "NUSATAMA BERKAH Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Motor Vehicles"
+  },
+  {
+   "kode": "NUSA",
+   "nama": "SINERGI MEGAH INTERNUSA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": ""
+  },
+  {
+   "kode": "NZIA",
+   "nama": "NUSANTARA ALMAZIA Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "OASA",
+   "nama": "MAHARAKSA BIRU ENERGI Tbk",
+   "sektor": "NON BUILDING CONSTRUCTION",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "OBAT",
+   "nama": "BRIGIT BIOFARMAKA TEKNOLOGI Tbk",
+   "sektor": "PHARMACEUTICALS",
+   "industri": "Industrial Conglomerates"
+  },
+  {
+   "kode": "OBMD",
+   "nama": "OBM DRILCHEM Tbk",
+   "sektor": "LAND/STONE QUARRYING",
+   "industri": "Chemicals: Major Diversified"
+  },
+  {
+   "kode": "OCAP",
+   "nama": "ONIX CAPITAL Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": ""
+  },
+  {
+   "kode": "OILS",
+   "nama": "INDO OIL PERKASA Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "OKAS",
+   "nama": "ANCORA INDONESIA RESOURCES Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Precious Metals"
+  },
+  {
+   "kode": "OLIV",
+   "nama": "ATLAS NEXUS GROUP Tbk",
+   "sektor": "HOUSEWARE",
+   "industri": "Home Furnishings"
+  },
+  {
+   "kode": "OMED",
+   "nama": "JAYAMAS MEDICA INDUSTRI Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Medical Specialties"
+  },
+  {
+   "kode": "OMRE",
+   "nama": "INDONESIA PRIMA PROPERTY Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "OPMS",
+   "nama": "OPTIMA PRIMA METAL SINERGI Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "PACK",
+   "nama": "ABADI NUSANTARA HIJAU INVESTAMA Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Containers/Packaging"
+  },
+  {
+   "kode": "PADA",
+   "nama": "PERSONEL ALIH DAYA Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "PADI",
+   "nama": "MINNA PADI INVESTAMA SEKURITAS Tbk",
+   "sektor": "SECURITIES COMPANY",
+   "industri": "Investment Banks/Brokers"
+  },
+  {
+   "kode": "PAFI",
+   "nama": "PANASIA FILAMENT INTI Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": ""
+  },
+  {
+   "kode": "PALM",
+   "nama": "PROVIDENT INVESTASI BERSAMA Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "PAMG",
+   "nama": "BIMA SAKTI PERTIWI Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "PANI",
+   "nama": "PANTAI INDAH KAPUK DUA Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Food: Meat/Fish/Dairy"
+  },
+  {
+   "kode": "PANR",
+   "nama": "PANORAMA SENTRAWISATA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Other Consumer Services"
+  },
+  {
+   "kode": "PANS",
+   "nama": "PANIN SEKURITAS Tbk",
+   "sektor": "SECURITIES COMPANY",
+   "industri": "Investment Banks/Brokers"
+  },
+  {
+   "kode": "PART",
+   "nama": "CIPTA PERDANA LANCAR Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Auto Parts: OEM"
+  },
+  {
+   "kode": "PBID",
+   "nama": "PANCA BUDI IDAMAN Tbk",
+   "sektor": "PLASTICS & PACKAGING",
+   "industri": "Containers/Packaging"
+  },
+  {
+   "kode": "PBRX",
+   "nama": "PAN BROTHERS Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": "Textiles"
+  },
+  {
+   "kode": "PBSA",
+   "nama": "PARAMITA BANGUN SARANA Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "PCAR",
+   "nama": "PRIMA CAKRAWALA ABADI Tbk",
+   "sektor": "FISHERY",
+   "industri": "Food: Meat/Fish/Dairy"
+  },
+  {
+   "kode": "PDES",
+   "nama": "DESTINASI TIRTA NUSANTARA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Other Consumer Services"
+  },
+  {
+   "kode": "PDPP",
+   "nama": "PRIMADAYA PLASTISINDO Tbk",
+   "sektor": "PLASTICS & PACKAGING",
+   "industri": "Containers/Packaging"
+  },
+  {
+   "kode": "PEGE",
+   "nama": "PANCA GLOBAL KAPITAL Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Investment Banks/Brokers"
+  },
+  {
+   "kode": "PEHA",
+   "nama": "PHAPROS Tbk",
+   "sektor": "PHARMACEUTICALS",
+   "industri": "Medical Distributors"
+  },
+  {
+   "kode": "PEVE",
+   "nama": "PENTA VALENT Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Medical Distributors"
+  },
+  {
+   "kode": "PGAS",
+   "nama": "PERUSAHAAN GAS NEGARA (PERSERO) Tbk",
+   "sektor": "ENERGY",
+   "industri": "Integrated Oil"
+  },
+  {
+   "kode": "PGEO",
+   "nama": "PERTAMINA GEOTHERMAL ENERGY Tbk",
+   "sektor": "CRUDE PETROLEUM & NATURAL GAS PROD.",
+   "industri": "Alternative Power Generation"
+  },
+  {
+   "kode": "PGJO",
+   "nama": "BAHTERA BUMI RAYA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Packaged Software"
+  },
+  {
+   "kode": "PGLI",
+   "nama": "PEMBANGUNAN GRAHA LESTARI INDAH Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "PGUN",
+   "nama": "PRADIKSI GUNATAMA Tbk",
+   "sektor": "CROPS",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "PICO",
+   "nama": "PELANGI INDAH CANINDO Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Containers/Packaging"
+  },
+  {
+   "kode": "PIPA",
+   "nama": "MULTI MAKMUR LEMINDO Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Construction Materials"
+  },
+  {
+   "kode": "PJAA",
+   "nama": "PEMBANGUNAN JAYA ANCOL Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Movies/Entertainment"
+  },
+  {
+   "kode": "PJHB",
+   "nama": "PELAYARAN JAYA HIDUP BARU Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "PKPK",
+   "nama": "PARAGON KARYA PERKASA Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "PLAN",
+   "nama": "PLANET PROPERINDO JAYA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "PLAS",
+   "nama": "POLARIS INVESTAMA TBK",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": ""
+  },
+  {
+   "kode": "PLIN",
+   "nama": "PLAZA INDONESIA REALTY Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": ""
+  },
+  {
+   "kode": "PMJS",
+   "nama": "PUTRA MANDIRI JEMBAR Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Specialty Stores"
+  },
+  {
+   "kode": "PMMP",
+   "nama": "PANCA MITRA MULTIPERDANA Tbk",
+   "sektor": "FISHERY",
+   "industri": ""
+  },
+  {
+   "kode": "PMUI",
+   "nama": "PRIMA MULTI USAHA INDONESIA Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": "Electronics Distributors"
+  },
+  {
+   "kode": "PNBN",
+   "nama": "BANK PAN INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "PNBS",
+   "nama": "BANK PANIN DUBAI SYARIAH Tbk",
+   "sektor": "BANK",
+   "industri": "Major Banks"
+  },
+  {
+   "kode": "PNGO",
+   "nama": "PINAGO UTAMA Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "PNIN",
+   "nama": "PANINVEST Tbk",
+   "sektor": "INSURANCE",
+   "industri": "Other Consumer Services"
+  },
+  {
+   "kode": "PNLF",
+   "nama": "PANIN FINANCIAL Tbk",
+   "sektor": "OTHERS - FINANCE",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "PNSE",
+   "nama": "PUDJIADI AND SONS Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "POLA",
+   "nama": "POOL ADVISTA FINANCE Tbk",
+   "sektor": "FINANCIAL INSTITUTION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "POLI",
+   "nama": "POLLUX HOTELS GROUP Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Homebuilding"
+  },
+  {
+   "kode": "POLL",
+   "nama": "POLLUX PROPERTIES INDONESIA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": ""
+  },
+  {
+   "kode": "POLU",
+   "nama": "GOLDEN FLOWER Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": "Apparel/Footwear"
+  },
+  {
+   "kode": "POLY",
+   "nama": "ASIA PACIFIC FIBERS Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": ""
+  },
+  {
+   "kode": "POOL",
+   "nama": "POOL ADVISTA INDONESIA Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": ""
+  },
+  {
+   "kode": "PORT",
+   "nama": "NUSANTARA PELABUHAN HANDAL Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "POSA",
+   "nama": "BLISS PROPERTI INDONESIA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": ""
+  },
+  {
+   "kode": "POWR",
+   "nama": "CIKARANG LISTRINDO Tbk",
+   "sektor": "ENERGY",
+   "industri": "Electric Utilities"
+  },
+  {
+   "kode": "PPGL",
+   "nama": "PRIMA GLOBALINDO LOGISTIK Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": ""
+  },
+  {
+   "kode": "PPRE",
+   "nama": "PP PRESISI Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "PPRI",
+   "nama": "PAPEROCKS INDONESIA Tbk",
+   "sektor": "OTHERS - CONSUMER GOODS INDUSTRY",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "PRAS",
+   "nama": "PRIMA ALLOY STEEL UNIVERSAL Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": ""
+  },
+  {
+   "kode": "PRAY",
+   "nama": "FAMON AWAL BROS SEDAYA Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Hospital/Nursing Management"
+  },
+  {
+   "kode": "PRDA",
+   "nama": "PRODIA WIDYAHUSADA Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Medical/Nursing Services"
+  },
+  {
+   "kode": "PRDL",
+   "nama": "PRODIA DIAGNOSTIC LINE Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Medical Specialties"
+  },
+  {
+   "kode": "PSAB",
+   "nama": "J RESOURCES ASIA PASIFIK Tbk",
+   "sektor": "METAL AND MINERAL MINING",
+   "industri": "Precious Metals"
+  },
+  {
+   "kode": "PSAT",
+   "nama": "PANCARAN SAMUDERA TRANSPORT Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "PSDN",
+   "nama": "PRASIDHA ANEKA NIAGA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "PSGO",
+   "nama": "PALMA SERASIH Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "PSKT",
+   "nama": "RED PLANET INDONESIA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "PSSI",
+   "nama": "IMC PELITA LOGISTIK Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "PTBA",
+   "nama": "BUKIT ASAM (PERSERO) Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "PTDU",
+   "nama": "DJASA UBERSAKTI Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": ""
+  },
+  {
+   "kode": "PTIS",
+   "nama": "INDO STRAITS Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "PTMP",
+   "nama": "MITRA PACK Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "PTMR",
+   "nama": "MASTER PRINT Tbk",
+   "sektor": "PLASTICS & PACKAGING",
+   "industri": ""
+  },
+  {
+   "kode": "PTPP",
+   "nama": "PP (PERSERO) Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "PTPS",
+   "nama": "PULAU SUBUR Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "PTPW",
+   "nama": "PRATAMA WIDYA Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "PTRO",
+   "nama": "PETROSEA Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "PTSN",
+   "nama": "SAT NUSAPERSADA Tbk",
+   "sektor": "ELECTRONICS",
+   "industri": "Electronic Production Equipment"
+  },
+  {
+   "kode": "PTSP",
+   "nama": "PIONEERINDO GOURMET INTERNATIONAL Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Restaurants"
+  },
+  {
+   "kode": "PUDP",
+   "nama": "PUDJIADI PRESTIGE Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "PURA",
+   "nama": "PUTRA RAJAWALI KENCANA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Air Freight/Couriers"
+  },
+  {
+   "kode": "PURE",
+   "nama": "TRINITAN METALS AND MINERALS Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": ""
+  },
+  {
+   "kode": "PURI",
+   "nama": "PURI GLOBAL SUKSES Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "PWON",
+   "nama": "PAKUWON JATI Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "PYFA",
+   "nama": "PYRIDAM FARMA Tbk",
+   "sektor": "PHARMACEUTICALS",
+   "industri": "Pharmaceuticals: Major"
+  },
+  {
+   "kode": "PZZA",
+   "nama": "SARIMELATI KENCANA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Restaurants"
+  },
+  {
+   "kode": "RAAM",
+   "nama": "TRIPAR MULTIVSION PLUS Tbk",
+   "sektor": "OTHERS - CONSUMER GOODS INDUSTRY",
+   "industri": "Movies/Entertainment"
+  },
+  {
+   "kode": "RAFI",
+   "nama": "SARI KREASI BOGA Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": ""
+  },
+  {
+   "kode": "RAJA",
+   "nama": "RUKUN RAHARJA Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Gas Distributors"
+  },
+  {
+   "kode": "RALS",
+   "nama": "RAMAYANA LESTARI SENTOSA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Department Stores"
+  },
+  {
+   "kode": "RANC",
+   "nama": "SUPRA BOGA LESTARI Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Food Retail"
+  },
+  {
+   "kode": "RANS",
+   "nama": "RANS ENTERTAINMEN INDONESIA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "RATU",
+   "nama": "RAHARJA ENERGI CEPU Tbk",
+   "sektor": "CRUDE PETROLEUM & NATURAL GAS PROD.",
+   "industri": "Miscellaneous"
+  },
+  {
+   "kode": "RBMS",
+   "nama": "RISTIA BINTANG MAHKOTASEJATI Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "RCCC",
+   "nama": "UTAMA RADAR CAHAYA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Aerospace & Defense"
+  },
+  {
+   "kode": "RDTX",
+   "nama": "RODA VIVATEX Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "REAL",
+   "nama": "REPOWER ASIA INDONESIA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "RELF",
+   "nama": "GRAHA MITRA ASIA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "RELI",
+   "nama": "RELIANCE SEKURITAS INDONESIA Tbk",
+   "sektor": "SECURITIES COMPANY",
+   "industri": "Investment Banks/Brokers"
+  },
+  {
+   "kode": "RGAS",
+   "nama": "KIAN SANTANG MULIATAMA Tbk",
+   "sektor": "ENERGY",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "RICY",
+   "nama": "RICKY PUTRA GLOBALINDO Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": "Apparel/Footwear"
+  },
+  {
+   "kode": "RIGS",
+   "nama": "RIG TENDERS INDONESIA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "RIMO",
+   "nama": "RIMO INTERNATIONAL LESTARI Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": ""
+  },
+  {
+   "kode": "RISE",
+   "nama": "JAYA SUKSES MAKMUR SENTOSA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "RLCO",
+   "nama": "ABADI LESTARI INDONESIA Tbk",
+   "sektor": "OTHERS - AGRICULTURE",
+   "industri": "Pharmaceuticals: Other"
+  },
+  {
+   "kode": "RMKE",
+   "nama": "RMK ENERGY Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "RMKO",
+   "nama": "ROYALTAMA MULIA KONTRAKTORINDO Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "ROCK",
+   "nama": "ROCKFIELDS PROPERTI INDONESIA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "RODA",
+   "nama": "PIKKO LAND DEVELOPMENT Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Homebuilding"
+  },
+  {
+   "kode": "RONY",
+   "nama": "ARACORD NUSANTARA GROUP Tbk",
+   "sektor": "OTHERS - MISCELLANENEOUS INDUSTRY",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "ROTI",
+   "nama": "NIPPON INDOSARI CORPINDO Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "RSCH",
+   "nama": "CHARLIE HOSPITAL SEMARANG Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Hospital/Nursing Management"
+  },
+  {
+   "kode": "RSGK",
+   "nama": "KEDOYA ADYARAYA Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Hospital/Nursing Management"
+  },
+  {
+   "kode": "RUIS",
+   "nama": "RADIANT UTAMA INTERINSCO Tbk",
+   "sektor": "CRUDE PETROLEUM & NATURAL GAS PROD.",
+   "industri": "Oilfield Services/Equipment"
+  },
+  {
+   "kode": "RUNS",
+   "nama": "GLOBAL SUKSES SOLUSI Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Packaged Software"
+  },
+  {
+   "kode": "SAFE",
+   "nama": "STEADY SAFE Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "SAGE",
+   "nama": "SAPTAUSAHA GEMILANGINDAH Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "SAME",
+   "nama": "SARANA MEDITAMA METROPOLITAN Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Hospital/Nursing Management"
+  },
+  {
+   "kode": "SAMF",
+   "nama": "SARASWANTI ANUGERAH MAKMUR Tbk",
+   "sektor": "CROPS",
+   "industri": "Chemicals: Agricultural"
+  },
+  {
+   "kode": "SAPX",
+   "nama": "SATRIA ANTARAN PRIMA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Air Freight/Couriers"
+  },
+  {
+   "kode": "SATU",
+   "nama": "KOTA SATU PROPERTI Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "SBAT",
+   "nama": "SEJAHTERA BINTANG ABADI TEXTILE Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": ""
+  },
+  {
+   "kode": "SBMA",
+   "nama": "SURYA BIRU MURNI ACETYLENE Tbk",
+   "sektor": "CHEMICALS",
+   "industri": "Chemicals: Specialty"
+  },
+  {
+   "kode": "SCCO",
+   "nama": "SUPREME CABLE MANUFACTURING & COMMERCE Tbk",
+   "sektor": "CABLE",
+   "industri": "Electrical Products"
+  },
+  {
+   "kode": "SCMA",
+   "nama": "SURYA CITRA MEDIA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Broadcasting"
+  },
+  {
+   "kode": "SCNP",
+   "nama": "SELARAS CITRA NUSANTARA PERKASA Tbk",
+   "sektor": "HOUSEWARE",
+   "industri": "Electronics/Appliances"
+  },
+  {
+   "kode": "SCPI",
+   "nama": "ORGANON PHARMA INDONESIA Tbk",
+   "sektor": "PHARMACEUTICALS",
+   "industri": ""
+  },
+  {
+   "kode": "SDMU",
+   "nama": "SIDOMULYO SELARAS Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Trucking"
+  },
+  {
+   "kode": "SDPC",
+   "nama": "MILLENNIUM PHARMACON INTERNATIONAL Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Medical Distributors"
+  },
+  {
+   "kode": "SDRA",
+   "nama": "BANK WOORI SAUDARA INDONESIA 1906 Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "SEMA",
+   "nama": "SEMACOM INTEGRATED Tbk",
+   "sektor": "ENERGY",
+   "industri": "Electrical Products"
+  },
+  {
+   "kode": "SFAN",
+   "nama": "SURYA FAJAR CAPITAL Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Investment Managers"
+  },
+  {
+   "kode": "SGER",
+   "nama": "SUMBER GLOBAL ENERGY Tbk",
+   "sektor": "ENERGY",
+   "industri": "Other Metals/Minerals"
+  },
+  {
+   "kode": "SGRO",
+   "nama": "PRIME AGRI RESOURCES Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "SHID",
+   "nama": "HOTEL SAHID JAYA INTERNATIONAL Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "SHIP",
+   "nama": "SILLO MARITIME PERDANA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "SICO",
+   "nama": "SIGMA ENERGY COMPRESSINDO Tbk",
+   "sektor": "ENERGY",
+   "industri": "Oil & Gas Production"
+  },
+  {
+   "kode": "SIDO",
+   "nama": "INDUSTRI JAMU DAN FARMASI SIDO MUNCUL Tbk",
+   "sektor": "PHARMACEUTICALS",
+   "industri": "Pharmaceuticals: Other"
+  },
+  {
+   "kode": "SILO",
+   "nama": "SILOAM INTERNATIONAL HOSPITALS Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Hospital/Nursing Management"
+  },
+  {
+   "kode": "SIMA",
+   "nama": "SIWANI MAKMUR Tbk",
+   "sektor": "PLASTICS & PACKAGING",
+   "industri": ""
+  },
+  {
+   "kode": "SIMP",
+   "nama": "SALIM IVOMAS PRATAMA Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "SING",
+   "nama": "SINGLETERRA Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": ""
+  },
+  {
+   "kode": "SINI",
+   "nama": "SINGARAJA PUTRA Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "SIPD",
+   "nama": "SREEYA SEWU INDONESIA Tbk",
+   "sektor": "ANIMAL FEED",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "SKBM",
+   "nama": "SEKAR BUMI Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Meat/Fish/Dairy"
+  },
+  {
+   "kode": "SKLT",
+   "nama": "SEKAR LAUT Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Major Diversified"
+  },
+  {
+   "kode": "SKRN",
+   "nama": "SUPERKRANE MITRA UTAMA Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "SKYB",
+   "nama": "NORTHCLIFF CITRANUSA INDONESIA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": ""
+  },
+  {
+   "kode": "SLIS",
+   "nama": "GAYA ABADI SEMPURNA Tbk",
+   "sektor": "ELECTRONICS",
+   "industri": "Electronics Distributors"
+  },
+  {
+   "kode": "SMAR",
+   "nama": "SINAR MAS AGRO RESOURCES AND TECHNOLOGY Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "SMBR",
+   "nama": "SEMEN BATURAJA (PERSERO) Tbk",
+   "sektor": "CEMENT",
+   "industri": "Construction Materials"
+  },
+  {
+   "kode": "SMCB",
+   "nama": "SOLUSI BANGUN INDONESIA Tbk",
+   "sektor": "CEMENT",
+   "industri": ""
+  },
+  {
+   "kode": "SMDM",
+   "nama": "SURYAMAS DUTAMAKMUR Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "SMDR",
+   "nama": "SAMUDERA INDONESIA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "SMGA",
+   "nama": "SUMBER MINERAL GLOBAL ABADI Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "SMGR",
+   "nama": "SEMEN INDONESIA (PERSERO) Tbk",
+   "sektor": "CEMENT",
+   "industri": "Construction Materials"
+  },
+  {
+   "kode": "SMIL",
+   "nama": "SARANA MITRA LUAS Tbk",
+   "sektor": "MACHINERY AND HEAVY EQUIPMENT",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "SMKL",
+   "nama": "SATYAMITRA KEMAS LESTARI Tbk",
+   "sektor": "PULP & PAPER",
+   "industri": "Containers/Packaging"
+  },
+  {
+   "kode": "SMKM",
+   "nama": "SUMBER MAS KONSTRUKSI Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "SMLE",
+   "nama": "SINERGI MULTI LESTARINDO Tbk",
+   "sektor": "CHEMICALS",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "SMMA",
+   "nama": "SINAR MAS MULTIARTHA Tbk",
+   "sektor": "OTHERS - FINANCE",
+   "industri": "Property/Casualty Insurance"
+  },
+  {
+   "kode": "SMMT",
+   "nama": "GOLDEN EAGLE ENERGY Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "SMRA",
+   "nama": "SUMMARECON AGUNG Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "SMRU",
+   "nama": "SMR UTAMA Tbk",
+   "sektor": "METAL AND MINERAL MINING",
+   "industri": ""
+  },
+  {
+   "kode": "SMSM",
+   "nama": "SELAMAT SEMPURNA Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Auto Parts: OEM"
+  },
+  {
+   "kode": "SNLK",
+   "nama": "SUNTER LAKESIDE HOTEL Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "SOCI",
+   "nama": "SOECHI LINES Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "SOFA",
+   "nama": "SOLUSI ENVIRONMENT ASIA Tbk",
+   "sektor": "WOOD INDUSTRIES",
+   "industri": "Forest Products"
+  },
+  {
+   "kode": "SOHO",
+   "nama": "SOHO GLOBAL HEALTH Tbk",
+   "sektor": "PHARMACEUTICALS",
+   "industri": "Pharmaceuticals: Major"
+  },
+  {
+   "kode": "SOLA",
+   "nama": "XOLARE RCR ENERGY Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "SONA",
+   "nama": "SONA TOPAS TOURISM INDUSTRY Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Specialty Stores"
+  },
+  {
+   "kode": "SOSS",
+   "nama": "ALSOK INDONESIA SERVICES Tbk",
+   "sektor": "OTHERS - MISCELLANENEOUS INDUSTRY",
+   "industri": "Personnel Services"
+  },
+  {
+   "kode": "SOTS",
+   "nama": "SATRIA MEGA KENCANA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Hotels/Resorts/Cruise lines"
+  },
+  {
+   "kode": "SOUL",
+   "nama": "MITRA TIRTA BUWANA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": ""
+  },
+  {
+   "kode": "SPMA",
+   "nama": "SUPARMA Tbk",
+   "sektor": "PULP & PAPER",
+   "industri": "Pulp & Paper"
+  },
+  {
+   "kode": "SPRE",
+   "nama": "SORAYA BERJAYA INDONESIA Tbk",
+   "sektor": "HOUSEWARE",
+   "industri": "Home Furnishings"
+  },
+  {
+   "kode": "SPTO",
+   "nama": "SURYA PERTIWI Tbk",
+   "sektor": "HOUSEWARE",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "SQMI",
+   "nama": "WILTON MAKMUR INDONESIA Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Precious Metals"
+  },
+  {
+   "kode": "SRAJ",
+   "nama": "SEJAHTERARAYA ANUGRAHJAYA Tbk, PT",
+   "sektor": "HEALTH CARE",
+   "industri": "Hospital/Nursing Management"
+  },
+  {
+   "kode": "SRIL",
+   "nama": "SRI REJEKI ISMAN Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": ""
+  },
+  {
+   "kode": "SRSN",
+   "nama": "INDO ACIDATAMA Tbk",
+   "sektor": "CHEMICALS",
+   "industri": "Apparel/Footwear"
+  },
+  {
+   "kode": "SRTG",
+   "nama": "SARATOGA INVESTAMA SEDAYA Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Financial Conglomerates"
+  },
+  {
+   "kode": "SSIA",
+   "nama": "SURYA SEMESTA INTERNUSA Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "SSMS",
+   "nama": "SAWIT SUMBERMAS SARANA Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "SSTM",
+   "nama": "SUNSON TEXTILE MANUFACTURER Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": "Textiles"
+  },
+  {
+   "kode": "STAA",
+   "nama": "SUMBER TANI AGUNG RESOURCES Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "STAR",
+   "nama": "CALCULUS GLOBAL VENTURES Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": "Investment Managers"
+  },
+  {
+   "kode": "STRK",
+   "nama": "LOVINA BEACH BREWERY Tbk",
+   "sektor": "OTHERS - CONSUMER GOODS INDUSTRY",
+   "industri": "Beverages: Alcoholic"
+  },
+  {
+   "kode": "STTP",
+   "nama": "SIANTAR TOP Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "SUDI",
+   "nama": "SURYA DUMAI INDUSTRI Tbk",
+   "sektor": "PLANTATION",
+   "industri": ""
+  },
+  {
+   "kode": "SUGI",
+   "nama": "SUGIH ENERGY Tbk, PT",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": ""
+  },
+  {
+   "kode": "SULI",
+   "nama": "SLJ GLOBAL Tbk",
+   "sektor": "WOOD INDUSTRIES",
+   "industri": "Forest Products"
+  },
+  {
+   "kode": "SUNI",
+   "nama": "SUNINDO PRATAMA Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Oil & Gas Production"
+  },
+  {
+   "kode": "SUPA",
+   "nama": "SUPER BANK INDONESIA Tbk",
+   "sektor": "BANK",
+   "industri": "Regional Banks"
+  },
+  {
+   "kode": "SUPR",
+   "nama": "SOLUSI TUNAS PRATAMA Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": ""
+  },
+  {
+   "kode": "SURE",
+   "nama": "SUPER ENERGY Tbk",
+   "sektor": "CRUDE PETROLEUM & NATURAL GAS PROD.",
+   "industri": "Oil Refining/Marketing"
+  },
+  {
+   "kode": "SURI",
+   "nama": "MAJA AGUNG LATEXINDO Tbk",
+   "sektor": "HEALTH CARE",
+   "industri": "Apparel/Footwear"
+  },
+  {
+   "kode": "SWAT",
+   "nama": "SRIWAHANA ADITYAKARTA Tbk",
+   "sektor": "PULP & PAPER",
+   "industri": ""
+  },
+  {
+   "kode": "SWID",
+   "nama": "SARASWANTI INDOLAND DEVELOPMENT Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "TAMA",
+   "nama": "LANCARTAMA SEJATI Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": "Homebuilding"
+  },
+  {
+   "kode": "TAMU",
+   "nama": "PELAYARAN TAMARIN SAMUDRA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "TAPG",
+   "nama": "TRIPUTRA AGRO PERSADA Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "TARA",
+   "nama": "AGUNG SEMESTA SEJAHTERA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "TAXI",
+   "nama": "EXPRESS TRANSINDO UTAMA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "TAYS",
+   "nama": "JAYA SWARASA AGUNG Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": ""
+  },
+  {
+   "kode": "TBIG",
+   "nama": "TOWER BERSAMA INFRASTRUCTURE Tbk",
+   "sektor": "NON BUILDING CONSTRUCTION",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "TBLA",
+   "nama": "TUNAS BARU LAMPUNG Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "TBMS",
+   "nama": "TEMBAGA MULIA SEMANAN Tbk",
+   "sektor": "METAL AND ALLIED PRODUCTS",
+   "industri": "Metal Fabrication"
+  },
+  {
+   "kode": "TCID",
+   "nama": "MANDOM INDONESIA Tbk",
+   "sektor": "COSMETICS AND HOUSEHOLD",
+   "industri": "Household/Personal Care"
+  },
+  {
+   "kode": "TCPI",
+   "nama": "TRANSCOAL PACIFIC Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "TDPM",
+   "nama": "TRIDOMAIN PERFORMANCE MATERIALS Tbk",
+   "sektor": "CHEMICALS",
+   "industri": ""
+  },
+  {
+   "kode": "TEBE",
+   "nama": "DANA BRATA LUHUR Tbk",
+   "sektor": "OTHERS - INFRASTRUCTURE, UTILITIES & TRANSPORTATIO",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "TECH",
+   "nama": "INDOSTERLING TECHNOMEDIA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": ""
+  },
+  {
+   "kode": "TELE",
+   "nama": "OMNI INOVASI INDONESIA Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": ""
+  },
+  {
+   "kode": "TFAS",
+   "nama": "TELEFAST INDONESIA Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": "Packaged Software"
+  },
+  {
+   "kode": "TFCO",
+   "nama": "TIFICO FIBER INDONESIA Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": "Textiles"
+  },
+  {
+   "kode": "TGKA",
+   "nama": "TIGARAKSA SATRIA Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Food Distributors"
+  },
+  {
+   "kode": "TGRA",
+   "nama": "TERREGRA ASIA ENERGY Tbk",
+   "sektor": "ENERGY",
+   "industri": ""
+  },
+  {
+   "kode": "TGUK",
+   "nama": "PLATINUM WAHAB NUSANTARA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Restaurants"
+  },
+  {
+   "kode": "TIFA",
+   "nama": "KDB TIFA FINANCE Tbk",
+   "sektor": "FINANCIAL INSTITUTION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "TINS",
+   "nama": "TIMAH (PERSERO) Tbk",
+   "sektor": "METAL AND MINERAL MINING",
+   "industri": "Other Metals/Minerals"
+  },
+  {
+   "kode": "TIRA",
+   "nama": "TIRA AUSTENITE Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "TIRT",
+   "nama": "TIRTA MAHAKAM RESOURCES Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": ""
+  },
+  {
+   "kode": "TKIM",
+   "nama": "PABRIK KERTAS TJIWI KIMIA Tbk",
+   "sektor": "PULP & PAPER",
+   "industri": "Pulp & Paper"
+  },
+  {
+   "kode": "TLDN",
+   "nama": "TELADAN PRIMA AGRO Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "TLKM",
+   "nama": "TELKOM INDONESIA (PERSERO) Tbk",
+   "sektor": "TELECOMUNICATION",
+   "industri": "Wireless Telecommunications"
+  },
+  {
+   "kode": "TMAS",
+   "nama": "TEMAS Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "TMPO",
+   "nama": "TEMPO INTI MEDIA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Publishing: Newspapers"
+  },
+  {
+   "kode": "TNCA",
+   "nama": "TRIMUDA NUANSA CITRA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Air Freight/Couriers"
+  },
+  {
+   "kode": "TOBA",
+   "nama": "TBS ENERGI UTAMA Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Coal"
+  },
+  {
+   "kode": "TOOL",
+   "nama": "ROHARTINDO NUSANTARA LUAS Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Miscellaneous Commercial Services"
+  },
+  {
+   "kode": "TOPS",
+   "nama": "TOTALINDO EKA PERSADA Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": ""
+  },
+  {
+   "kode": "TOSK",
+   "nama": "TOPINDO SOLUSI KOMUNIKA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Packaged Software"
+  },
+  {
+   "kode": "TOTL",
+   "nama": "TOTAL BANGUN PERSADA Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "TOTO",
+   "nama": "SURYA TOTO INDONESIA Tbk",
+   "sektor": "CERAMICS, GLASS, PORCELAIN",
+   "industri": "Building Products"
+  },
+  {
+   "kode": "TOWR",
+   "nama": "SARANA MENARA NUSANTARA Tbk",
+   "sektor": "NON BUILDING CONSTRUCTION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "TOYS",
+   "nama": "SUNINDO ADIPERSADA Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": ""
+  },
+  {
+   "kode": "TPIA",
+   "nama": "CHANDRA ASRI PACIFIC Tbk",
+   "sektor": "CHEMICALS",
+   "industri": "Chemicals: Specialty"
+  },
+  {
+   "kode": "TPMA",
+   "nama": "TRANS POWER MARINE Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "TRAM",
+   "nama": "TRADA ALAM MINERA Tbk",
+   "sektor": "COAL MINING",
+   "industri": ""
+  },
+  {
+   "kode": "TRGU",
+   "nama": "CERESTAR INDONESIA Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "TRIL",
+   "nama": "TRIWIRA INSANLESTARI Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": ""
+  },
+  {
+   "kode": "TRIM",
+   "nama": "TRIMEGAH SEKURITAS INDONESIA Tbk",
+   "sektor": "SECURITIES COMPANY",
+   "industri": "Investment Managers"
+  },
+  {
+   "kode": "TRIN",
+   "nama": "PERINTIS TRINITI PROPERTI Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "TRIO",
+   "nama": "TRIKOMSEL OKE Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": ""
+  },
+  {
+   "kode": "TRIS",
+   "nama": "TRISULA INTERNATIONAL Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": "Apparel/Footwear"
+  },
+  {
+   "kode": "TRJA",
+   "nama": "TRANSKON JAYA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "TRON",
+   "nama": "TEKNOLOGI KARYA DIGITAL NUSA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Data Processing Services"
+  },
+  {
+   "kode": "TRST",
+   "nama": "TRIAS SENTOSA Tbk",
+   "sektor": "PLASTICS & PACKAGING",
+   "industri": "Containers/Packaging"
+  },
+  {
+   "kode": "TRUE",
+   "nama": "TRINITI DINAMIK Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "TRUK",
+   "nama": "GUNA TIMUR RAYA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Trucking"
+  },
+  {
+   "kode": "TRUS",
+   "nama": "TRUST FINANCE INDONESIA Tbk",
+   "sektor": "FINANCIAL INSTITUTION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "TSPC",
+   "nama": "TEMPO SCAN PACIFIC Tbk",
+   "sektor": "PHARMACEUTICALS",
+   "industri": "Medical Distributors"
+  },
+  {
+   "kode": "TUGU",
+   "nama": "ASURANSI TUGU PRATAMA INDONESIA Tbk",
+   "sektor": "INSURANCE",
+   "industri": "Multi-Line Insurance"
+  },
+  {
+   "kode": "TYRE",
+   "nama": "KING TIRE INDONESIA Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Automotive Aftermarket"
+  },
+  {
+   "kode": "UANG",
+   "nama": "PAKUAN Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "UCID",
+   "nama": "UNI-CHARM INDONESIA Tbk",
+   "sektor": "OTHERS - CONSUMER GOODS INDUSTRY",
+   "industri": "Household/Personal Care"
+  },
+  {
+   "kode": "UDNG",
+   "nama": "AGRO BAHARI NUSANTARA Tbk",
+   "sektor": "FISHERY",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "UFOE",
+   "nama": "DAMAI SEJAHTERA ABADI Tbk",
+   "sektor": "ELECTRONICS",
+   "industri": "Electronics/Appliance Stores"
+  },
+  {
+   "kode": "ULTJ",
+   "nama": "ULTRAJAYA MILK INDUSTRY AND TRADING COMPANY Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Meat/Fish/Dairy"
+  },
+  {
+   "kode": "UNIC",
+   "nama": "UNGGUL INDAH CAHAYA Tbk",
+   "sektor": "CHEMICALS",
+   "industri": "Household/Personal Care"
+  },
+  {
+   "kode": "UNIQ",
+   "nama": "ULIMA NITRA Tbk",
+   "sektor": "COAL MINING",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "UNIT",
+   "nama": "CAHAYA PERMATA SEJAHTERA Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": ""
+  },
+  {
+   "kode": "UNSP",
+   "nama": "BAKRIE SUMATERA PLANTATIONS Tbk",
+   "sektor": "PLANTATION",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "UNTD",
+   "nama": "TERANG DUNIA INTERNUSA Tbk",
+   "sektor": "AUTOMOTIVE AND COMPONENTS",
+   "industri": "Motor Vehicles"
+  },
+  {
+   "kode": "UNTR",
+   "nama": "UNITED TRACTORS Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Coal"
+  },
+  {
+   "kode": "UNVR",
+   "nama": "UNILEVER INDONESIA Tbk",
+   "sektor": "COSMETICS AND HOUSEHOLD",
+   "industri": "Household/Personal Care"
+  },
+  {
+   "kode": "URBN",
+   "nama": "URBAN JAKARTA PROPERTINDO Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "UVCR",
+   "nama": "TRIMEGAH KARYA PRATAMA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Packaged Software"
+  },
+  {
+   "kode": "VAST",
+   "nama": "VASTLAND INDONESIA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "VERN",
+   "nama": "VERONA INDAH PICTURES Tbk",
+   "sektor": "OTHERS - CONSUMER GOODS INDUSTRY",
+   "industri": "Movies/Entertainment"
+  },
+  {
+   "kode": "VICI",
+   "nama": "VICTORIA CARE INDONESIA Tbk",
+   "sektor": "COSMETICS AND HOUSEHOLD",
+   "industri": "Household/Personal Care"
+  },
+  {
+   "kode": "VICO",
+   "nama": "VICTORIA INVESTAMA Tbk",
+   "sektor": "OTHERS - FINANCE",
+   "industri": "Investment Banks/Brokers"
+  },
+  {
+   "kode": "VINS",
+   "nama": "VICTORIA INSURANCE Tbk",
+   "sektor": "INSURANCE",
+   "industri": "Property/Casualty Insurance"
+  },
+  {
+   "kode": "VISI",
+   "nama": "SATU VISI PUTRA Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Wholesale Distributors"
+  },
+  {
+   "kode": "VIVA",
+   "nama": "VISI MEDIA ASIA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Broadcasting"
+  },
+  {
+   "kode": "VKTR",
+   "nama": "VKTR TEKNOLOGI MOBILITAS Tbk",
+   "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+   "industri": "Motor Vehicles"
+  },
+  {
+   "kode": "VOKS",
+   "nama": "VOKSEL ELECTRIC Tbk",
+   "sektor": "CABLE",
+   "industri": "Electrical Products"
+  },
+  {
+   "kode": "VRNA",
+   "nama": "MIZUHO LEASING INDONESIA Tbk",
+   "sektor": "FINANCIAL INSTITUTION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "VTNY",
+   "nama": "VENTENY FORTUNA INTERNATIONAL Tbk",
+   "sektor": "INVESTMENT COMPANY",
+   "industri": "Information Technology Services"
+  },
+  {
+   "kode": "WAPO",
+   "nama": "WAHANA PRONATURAL Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "WBSA",
+   "nama": "BSA LOGISTICS INDONESIA Tbk",
+   "sektor": "OTHERS - INFRASTRUCTURE, UTILITIES & TRANSPORTATIO",
+   "industri": "Trucking"
+  },
+  {
+   "kode": "WEGE",
+   "nama": "WIJAYA KARYA BANGUNAN GEDUNG Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "WEHA",
+   "nama": "WEHA TRANSPORTASI INDONESIA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Other Transportation"
+  },
+  {
+   "kode": "WGSH",
+   "nama": "WIRA GLOBAL SOLUSI Tbk",
+   "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+   "industri": "Information Technology Services"
+  },
+  {
+   "kode": "WICO",
+   "nama": "WICAKSANA OVERSEAS INTERNATIONAL Tbk",
+   "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+   "industri": ""
+  },
+  {
+   "kode": "WIDI",
+   "nama": "WIDIANT JAYA KRENINDO Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "WIFI",
+   "nama": "SOLUSI SINERGI DIGITAL Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Packaged Software"
+  },
+  {
+   "kode": "WIIM",
+   "nama": "WISMILAK INTI MAKMUR Tbk",
+   "sektor": "TOBACCO MANUFACTURERS",
+   "industri": "Tobacco"
+  },
+  {
+   "kode": "WIKA",
+   "nama": "WIJAYA KARYA (PERSERO) Tbk",
+   "sektor": "CONSTRUCTION",
+   "industri": ""
+  },
+  {
+   "kode": "WINE",
+   "nama": "HATTEN BALI Tbk",
+   "sektor": "OTHERS - CONSUMER GOODS INDUSTRY",
+   "industri": "Beverages: Alcoholic"
+  },
+  {
+   "kode": "WINR",
+   "nama": "WINNER NUSANTARA JAYA Tbk",
+   "sektor": "PROPERTY AND REAL ESTATE",
+   "industri": "Real Estate Development"
+  },
+  {
+   "kode": "WINS",
+   "nama": "WINTERMAR OFFSHORE MARINE Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": "Marine Shipping"
+  },
+  {
+   "kode": "WIRG",
+   "nama": "WIR ASIA Tbk",
+   "sektor": "ADVERTISING,PRINTING AND MEDIA",
+   "industri": "Medical/Nursing Services"
+  },
+  {
+   "kode": "WMPP",
+   "nama": "WIDODO MAKMUR PERKASA Tbk",
+   "sektor": "ANIMAL HUSBANDRY",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "WMUU",
+   "nama": "WIDODO MAKMUR UNGGAS Tbk",
+   "sektor": "ANIMAL HUSBANDRY",
+   "industri": "Agricultural Commodities/Milling"
+  },
+  {
+   "kode": "WOMF",
+   "nama": "WAHANA OTTOMITRA MULTIARTHA Tbk",
+   "sektor": "FINANCIAL INSTITUTION",
+   "industri": "Finance/Rental/Leasing"
+  },
+  {
+   "kode": "WOOD",
+   "nama": "INTEGRA INDOCABINET Tbk",
+   "sektor": "WOOD INDUSTRIES",
+   "industri": "Home Furnishings"
+  },
+  {
+   "kode": "WOWS",
+   "nama": "GINTING JAYA ENERGI Tbk",
+   "sektor": "CRUDE PETROLEUM & NATURAL GAS PROD.",
+   "industri": "Oilfield Services/Equipment"
+  },
+  {
+   "kode": "WSBP",
+   "nama": "WASKITA BETON PRECAST Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": ""
+  },
+  {
+   "kode": "WSKT",
+   "nama": "WASKITA KARYA (PERSERO) Tbk",
+   "sektor": "BUILDING CONSTRUCTION",
+   "industri": ""
+  },
+  {
+   "kode": "WTON",
+   "nama": "WIJAYA KARYA BETON Tbk",
+   "sektor": "CEMENT",
+   "industri": "Engineering & Construction"
+  },
+  {
+   "kode": "YELO",
+   "nama": "YELOOO INTEGRA DATANET Tbk",
+   "sektor": "RESTAURANT, HOTEL & TOURISM",
+   "industri": "Electronics Distributors"
+  },
+  {
+   "kode": "YOII",
+   "nama": "ASURANSI DIGITAL BERSAMA Tbk",
+   "sektor": "INSURANCE",
+   "industri": "Multi-Line Insurance"
+  },
+  {
+   "kode": "YPAS",
+   "nama": "YANAPRIMA HASTAPERSADA Tbk",
+   "sektor": "PLASTICS & PACKAGING",
+   "industri": "Containers/Packaging"
+  },
+  {
+   "kode": "YULE",
+   "nama": "YULIE SEKURITAS INDONESIA Tbk",
+   "sektor": "SECURITIES COMPANY",
+   "industri": "Investment Banks/Brokers"
+  },
+  {
+   "kode": "YUPI",
+   "nama": "YUPI INDO JELLY GUM Tbk",
+   "sektor": "FOOD & BEVERAGES",
+   "industri": "Food: Specialty/Candy"
+  },
+  {
+   "kode": "ZATA",
+   "nama": "BERSAMA ZATTA JAYA Tbk",
+   "sektor": "TEXTILE, GARMENT",
+   "industri": "Apparel/Footwear Retail"
+  },
+  {
+   "kode": "ZBRA",
+   "nama": "DOSNI ROHA INDONESIA Tbk",
+   "sektor": "TRANSPORTATION",
+   "industri": ""
+  },
+  {
+   "kode": "ZINC",
+   "nama": "KAPUAS PRIMA COAL Tbk",
+   "sektor": "COAL MINING",
+   "industri": ""
+  },
+  {
+   "kode": "ZONE",
+   "nama": "MEGA PERINTIS Tbk",
+   "sektor": "RETAIL TRADE",
+   "industri": "Apparel/Footwear"
+  },
+  {
+   "kode": "ZYRX",
+   "nama": "ZYREXINDO MANDIRI BUANA Tbk",
+   "sektor": "COMPUTER AND SERVICES",
+   "industri": "Computer Processing Hardware"
+  }
+ ]
+}

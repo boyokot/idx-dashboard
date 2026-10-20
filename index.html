@@ -1,356 +1,964 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="auto">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IDX Stock Screener Dashboard</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>IDX Stock Screener — Screening Otomatis</title>
 <style>
-:root{--bg:#0f172a;--card:#1e293b;--border:#334155;--text:#e2e8f0;--muted:#94a3b8;--green:#22c55e;--red:#ef4444;--yellow:#eab308;--blue:#3b82f6;--purple:#a855f7}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.container{max-width:1400px;margin:0 auto;padding:20px}
-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:24px}
-h1{font-size:1.5rem;font-weight:700}
-h1 span{color:var(--blue)}
-.meta{color:var(--muted);font-size:.85rem}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
-.kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
-.kpi .label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.kpi .value{font-size:1.75rem;font-weight:700;margin-top:4px}
-.kpi .sub{font-size:.8rem;color:var(--muted)}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
-@media(max-width:900px){.grid{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;overflow-x:auto}
-.card h2{font-size:1rem;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.card h2 .icon{font-size:1.2rem}
-table{width:100%;border-collapse:collapse;font-size:.85rem}
-th{text-align:left;padding:8px 10px;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
-th:hover{color:var(--text)}
-th.sorted-asc::after{content:' ▲'}
-th.sorted-desc::after{content:' ▼'}
-td{padding:8px 10px;border-bottom:1px solid rgba(51,65,85,.5);white-space:nowrap}
-tr:hover{background:rgba(59,130,246,.08)}
-.badge{display:inline-block;padding:2px 8px;border-radius:9999px;font-size:.75rem;font-weight:600}
-.badge-green{background:rgba(34,197,94,.15);color:var(--green)}
-.badge-red{background:rgba(239,68,68,.15);color:var(--red)}
-.badge-yellow{background:rgba(234,179,8,.15);color:var(--yellow)}
-.badge-blue{background:rgba(59,130,246,.15);color:var(--blue)}
-.pos{color:var(--green)}.neg{color:var(--red)}
-.score-bar{display:inline-block;width:60px;height:8px;background:var(--border);border-radius:4px;vertical-align:middle;margin-left:6px;overflow:hidden}
-.score-bar .fill{height:100%;border-radius:4px}
-.alert-item{padding:8px 12px;border-radius:8px;margin-bottom:6px;font-size:.85rem;display:flex;align-items:flex-start;gap:8px}
-.alert-breakout{background:rgba(34,197,94,.1);border-left:3px solid var(--green)}
-.alert-support{background:rgba(239,68,68,.1);border-left:3px solid var(--red)}
-.alert-rsi{background:rgba(234,179,8,.1);border-left:3px solid var(--yellow)}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
-.toolbar input,.toolbar select{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:.85rem}
-.toolbar input:focus,.toolbar select:focus{outline:none;border-color:var(--blue)}
-.toolbar input{min-width:200px}
-.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
-.tab{padding:6px 14px;border-radius:8px;font-size:.8rem;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:.15s}
-.tab.active{background:var(--blue);color:#fff;border-color:var(--blue)}
-.refresh{font-size:.8rem;color:var(--muted);margin-top:16px;text-align:center}
-.footer{color:var(--muted);font-size:.75rem;text-align:center;padding:20px;border-top:1px solid var(--border);margin-top:20px}
-#loading{text-align:center;padding:60px;color:var(--muted);font-size:1.1rem}
-.spinner{display:inline-block;width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px}
+:root{
+  --bg:#f5f6f8; --card:#fff; --text:#1a1d23; --muted:#6b7280; --border:#e3e6ea;
+  --up:#0a8f4a; --down:#d92b3a; --warn:#b45309; --warnbg:#fef3c7;
+  --accent:#2563eb; --accent-soft:#dbeafe; --shadow:0 1px 3px rgba(0,0,0,.07);
+  --sticky:#fafbfc;
+}
+[data-theme="dark"]{
+  --bg:#0e1116; --card:#161b22; --text:#e6edf3; --muted:#8b949e; --border:#2d333b;
+  --up:#3fb950; --down:#f85149; --warn:#d29922; --warnbg:#3a2d09;
+  --accent:#58a6ff; --accent-soft:#132a45; --shadow:0 1px 3px rgba(0,0,0,.4);
+  --sticky:#1c2129;
+}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:var(--bg);color:var(--text);transition:background .2s,color .2s}
+.wrap{max-width:1400px;margin:0 auto;padding:16px}
+header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+h1{font-size:19px;margin:0 0 2px}
+.sub{color:var(--muted);font-size:12px}
+.hdr-right{display:flex;gap:8px;align-items:center;flex-shrink:0}
+button{font:inherit;cursor:pointer;border:1px solid var(--border);background:var(--card);
+  color:var(--text);border-radius:8px;padding:7px 12px;transition:.15s}
+button:hover{border-color:var(--accent);color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.primary:hover{opacity:.9;color:#fff}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+  box-shadow:var(--shadow);padding:14px;margin-bottom:14px}
+
+/* state */
+#stateBox{padding:32px 16px;text-align:center}
+#stateBox .msg{font-size:15px;margin-bottom:6px;font-weight:600}
+#stateBox .detail{color:var(--muted);font-size:13px;margin-bottom:14px;max-width:560px;margin-inline:auto}
+.spinner{display:inline-block;width:22px;height:22px;border:3px solid var(--border);
+  border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:12px}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* kpi */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;box-shadow:var(--shadow)}
+.kpi .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.kpi .v{font-size:19px;font-weight:700}
+.kpi .s{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* toolbar */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.toolbar input[type=text]{flex:1;min-width:180px;padding:8px 11px;border:1px solid var(--border);
+  border-radius:8px;background:var(--bg);color:var(--text);font:inherit}
+.toolbar input[type=text]:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+select{padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--card);
+  color:var(--text);font:inherit;cursor:pointer}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:14px;overflow-x:auto}
+.tab{padding:9px 14px;border:none;background:none;border-bottom:2px solid transparent;
+  color:var(--muted);border-radius:0;white-space:nowrap;font-weight:500}
+.tab:hover{color:var(--text);border-color:transparent}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.panel{display:none}
+.panel.active{display:block}
+
+/* table */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px;
+  -webkit-overflow-scrolling:touch}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:13px;white-space:nowrap}
+thead th{position:sticky;top:0;background:var(--sticky);z-index:3;text-align:right;
+  padding:9px 10px;font-size:11px;text-transform:uppercase;letter-spacing:.3px;
+  color:var(--muted);border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+thead th:hover{color:var(--accent)}
+thead th.sorted{color:var(--accent)}
+thead th .arw{font-size:9px;margin-left:2px}
+tbody td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--border)}
+tbody tr:hover{background:var(--accent-soft)}
+tbody tr:last-child td{border-bottom:none}
+th:nth-child(1),td:nth-child(1),th:nth-child(2),td:nth-child(2){text-align:left}
+/* kolom Kode sticky */
+th.stick,td.stick{position:sticky;left:0;background:var(--card);z-index:2;
+  box-shadow:1px 0 0 var(--border)}
+thead th.stick{background:var(--sticky);z-index:4}
+tbody tr:hover td.stick{background:var(--accent-soft)}
+.kode{font-weight:700;letter-spacing:.3px}
+.nm{font-size:11px;color:var(--muted);max-width:190px;overflow:hidden;
+  text-overflow:ellipsis;display:block}
+.up{color:var(--up);font-weight:600}
+.down{color:var(--down);font-weight:600}
+.na{color:var(--muted)}
+.skor{font-weight:700;display:inline-block;min-width:38px;text-align:center;
+  padding:2px 7px;border-radius:6px;font-size:12px}
+.sk-hi{background:rgba(10,143,74,.13);color:var(--up)}
+.sk-md{background:var(--accent-soft);color:var(--accent)}
+.sk-lo{background:rgba(107,114,128,.14);color:var(--muted)}
+.sk-no{background:rgba(217,43,58,.12);color:var(--down)}
+.pill{display:inline-block;padding:2px 8px;border-radius:11px;font-size:11px;font-weight:600}
+.p-normal{background:rgba(107,114,128,.13);color:var(--muted)}
+.p-break{background:rgba(10,143,74,.15);color:var(--up)}
+.p-sup{background:rgba(217,43,58,.15);color:var(--down)}
+.p-warn{background:var(--warnbg);color:var(--warn)}
+.p-thin{background:rgba(180,83,9,.1);color:var(--warn)}
+
+/* detail drawer */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50;display:none;
+  align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.overlay.show{display:flex}
+.drawer{background:var(--card);border-radius:14px;max-width:880px;width:100%;
+  padding:20px;border:1px solid var(--border);position:relative;margin:auto}
+.drawer h2{margin:0 0 2px;font-size:18px}
+.close{position:absolute;top:12px;right:12px;padding:5px 10px;font-size:16px;line-height:1}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){
+  .grid2{grid-template-columns:1fr}
+  .wrap{padding:10px}
+  header{align-items:center}
+  header h1{font-size:17px}
+  .hdr-right{width:100%;justify-content:flex-end}
+  .kpis{grid-template-columns:repeat(2,1fr);gap:8px}
+  .kpi{padding:9px 10px;border-radius:10px}
+  .kpi .v{font-size:17px}
+  .kpi .l{font-size:10px;letter-spacing:.02em}
+  .kpi .s{font-size:10px}
+  /* Top 10: 2 kolom agar kartu tidak sempit di layar kecil */
+  #top10List{grid-template-columns:repeat(2,1fr)!important;gap:7px}
+  #top10List>div{padding:8px!important}
+  #top10List .nm{font-size:10px;line-height:1.25;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  #top10List .kode{font-size:12px}
+  /* Tabs: bisa digeser, scrollbar disembunyikan (geser natural di HP) */
+  .tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{padding:9px 11px;white-space:nowrap;flex:0 0 auto}
+  /* Tabel: scroll horizontal + kolom sticky tetap menempel */
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tbl-wrap table{min-width:640px}
+  /* Modal drawer: muat penuh di layar kecil */
+  .overlay{padding:8px}
+  .drawer{width:100%;max-height:94vh;padding:14px;border-radius:12px;overflow-y:auto}
+  .drawer canvas{width:100%!important;height:auto!important}
+  /* Filter: menumpuk & tetap bisa dibaca */
+  .toolbar{gap:6px}
+  .toolbar input,.toolbar select{font-size:13px;padding:7px;min-width:0}
+}
+.stat{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:13px}
+.stat span:first-child{color:var(--muted)}
+.bar{height:7px;border-radius:4px;background:var(--border);overflow:hidden;margin-top:3px}
+.bar>i{display:block;height:100%;border-radius:4px}
+.cmp{display:flex;justify-content:space-between;align-items:center;gap:8px;
+  padding:5px 0;font-size:12px;border-bottom:1px solid var(--border)}
+.cmp .nm2{flex:1;min-width:0}
+.cmp .ln{font-weight:600}
+
+/* misc */
+.note{font-size:12px;color:var(--muted);line-height:1.6}
+.tag{display:inline-block;font-size:10px;padding:1px 6px;border-radius:5px;
+  background:var(--bg);border:1px solid var(--border);color:var(--muted);margin-left:4px}
+.disclaimer{margin-top:16px;padding:11px 14px;background:var(--warnbg);color:var(--warn);
+  border-radius:9px;font-size:12px;font-weight:500}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+canvas{max-width:100%;display:block}
+.tblnote{font-size:11px;color:var(--muted);margin-top:8px}
+details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px}
 </style>
 </head>
 <body>
-<div class="container">
+<div class="wrap">
+
 <header>
   <div>
-    <h1>📈 <span>IDX</span> Stock Screener</h1>
-    <div class="meta" id="lastUpdate">Memuat data...</div>
+    <h1>IDX Stock Screener</h1>
+    <div class="sub" id="lastUpdate">Memuat data…</div>
   </div>
-  <div class="meta" style="text-align:right">
-    Sumber: yfinance (.JK) + KSEI<br>
-    Screening otomatis — bukan rekomendasi beli
+  <div class="hdr-right">
+    <button id="btnInfo" title="Penjelasan skor">ℹ️ Skor</button>
+    <button id="btnTheme" title="Ganti tema">🌗</button>
+    <button id="btnRefresh" class="primary">↻ Muat ulang</button>
   </div>
 </header>
 
-<div id="loading"><span class="spinner"></span>Memuat data emiten...</div>
+<div id="stateBox" class="card">
+  <div class="spinner"></div>
+  <div class="msg">Memuat data…</div>
+  <div class="detail">Mengambil data screening terakhir.</div>
+</div>
 
-<div id="dashboard" style="display:none">
+<div id="app" style="display:none">
+
   <div class="kpis" id="kpis"></div>
 
-  <div class="grid">
-    <div class="card">
-      <h2><span class="icon">🏆</span> Top 10 Elemen (Skor Tertinggi)</h2>
-      <table id="top10"><thead><tr><th>Kode</th><th>Nama</th><th>Harga</th><th>Chg%</th><th>Skor</th><th>Sinyal</th></tr></thead><tbody></tbody></table>
+  <div class="card" id="top10Card" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+      <b style="font-size:14px">Top 10 Emiten</b>
+      <span class="note">Emiten bertanda <span class="pill p-warn">waspada</span> tidak pernah masuk daftar ini.</span>
     </div>
-    <div class="card">
-      <h2><span class="icon">🚨</span> Alerts</h2>
-      <div id="alerts"></div>
-    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px" id="top10List"></div>
   </div>
 
-  <div class="card" style="margin-bottom:24px">
-    <h2><span class="icon">🔍</span> Screening Lengkap</h2>
+  <div class="tabs">
+    <button class="tab active" data-tab="screener">Screener</button>
+    <button class="tab" data-tab="watchlist">Watchlist <span id="wlCount"></span></button>
+    <button class="tab" data-tab="akurasi">Akurasi Sinyal</button>
+    <button class="tab" data-tab="risiko">Kalkulator Risiko</button>
+  </div>
+
+  <!-- SCREENER -->
+  <div class="panel active" id="panel-screener">
     <div class="toolbar">
-      <input type="text" id="search" placeholder="Cari kode/nama/sektor...">
-      <select id="filterSektor"><option value="">Semua Sektor</option></select>
-      <select id="filterStatus">
-        <option value="">Semua Status</option>
-        <option value="normal">Normal</option>
-        <option value="waspada">Waspada</option>
-        <option value="breakout">Breakout</option>
-        <option value="support">Tembus Support</option>
+      <input type="text" id="search" placeholder="Cari kode / nama emiten…">
+      <select id="fSektor"><option value="">Semua sektor</option></select>
+      <select id="fSinyal">
+        <option value="">Semua sinyal</option>
+        <option value="Breakout">Breakout</option>
+        <option value="Normal">Normal</option>
+        <option value="Tembus Support">Tembus Support</option>
+        <option value="waspada">Waspada saja</option>
       </select>
-      <select id="filterScore">
-        <option value="0">Skor ≥ 0</option>
-        <option value="50">Skor ≥ 50</option>
-        <option value="60">Skor ≥ 60</option>
-        <option value="70">Skor ≥ 70</option>
-        <option value="80">Skor ≥ 80</option>
+      <select id="fSkor">
+        <option value="">Semua skor</option>
+        <option value="70">≥ 70</option>
+        <option value="60">≥ 60</option>
+        <option value="50">≥ 50</option>
+        <option value="0">Semua (termasuk rendah)</option>
       </select>
+      <button id="btnCols" title="Sembunyikan/tampilkan kolom sekunder">⚙️ Kolom</button>
+      <button id="btnCsv">⬇ CSV</button>
     </div>
-    <div style="overflow-x:auto">
-      <table id="fullTable">
-        <thead><tr>
-          <th data-col="kode">Kode</th>
-          <th data-col="nama">Nama</th>
-          <th data-col="sektor">Sektor</th>
-          <th data-col="harga">Harga</th>
-          <th data-col="chg">Chg%</th>
-          <th data-col="vol">Volume</th>
-          <th data-col="ma20">MA20</th>
-          <th data-col="ma50">MA50</th>
-          <th data-col="rsi">RSI</th>
-          <th data-col="support">Support</th>
-          <th data-col="resistance">Resistance</th>
-          <th data-col="skor">Skor</th>
-          <th data-col="sinyal">Sinyal</th>
-        </tr></thead>
-        <tbody></tbody>
+
+    <div id="colsPanel" class="card" style="display:none;margin-bottom:12px">
+      <div class="note" style="margin-bottom:8px">Pilih kolom sekunder yang ditampilkan (disimpan di perangkat ini):</div>
+      <div id="colsList" style="display:flex;gap:14px;flex-wrap:wrap;font-size:13px"></div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table id="tbl">
+        <thead><tr id="thead"></tr></thead>
+        <tbody id="tbody"></tbody>
       </table>
     </div>
-    <div class="meta" style="margin-top:8px" id="tableInfo"></div>
+    <div class="tblnote" id="tableInfo"></div>
+    <div class="disclaimer">Hasil screening otomatis, bukan rekomendasi beli.</div>
+  </div>
+
+  <!-- WATCHLIST -->
+  <div class="panel" id="panel-watchlist">
+    <div class="card">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <input type="text" id="wlInput" placeholder="Tambah kode emiten (mis. BBCA)" style="flex:1;min-width:170px;padding:8px 11px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit">
+        <button class="primary" id="wlAdd">+ Tambah</button>
+      </div>
+      <div class="note" style="margin-top:8px">Watchlist disimpan di perangkat ini (localStorage). Tidak dikirim ke mana pun.</div>
+    </div>
+    <div class="tbl-wrap">
+      <table><thead><tr id="wlThead"></tr></thead><tbody id="wlBody"></tbody></table>
+    </div>
+    <div class="tblnote" id="wlInfo"></div>
+  </div>
+
+  <!-- AKURASI -->
+  <div class="panel" id="panel-akurasi">
+    <div class="card">
+      <h2 style="font-size:15px;margin:0 0 8px">Akurasi Sinyal Historis</h2>
+      <div class="note" id="btInfo">Memuat…</div>
+    </div>
+    <div class="tbl-wrap">
+      <table><thead><tr>
+        <th style="text-align:left">Sinyal</th><th>Periode</th><th>Jumlah sinyal</th>
+        <th>Naik</th><th>Turun</th><th>% Naik</th><th>Rata-rata return</th>
+      </tr></thead><tbody id="btBody"></tbody></table>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="note">
+        Backtest memakai snapshot harian yang tersimpan di <code>data/snapshots/</code>.
+        Hasil ditampilkan apa adanya, termasuk bila buruk. Angka kecil = sampel belum
+        cukup, jangan dijadikan patokan. Metode: sinyal diambil dari snapshot tanggal T,
+        lalu return dihitung dari harga T ke T+5/T+10/T+20 sesi bursa berikutnya yang
+        snapshotnya tersedia.
+      </div>
+    </div>
+  </div>
+
+  <!-- RISIKO -->
+  <div class="panel" id="panel-risiko">
+    <div class="card">
+      <h2 style="font-size:15px;margin:0 0 12px">Kalkulator Ukuran Posisi</h2>
+      <div class="grid2">
+        <div>
+          <label class="note">Modal total (Rp)</label>
+          <input type="number" id="rkModal" value="10000000" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;margin-bottom:10px">
+          <label class="note">Risiko per transaksi (%)</label>
+          <input type="number" id="rkRisk" value="2" step="0.5" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;margin-bottom:10px">
+          <label class="note">Harga entry (Rp)</label>
+          <input type="number" id="rkEntry" value="5000" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;margin-bottom:10px">
+          <label class="note">Harga cut loss (Rp)</label>
+          <input type="number" id="rkCut" value="4700" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;margin-bottom:10px">
+          <label class="note">Target (Rp, opsional)</label>
+          <input type="number" id="rkTarget" value="5600" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit">
+        </div>
+        <div id="rkOut"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- info modal -->
+<div class="overlay" id="infoModal">
+  <div class="drawer">
+    <button class="close" onclick="document.getElementById('infoModal').classList.remove('show')">✕</button>
+    <h2>Penjelasan Skor</h2>
+    <div class="sub" style="margin-bottom:14px">Skor 0–100; makin tinggi makin banyak sinyal positif yang terpenuhi.</div>
+    <div class="card" style="box-shadow:none;margin-bottom:10px">
+      <b>Teknikal — 40%</b>
+      <div class="note">Harga &gt; MA20 (15) · Harga &gt; MA50 (15) · MA20 potong ke atas MA50 (10) ·
+      Breakout resistance 20-hari + volume &gt;1,5× rata-rata (20) · RSI(14) 50–70 (20) · MACD golden cross (20)</div>
+    </div>
+    <div class="card" style="box-shadow:none;margin-bottom:10px">
+      <b>Fundamental — 40%</b>
+      <div class="note">Pertumbuhan laba (18) · Pertumbuhan pendapatan (12) · ROE (25) ·
+      DER (15) · PER vs median sektor (15) · PBV vs median sektor (15)</div>
+    </div>
+    <div class="card" style="box-shadow:none;margin-bottom:10px">
+      <b>Katalis — 20%</b>
+      <div class="note">Berita ≤14 hari (40) · Aksi korporasi ≤60 hari (30) · Net beli asing/broker (30).
+      Butuh API key Sectors.app — tanpa key, komponen ini tidak dinilai dan bobot dinormalisasi ulang.</div>
+    </div>
+    <div class="card" style="box-shadow:none">
+      <b>Arti label sinyal</b>
+      <div class="note" style="margin-top:6px">
+        <span class="pill p-normal">Normal</span> tidak ada sinyal ekstrem.<br><br>
+        <span class="pill p-break">Breakout</span> harga menembus resistance 20 hari <i>dengan</i> volume &gt;1,5× rata-rata.<br><br>
+        <span class="pill p-thin">Breakout (volume tipis)</span> tembus resistance tapi volume kurang — rawan gagal.<br><br>
+        <span class="pill p-sup">Tembus Support</span> harga di bawah support 20 hari — sinyal negatif.<br><br>
+        <span class="pill p-warn">Waspada</span> volume sangat kecil, penny stock, lonjakan tanpa berita, RSI jenuh beli,
+        ROE negatif, breakout tanpa volume. <b>Emiten waspada tidak pernah masuk Top 10.</b>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="footer">
-  ⚠️ Ini hasil screening otomatis, bukan rekomendasi beli.<br>
-  Data harga dari yfinance (delay ~15 menit). Fundamental top50 dari yfinance .info.
-</div>
+<!-- detail modal -->
+<div class="overlay" id="detailModal">
+  <div class="drawer" id="detailBody"></div>
 </div>
 
 <script>
-const SHEET_ID = '1KRQpGoCFabu7P8Ub3-n_HSERBqb4EAT-D5hLb7HrFU8';
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Emiten`;
-let allData = [];
-let sortCol = 'skor', sortDir = 'desc';
+'use strict';
+const DATA_URL = 'data/latest.json';
+const SNAP_INDEX_URL = 'data/snapshots/index.json';
+let DATA = null;
+let SORT = {key:'skor', dir:-1};
+let WATCHLIST = [];
+let HIDDEN_COLS = new Set();
+let BT = null;
 
-function parseCSV(text) {
-  const rows = [];
-  let row = [], field = '', inQ = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (inQ) {
-      if (c === '"') { if (text[i+1] === '"') { field += '"'; i++; } else inQ = false; }
-      else field += c;
-    } else {
-      if (c === '"') inQ = true;
-      else if (c === ',') { row.push(field); field = ''; }
-      else if (c === '\n' || c === '\r') {
-        if (c === '\r' && text[i+1] === '\n') i++;
-        row.push(field); field = '';
-        if (row.some(x => x.trim())) rows.push(row);
-        row = [];
-      } else field += c;
-    }
+const LS_WL='idx_watchlist_v1', LS_COLS='idx_hidden_cols_v1', LS_THEME='idx_theme_v1';
+
+/* ---------- util ---------- */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function nf(v,d=0){ if(v==null||v===''||Number.isNaN(v)) return null;
+  return Number(v).toLocaleString('id-ID',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+function pct(v,d=2){ if(v==null||Number.isNaN(v)) return '<span class="na">–</span>';
+  const c=v>0?'up':(v<0?'down':''); const s=(v>0?'+':'')+Number(v).toLocaleString('id-ID',{minimumFractionDigits:d,maximumFractionDigits:d})+'%';
+  return `<span class="${c}">${s}</span>`; }
+function num(v,d=1){ if(v==null||Number.isNaN(v)) return '<span class="na">–</span>'; return nf(v,d); }
+function ratio(v,d=2){ if(v==null||Number.isNaN(v)) return '<span class="na">–</span>'; return nf(v,d); }
+function roePct(v){ if(v==null) return '<span class="na">–</span>'; return nf(v*100,1)+'%'; }
+
+function skorCell(v){
+  if(v==null) return '<span class="skor sk-no" title="data tidak tersedia">n/a</span>';
+  const cls = v>=70?'sk-hi':(v>=50?'sk-md':'sk-lo');
+  return `<span class="skor ${cls}">${v.toFixed(1)}</span>`;
+}
+function sinyalPill(s){
+  if(!s) return '';
+  const m={'Breakout':'p-break','Tembus Support':'p-sup','Normal':'p-normal'};
+  const c = m[s] || (s.startsWith('Waspada')?'p-warn':'p-thin');
+  return `<span class="pill ${c}">${esc(s)}</span>`;
+}
+
+/* ---------- tema ---------- */
+function terapkanTema(t){
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  const eff = t==='auto' ? (mq.matches?'dark':'light') : t;
+  document.documentElement.setAttribute('data-theme', eff);
+  $('#btnTheme').textContent = t==='auto' ? (eff==='dark'?'🌙':'☀️') : (t==='dark'?'🌙':'☀️');
+  $('#btnTheme').title = 'Tema: '+t+' (klik untuk ganti)';
+}
+function initTema(){
+  let t = localStorage.getItem(LS_THEME) || 'auto';
+  terapkanTema(t);
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{
+    if((localStorage.getItem(LS_THEME)||'auto')==='auto') terapkanTema('auto');
+  });
+  $('#btnTheme').onclick = () => {
+    const order=['auto','light','dark'];
+    let cur=localStorage.getItem(LS_THEME)||'auto';
+    const nx=order[(order.indexOf(cur)+1)%3];
+    localStorage.setItem(LS_THEME,nx); terapkanTema(nx);
+  };
+}
+
+/* ---------- state UI ---------- */
+function showState(kind,msg,detail,retry){
+  $('#app').style.display='none';
+  const box=$('#stateBox'); box.style.display='block';
+  if(kind==='loading'){ box.innerHTML=`<div class="spinner"></div><div class="msg">${esc(msg)}</div><div class="detail">${esc(detail||'')}</div>`; return; }
+  const icon = kind==='error'?'⚠️':'📭';
+  box.innerHTML=`<div style="font-size:30px;margin-bottom:8px">${icon}</div>
+    <div class="msg">${esc(msg)}</div><div class="detail">${esc(detail||'')}</div>
+    ${retry?'<button class="primary" id="btnRetry">↻ Coba lagi</button>':''}`;
+  if(retry) $('#btnRetry').onclick=load;
+}
+function showApp(){ $('#stateBox').style.display='none'; $('#app').style.display='block'; }
+
+/* ---------- load ---------- */
+async function load(){
+  showState('loading','Memuat data…','Mengambil data screening terakhir.');
+  try{
+    const r = await fetch(DATA_URL+'?_='+Date.now(),{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const j = await r.json();
+    if(!j || !Array.isArray(j.emiten) || !j.emiten.length)
+      throw new Error('Data kosong: tidak ada emiten pada respons.');
+    DATA=j;
+    const tgl=j.diperbarui_pada_teks || j.diperbarui_pada || '–';
+    $('#lastUpdate').textContent = 'Terakhir diperbarui: '+tgl;
+    showApp(); renderAll();
+    loadBacktest();
+  }catch(e){
+    const msg = String(e.message||e);
+    let hint = 'Periksa koneksi lalu coba lagi.';
+    if(/Failed to fetch|NetworkError/i.test(msg)) hint='Tidak bisa menghubungi server. Periksa koneksi internet.';
+    if(/404/.test(msg)) hint='File data belum tersedia (data/latest.json). Pipeline mungkin belum dijalankan.';
+    showState('error','Gagal memuat data', msg+' — '+hint, true);
   }
-  if (field || row.length) { row.push(field); rows.push(row); }
+}
+
+/* ---------- KPI ---------- */
+function renderTop10(){
+  const t=(DATA.top10||[]);
+  const card=$('#top10Card');
+  if(!t.length){ card.style.display='none'; return; }
+  card.style.display='block';
+  $('#top10List').innerHTML=t.map(r=>`
+    <div style="border:1px solid var(--border);border-radius:9px;padding:9px;cursor:pointer" data-kode="${esc(r.kode)}">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="kode">${r.peringkat}. ${esc(r.kode)}</span>${skorCell(r.skor)}
+      </div>
+      <div class="nm" style="margin:3px 0">${esc(r.nama||'')}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px">
+        <span>${r.harga!=null?nf(r.harga,0):'–'}</span>${pct(r.chg_pct)}
+      </div>
+    </div>`).join('');
+  $$('#top10List [data-kode]').forEach(d=>d.onclick=()=>bukaDetail(d.dataset.kode));
+}
+
+function renderKPI(){
+  const e=DATA.emiten||[]; const mp=DATA.ringkasan_pasar||{};
+  const skor=e.filter(x=>x.skor!=null);
+  const top=skor.length?Math.max(...skor.map(x=>x.skor)):null;
+  const avg=skor.length?skor.reduce((a,b)=>a+b.skor,0)/skor.length:null;
+  const brk=e.filter(x=>x.sinyal==='Breakout').length;
+  const wst=e.filter(x=>x.waspada).length;
+  const ihsg=mp.ihsg||{};
+  const k=[
+    {l:'IHSG',v:ihsg.tersedia?nf(ihsg.nilai,2):'–',s:ihsg.tersedia?('Chg '+(ihsg.chg_pct!=null?ihsg.chg_pct.toFixed(2)+'%':'–')):'data tidak tersedia'},
+    {l:'Emiten dinilai',v:nf(skor.length,0),s:'dari '+nf(e.length,0)+' di universe'},
+    {l:'Skor tertinggi',v:top!=null?top.toFixed(1):'–',s:avg!=null?('rata-rata '+avg.toFixed(1)):'–'},
+    {l:'Breakout',v:nf(brk,0),s:'volume >1,5× rata-rata'},
+    {l:'Waspada',v:nf(wst,0),s:'tidak masuk Top 10'},
+    {l:'Sektor terkuat',v:(mp.sektor_terkuat?mp.sektor_terkuat.sektor:'–'),s:(mp.sektor_terkuat?mp.sektor_terkuat.chg_pct.toFixed(2)+'%':'–')},
+  ];
+  if(mp.ihsg && mp.ihsg.chg_pct!=null) k[0].s='Chg '+mp.ihsg.chg_pct.toFixed(2)+'%';
+  $('#kpis').innerHTML = k.map(x=>`<div class="kpi"><div class="l">${esc(x.l)}</div><div class="v">${esc(String(x.v))}</div><div class="s">${esc(String(x.s))}</div></div>`).join('');
+}
+
+/* ---------- kolom ---------- */
+const COLS=[
+  {k:'kode',t:'Kode',sticky:true,always:true,f:r=>`<span class="kode">${esc(r.kode)}</span>`},
+  {k:'nama',t:'Nama',always:true,f:r=>`<span class="nm" title="${esc(r.nama)}">${esc(r.nama)}</span>`},
+  {k:'skor',t:'Skor',always:true,f:r=>skorCell(r.skor)},
+  {k:'sinyal',t:'Sinyal',always:true,f:r=>sinyalPill(r.sinyal)},
+  {k:'harga',t:'Harga',always:true,f:r=>r.harga!=null?nf(r.harga,0):'<span class="na">–</span>'},
+  {k:'chg_pct',t:'Chg%',always:true,f:r=>pct(r.chg_pct)},
+  {k:'per',t:'PER',sec:true,f:r=>ratio(r.per,1)},
+  {k:'pbv',t:'PBV',sec:true,f:r=>ratio(r.pbv,2)},
+  {k:'roe',t:'ROE',sec:true,f:r=>roePct(r.roe)},
+  {k:'der',t:'DER',sec:true,f:r=>ratio(r.der,2)},
+  {k:'rsi',t:'RSI',sec:true,f:r=>r.rsi!=null?num(r.rsi,1):'<span class="na">–</span>'},
+  {k:'ma20',t:'MA20',sec:true,f:r=>r.ma20!=null?nf(r.ma20,0):'<span class="na">–</span>'},
+  {k:'ma50',t:'MA50',sec:true,f:r=>r.ma50!=null?nf(r.ma50,0):'<span class="na">–</span>'},
+  {k:'volume',t:'Volume',sec:true,f:r=>r.volume!=null?nf(r.volume,0):'<span class="na">–</span>'},
+  {k:'sumber_data',t:'Sumber',sec:true,f:r=>`<span class="tag">${esc(r.sumber_data||'–')}</span>`},
+];
+function colsAktif(){ return COLS.filter(c=>c.always || !HIDDEN_COLS.has(c.k)); }
+
+function renderColsPanel(){
+  const sec=COLS.filter(c=>c.sec);
+  $('#colsList').innerHTML = sec.map(c=>
+    `<label style="display:flex;align-items:center;gap:6px;cursor:pointer">
+      <input type="checkbox" data-col="${c.k}" ${HIDDEN_COLS.has(c.k)?'':'checked'}> ${esc(c.t)}
+    </label>`).join('');
+  $$('#colsList input').forEach(inp=>{
+    inp.onchange=()=>{
+      const k=inp.dataset.col;
+      if(inp.checked) HIDDEN_COLS.delete(k); else HIDDEN_COLS.add(k);
+      localStorage.setItem(LS_COLS,JSON.stringify([...HIDDEN_COLS]));
+      renderScreener();
+    };
+  });
+}
+
+/* ---------- filter + sort ---------- */
+function rowsTampil(){
+  const q=($('#search').value||'').trim().toLowerCase();
+  const fs=$('#fSektor').value, fg=$('#fSinyal').value, fk=$('#fSkor').value;
+  let rows=(DATA.emiten||[]).filter(r=>{
+    if(q && !(r.kode||'').toLowerCase().includes(q) && !(r.nama||'').toLowerCase().includes(q)) return false;
+    if(fs && (r.sektor||'')!==fs) return false;
+    if(fg==='waspada'){ if(!r.waspada) return false; }
+    else if(fg){ if(r.sinyal!==fg) return false; }
+    if(fk!==''){ const min=parseFloat(fk); if(min>0 && (r.skor==null||r.skor<min)) return false; }
+    return true;
+  });
+  const {key,dir}=SORT;
+  rows.sort((a,b)=>{
+    if(key==='skor'){ if(a.waspada!==b.waspada) return a.waspada?1:-1; }
+    let x=a[key],y=b[key];
+    if(x==null&&y==null) return 0; if(x==null) return 1; if(y==null) return -1;
+    if(typeof x==='number'&&typeof y==='number') return (x-y)*dir;
+    return String(x).localeCompare(String(y))*dir;
+  });
   return rows;
 }
 
-function num(v) {
-  if (!v) return 0;
-  const s = String(v).replace(/[^\d.,-]/g, '').replace(/\./g, '').replace(',', '.');
-  const n = parseFloat(s);
-  return isNaN(n) ? 0 : n;
-}
+function renderScreener(){
+  const cols=colsAktif(), {key,dir}=SORT;
+  $('#thead').innerHTML = cols.map(c=>{
+    const srt = SORT.key===c.k;
+    return `<th class="${c.sticky?'stick':''} ${srt?'sorted':''}" data-k="${c.k}">${esc(c.t)}${srt?`<span class="arw">${dir<0?'▼':'▲'}</span>`:''}</th>`;
+  }).join('');
+  $$('#thead th').forEach(th=>th.onclick=()=>{
+    const k=th.dataset.k;
+    if(SORT.key===k) SORT.dir*=-1; else SORT={key:k,dir:(k==='kode'||k==='nama'||k==='sinyal'?1:-1)};
+    renderScreener();
+  });
 
-function fmtRp(n) {
-  if (n >= 1e12) return 'Rp' + (n/1e12).toFixed(1) + 'T';
-  if (n >= 1e9) return 'Rp' + (n/1e9).toFixed(1) + 'M';
-  if (n >= 1e6) return 'Rp' + (n/1e6).toFixed(1) + 'jt';
-  return 'Rp' + n.toLocaleString('id-ID');
-}
-
-function fmtNum(n) {
-  if (n >= 1e9) return (n/1e9).toFixed(1) + 'B';
-  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
-  if (n >= 1e3) return (n/1e3).toFixed(0) + 'K';
-  return n.toString();
-}
-
-async function loadData() {
-  try {
-    const resp = await fetch(CSV_URL + '&_=' + Date.now());
-    const text = await resp.text();
-    const rows = parseCSV(text);
-    if (rows.length < 2) throw new Error('Data kosong');
-    const header = rows[0];
-    allData = rows.slice(1).map(r => {
-      const sig = r[14] || '';
-      return {
-        kode: r[0] || '', nama: r[1] || '', sektor: r[2] || '', industri: r[3] || '',
-        hargaClose: num(r[4]), mcap: num(r[5]), listing: r[6] || '',
-        harga: num(r[8]), chg: num(r[9]), vol: num(r[10]),
-        ma20: num(r[11]), ma50: num(r[12]), rsi: num(r[13]),
-        sinyal: sig, support: num(r[15]), resistance: num(r[16]),
-        skor: num(r[17]), update: r[18] || '',
-        isBreakout: sig.includes('BREAKOUT'),
-        isSupportBreak: sig.includes('SUPPORT BREAK'),
-        isOverbought: sig.includes('RSI OVER'),
-        isGolden: sig.includes('MA golden'),
-        isMacd: sig.includes('MACD'),
-        waspada: sig.includes('WASPADA') || (r[10] && num(r[10]) < 100000),
-        rsiOver: rsi => sig.includes('OVER')
-      };
-    });
-    render();
-  } catch (e) {
-    document.getElementById('loading').innerHTML = '❌ Error: ' + e.message + '<br><button onclick="loadData()" style="margin-top:12px;padding:8px 16px;background:var(--blue);border:none;color:#fff;border-radius:8px;cursor:pointer">Retry</button>';
-  }
-}
-
-function render() {
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('dashboard').style.display = 'block';
-
-  const lastUpdate = allData.map(d => d.update).filter(Boolean).sort().pop();
-  document.getElementById('lastUpdate').textContent = `Update terakhir: ${lastUpdate} | ${allData.length} emiten`;
-
-  // KPIs
-  const withScore = allData.filter(d => d.skor > 0);
-  const avgSkor = withScore.length ? (withScore.reduce((s,d) => s+d.skor, 0) / withScore.length).toFixed(1) : 0;
-  const breakout = allData.filter(d => d.isBreakout).length;
-  const supportBreak = allData.filter(d => d.isSupportBreak).length;
-  const overbought = allData.filter(d => d.isOverbought).length;
-  const golden = allData.filter(d => d.isGolden).length;
-  const topSkor = withScore.length ? Math.max(...withScore.map(d => d.skor)) : 0;
-
-  document.getElementById('kpis').innerHTML = `
-    <div class="kpi"><div class="label">Total Emiten</div><div class="value">${allData.length}</div><div class="sub">dari KSEI + TV</div></div>
-    <div class="kpi"><div class="label">Rata-rata Skor</div><div class="value" style="color:var(--blue)">${avgSkor}</div><div class="sub">dari 100</div></div>
-    <div class="kpi"><div class="label">Skor Tertinggi</div><div class="value" style="color:var(--green)">${topSkor}</div><div class="sub">emiten terbaik</div></div>
-    <div class="kpi"><div class="label">🟢 Breakout</div><div class="value" style="color:var(--green)">${breakout}</div><div class="sub">+ volume</div></div>
-    <div class="kpi"><div class="label">🔴 Support Break</div><div class="value" style="color:var(--red)">${supportBreak}</div><div class="sub">tembus support</div></div>
-    <div class="kpi"><div class="label">🟡 RSI Overbought</div><div class="value" style="color:var(--yellow)">${overbought}</div><div class="sub">RSI > 75</div></div>
-    <div class="kpi"><div class="label">📈 MA Golden</div><div class="value" style="color:var(--purple)">${golden}</div><div class="sub">MA20 > MA50</div></div>
-  `;
-
-  // Top 10
-  const top10 = [...withScore].filter(d => d.skor >= 60).sort((a,b) => b.skor - a.skor).slice(0, 10);
-  const tbody = document.querySelector('#top10 tbody');
-  tbody.innerHTML = top10.map(d => `
-    <tr>
-      <td><strong>${d.kode}</strong></td>
-      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis">${d.nama}</td>
-      <td>${fmtRp(d.harga)}</td>
-      <td class="${d.chg >= 0 ? 'pos' : 'neg'}">${d.chg >= 0 ? '+' : ''}${d.chg.toFixed(2)}%</td>
-      <td><span class="badge badge-blue">${d.skor}</span><span class="score-bar"><span class="fill" style="width:${d.skor}%;background:${d.skor >= 70 ? 'var(--green)' : d.skor >= 50 ? 'var(--blue)' : 'var(--yellow)'}"></span></span></td>
-      <td style="font-size:.75rem;color:var(--muted)">${d.sinyal.substring(0, 40)}</td>
-    </tr>
-  `).join('');
-
-  // Alerts
-  const alerts = [];
-  allData.filter(d => d.isBreakout && d.vol > 0).forEach(d => alerts.push({type:'breakout', text:`${d.kode} breakout +${d.chg.toFixed(1)}% vol ${fmtNum(d.vol)}`}));
-  allData.filter(d => d.isSupportBreak).forEach(d => alerts.push({type:'support', text:`${d.kode} tembus support (${d.chg.toFixed(1)}%)`}));
-  allData.filter(d => d.isOverbought).forEach(d => alerts.push({type:'rsi', text:`${d.kode} RSI overbought`}));
-
-  const alertDiv = document.getElementById('alerts');
-  if (alerts.length === 0) {
-    alertDiv.innerHTML = '<div class="meta" style="padding:20px;text-align:center">Tidak ada alert</div>';
+  const rows=rowsTampil();
+  if(!rows.length){
+    $('#tbody').innerHTML=`<tr><td colspan="${cols.length}" class="empty">Tidak ada emiten yang cocok dengan filter.</td></tr>`;
   } else {
-    const grouped = {breakout: [], support: [], rsi: []};
-    alerts.forEach(a => grouped[a.type].push(a));
-    let html = '';
-    if (grouped.breakout.length) html += `<div style="margin-bottom:8px"><strong style="color:var(--green)">🟢 Breakout (${grouped.breakout.length})</strong>` + grouped.breakout.slice(0,5).map(a => `<div class="alert-item alert-breakout">${a.text}</div>`).join('') + (grouped.breakout.length > 5 ? `<div class="meta" style="padding:4px 12px">+${grouped.breakout.length - 5} lainnya</div>` : '') + '</div>';
-    if (grouped.support.length) html += `<div style="margin-bottom:8px"><strong style="color:var(--red)">🔴 Support Break (${grouped.support.length})</strong>` + grouped.support.slice(0,5).map(a => `<div class="alert-item alert-support">${a.text}</div>`).join('') + (grouped.support.length > 5 ? `<div class="meta" style="padding:4px 12px">+${grouped.support.length - 5} lainnya</div>` : '') + '</div>';
-    if (grouped.rsi.length) html += `<div><strong style="color:var(--yellow)">🟡 RSI Overbought (${grouped.rsi.length})</strong>` + grouped.rsi.slice(0,5).map(a => `<div class="alert-item alert-rsi">${a.text}</div>`).join('') + (grouped.rsi.length > 5 ? `<div class="meta" style="padding:4px 12px">+${grouped.rsi.length - 5} lainnya</div>` : '') + '</div>';
-    alertDiv.innerHTML = html;
+    $('#tbody').innerHTML=rows.map(r=>{
+      const tds=cols.map(c=>{
+        let v=c.f(r);
+        if(c.k==='sinyal'&&r.waspada){
+          const extra=r.flag_waspada&&r.flag_waspada.length?` <span class="tag" title="${esc(r.flag_waspada.join('; '))}">waspada</span>`:'';
+          v+=extra;
+        }
+        return `<td class="${c.sticky?'stick':''}" ${c.k==='kode'?`style="cursor:pointer" data-kode="${esc(r.kode)}"`:''}>${v}</td>`;
+      }).join('');
+      return `<tr>${tds}</tr>`;
+    }).join('');
+    $$('#tbody td[data-kode]').forEach(td=>td.onclick=()=>bukaDetail(td.dataset.kode));
   }
 
-  // Sector filter
-  const sectors = [...new Set(allData.map(d => d.sektor).filter(Boolean))].sort();
-  const sel = document.getElementById('filterSektor');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">Semua Sektor</option>' + sectors.map(s => `<option value="${s}" ${s === cur ? 'selected' : ''}>${s}</option>`).join('');
-
-  renderFullTable();
+  const total=(DATA.emiten||[]).length;
+  const wst=rows.filter(r=>r.waspada).length;
+  $('#tableInfo').textContent=`Menampilkan ${rows.length} dari ${total} emiten`+(wst?` · ${wst} bertanda waspada`:'')+` · klik kode untuk detail`;
 }
 
-function renderFullTable() {
-  const search = document.getElementById('search').value.toLowerCase();
-  const sektor = document.getElementById('filterSektor').value;
-  const status = document.getElementById('filterStatus').value;
-  const minScore = parseInt(document.getElementById('filterScore').value) || 0;
+/* ---------- detail ---------- */
+function cari(k){ return (DATA.emiten||[]).find(r=>r.kode===k); }
 
-  let filtered = allData.filter(d => {
-    if (search && !d.kode.toLowerCase().includes(search) && !d.nama.toLowerCase().includes(search) && !d.sektor.toLowerCase().includes(search)) return false;
-    if (sektor && d.sektor !== sektor) return false;
-    if (minScore && d.skor < minScore) return false;
-    if (status === 'normal' && (d.isBreakout || d.isSupportBreak)) return false;
-    if (status === 'waspada' && !d.waspada) return false;
-    if (status === 'breakout' && !d.isBreakout) return false;
-    if (status === 'support' && !d.isSupportBreak) return false;
-    return true;
-  });
+function bukaDetail(kode){
+  const r=cari(kode); if(!r) return;
+  const sd=r.skor_detail||{}; const kp=sd.komponen||{};
+  const comp=(n,label)=>{
+    const c=kp[n]||{};
+    if(!c.tersedia||c.skor==null) return `<div class="stat"><span>${label}</span><span class="na">tidak tersedia</span></div>`;
+    const w=Math.round((c.bobot_efektif||0)*100);
+    return `<div class="stat"><span>${label} <span class="tag">bobot ${w}%</span></span>
+      <span><b>${c.skor.toFixed(0)}</b>/100</span></div>
+      <div class="bar"><i style="width:${c.skor}%;background:${c.skor>=70?'var(--up)':(c.skor>=50?'var(--accent)':'var(--muted)')}"></i></div>`;
+  };
+  const det=(n)=>{
+    const c=kp[n]||{}; if(!c.detail||!c.detail.length) return '';
+    return `<details><summary>Rincian ${n}</summary>`+c.detail.map(d=>
+      `<div class="cmp"><span class="nm2">${d.aktif?'✓':'✗'} ${esc(d.sinyal)}</span>
+        <span class="ln">${d.poin||0}/${d.maks||0}</span></div>
+      <div class="note" style="padding-left:14px;margin-bottom:4px">${esc(d.nilai||'')}${d.catatan?' · '+esc(d.catatan):''}</div>`
+    ).join('')+`</details>`;
+  };
 
-  // Sort
-  filtered.sort((a, b) => {
-    let va = a[sortCol], vb = b[sortCol];
-    if (typeof va === 'string') { va = va.toLowerCase(); vb = vb.toLowerCase(); }
-    if (va < vb) return sortDir === 'asc' ? -1 : 1;
-    if (va > vb) return sortDir === 'asc' ? 1 : -1;
-    return 0;
-  });
+  const tgt  = r.resistance!=null && r.harga!=null ? Math.max(r.resistance, r.harga*1.03) : (r.harga!=null?r.harga*1.08:null);
+  const cut  = r.support!=null && r.harga!=null ? Math.min(r.support, r.harga*0.97) : (r.harga!=null?r.harga*0.93:null);
+  const rr   = (tgt&&cut&&r.harga)?((tgt-r.harga)/(r.harga-cut)):null;
 
-  const tbody = document.querySelector('#fullTable tbody');
-  tbody.innerHTML = filtered.slice(0, 300).map(d => `
-    <tr>
-      <td><strong>${d.kode}</strong></td>
-      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis">${d.nama}</td>
-      <td style="font-size:.75rem">${d.sektor}</td>
-      <td>${fmtRp(d.harga)}</td>
-      <td class="${d.chg >= 0 ? 'pos' : 'neg'}">${d.chg >= 0 ? '+' : ''}${d.chg.toFixed(2)}%</td>
-      <td>${fmtNum(d.vol)}</td>
-      <td>${d.ma20 ? fmtRp(d.ma20) : '-'}</td>
-      <td>${d.ma50 ? fmtRp(d.ma50) : '-'}</td>
-      <td>${d.rsi ? d.rsi.toFixed(1) : '-'}</td>
-      <td>${d.support ? fmtRp(d.support) : '-'}</td>
-      <td>${d.resistance ? fmtRp(d.resistance) : '-'}</td>
-      <td><span class="badge ${d.skor >= 70 ? 'badge-green' : d.skor >= 50 ? 'badge-blue' : 'badge-yellow'}">${d.skor}</span></td>
-      <td style="font-size:.7rem;color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis">${d.sinyal}</td>
-    </tr>
-  `).join('');
+  $('#detailBody').innerHTML=`
+    <button class="close" onclick="document.getElementById('detailModal').classList.remove('show')">✕</button>
+    <h2>${esc(r.kode)} <span style="font-weight:400;font-size:14px;color:var(--muted)">${esc(r.nama||'')}</span></h2>
+    <div class="sub" style="margin-bottom:14px">${esc(r.sektor||'')} · ${esc(r.industri||'')} · ${skorCell(r.skor)} ${sinyalPill(r.sinyal)}
+      <span class="tag">sumber: ${esc(r.sumber_data||'–')}</span></div>
 
-  document.getElementById('tableInfo').textContent = `Menampilkan ${Math.min(filtered.length, 300)} dari ${filtered.length} emiten (dari total ${allData.length})`;
+    <div class="grid2">
+      <div>
+        <div class="stat"><span>Harga</span><b>${r.harga!=null?nf(r.harga,0):'–'}</b></div>
+        <div class="stat"><span>Perubahan</span>${pct(r.chg_pct)}</div>
+        <div class="stat"><span>Volume</span>${r.volume!=null?nf(r.volume,0):'–'}</div>
+        <div class="stat"><span>MA20 / MA50</span><span>${r.ma20!=null?nf(r.ma20,0):'–'} / ${r.ma50!=null?nf(r.ma50,0):'–'}</span></div>
+        <div class="stat"><span>RSI(14)</span>${r.rsi!=null?num(r.rsi,1):'–'}</div>
+        <div class="stat"><span>Support / Resistance</span><span>${r.support!=null?nf(r.support,0):'–'} / ${r.resistance!=null?nf(r.resistance,0):'–'}</span></div>
+        <div class="stat"><span>PER / PBV</span><span>${ratio(r.per,1)} / ${ratio(r.pbv,2)}</span></div>
+        <div class="stat"><span>ROE / DER</span><span>${roePct(r.roe)} / ${ratio(r.der,2)}</span></div>
+      </div>
+      <div>
+        <div style="font-weight:600;margin-bottom:6px">Skor ${sd.total!=null?sd.total.toFixed(1):'–'}/100</div>
+        ${comp('teknikal','Teknikal')}
+        ${comp('fundamental','Fundamental')}
+        ${comp('katalis','Katalis')}
+        ${sd.catatan?`<div class="note" style="margin-top:8px">⚠️ ${esc(sd.catatan)}</div>`:''}
+        <div style="margin-top:12px">
+          <div class="stat"><span>Saran target</span><b>${tgt!=null?nf(tgt,0):'–'}</b></div>
+          <div class="stat"><span>Saran cut loss</span><b>${cut!=null?nf(cut,0):'–'}</b></div>
+          <div class="stat"><span>Risk/Reward</span><b>${rr!=null?rr.toFixed(2)+'×':'–'}</b></div>
+        </div>
+        <div class="note" style="margin-top:6px">Target = resistance 20-hari (min +3%), cut = support 20-hari (maks −3%). Bukan rekomendasi.</div>
+      </div>
+    </div>
+
+    ${r.flag_waspada&&r.flag_waspada.length?`<div class="disclaimer" style="margin-top:12px">⚠️ Waspada: ${esc(r.flag_waspada.join(' · '))}</div>`:''}
+
+    <div style="margin-top:14px">
+      <div style="font-weight:600;margin-bottom:6px">Harga + MA20/MA50 + Volume</div>
+      <canvas id="chart" width="820" height="260" style="width:100%;height:auto"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--accent)"></i>Harga</span>
+        <span><i style="background:#e0a020"></i>MA20</span>
+        <span><i style="background:#8b5cf6"></i>MA50</span>
+        <span><i style="background:var(--muted)"></i>Volume</span>
+        <span class="na">Grafik dari 60 sesi snapshot terakhir yang tersedia.</span>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <div style="font-weight:600;margin-bottom:6px">Tren Skor Harian</div>
+      <canvas id="skorChart" width="820" height="130" style="width:100%;height:auto"></canvas>
+      <div class="legend"><span class="na" id="skorTrendInfo">–</span></div>
+    </div>
+
+    <div style="margin-top:14px">
+      ${det('teknikal')}${det('fundamental')}${det('katalis')}
+    </div>
+
+    <div style="margin-top:14px" class="note">
+      Diperbarui: ${esc(r.diperbarui_pada||'–')} · Sumber harga: ${esc(r.sumber_harga||'–')} · Sumber fundamental: ${esc(r.sumber_fundamental||'–')}
+    </div>
+    <div class="disclaimer">Hasil screening otomatis, bukan rekomendasi beli.</div>
+  `;
+  $('#detailModal').classList.add('show');
+  gambarChart(r.kode);
+  gambarTrenSkor(r.kode);
 }
 
-// Sort handlers
-document.querySelectorAll('#fullTable th[data-col]').forEach(th => {
-  th.addEventListener('click', () => {
-    const col = th.dataset.col;
-    if (sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
-    else { sortCol = col; sortDir = col === 'kode' || col === 'nama' || col === 'sektor' || col === 'sinyal' ? 'asc' : 'desc'; }
-    document.querySelectorAll('#fullTable th').forEach(t => t.classList.remove('sorted-asc', 'sorted-desc'));
-    th.classList.add(sortDir === 'asc' ? 'sorted-asc' : 'sorted-desc');
-    renderFullTable();
+/* tren skor dari snapshot harian */
+async function gambarTrenSkor(kode){
+  const cv=$('#skorChart'); if(!cv) return;
+  const ctx=cv.getContext('2d');
+  let pts=[];
+  try{
+    const idx=await fetchJson(SNAP_INDEX_URL);
+    const files=(idx&&idx.files)||[];
+    const snaps=await Promise.all(files.slice(-60).map(f=>fetchJson('data/snapshots/'+f).catch(()=>null)));
+    for(const s of snaps){
+      if(!s||!s.emiten) continue;
+      const e=s.emiten.find(x=>x.kode===kode);
+      if(e&&e.skor!=null) pts.push({t:s.tanggal,v:e.skor});
+    }
+  }catch(e){}
+  ctx.clearRect(0,0,cv.width,cv.height);
+  if(pts.length<2){
+    ctx.fillStyle=getCss('--muted'); ctx.font='12px sans-serif';
+    ctx.fillText('Butuh ≥2 snapshot harian untuk menampilkan tren skor.',10,22);
+    $('#skorTrendInfo').textContent='Tren mulai terlihat setelah pipeline menyimpan snapshot beberapa hari bursa.';
+    return;
+  }
+  const W=cv.width,H=cv.height,pad={l:34,r:10,t:10,b:20};
+  const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
+  const X=i=>pad.l+(pts.length===1?cw/2:(i/(pts.length-1))*cw);
+  const Y=v=>pad.t+ch-(v/100)*ch;
+  ctx.strokeStyle=getCss('--border'); ctx.lineWidth=1;
+  [0,50,100].forEach(v=>{ const y=Y(v); ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+    ctx.fillStyle=getCss('--muted'); ctx.font='10px sans-serif'; ctx.textAlign='right';
+    ctx.fillText(v,pad.l-5,y+3); });
+  ctx.strokeStyle=getCss('--up'); ctx.lineWidth=2; ctx.beginPath();
+  pts.forEach((p,i)=>{ i?ctx.lineTo(X(i),Y(p.v)):ctx.moveTo(X(i),Y(p.v)); }); ctx.stroke();
+  ctx.fillStyle=getCss('--muted'); ctx.font='10px sans-serif'; ctx.textAlign='left';
+  ctx.fillText(pts[0].t,pad.l,H-5);
+  ctx.textAlign='right'; ctx.fillText(pts[pts.length-1].t,W-pad.r,H-5);
+  const delta=pts[pts.length-1].v-pts[0].v;
+  $('#skorTrendInfo').textContent=`${pts.length} snapshot · skor ${pts[0].v.toFixed(1)} → ${pts[pts.length-1].v.toFixed(1)} (${delta>=0?'+':''}${delta.toFixed(1)})`;
+}
+
+/* grafik sederhana pakai canvas, data dari snapshot */
+async function gambarChart(kode){
+  const cv=$('#chart'); if(!cv) return;
+  const ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.fillStyle=getCss('--muted'); ctx.font='12px sans-serif';
+  ctx.fillText('Memuat riwayat…',10,20);
+  let bars=[];
+  try{
+    const idx=await fetchJson(SNAP_INDEX_URL);
+    const files=(idx&&idx.files)||[];
+    const pick=files.slice(-60);
+    const snaps=await Promise.all(pick.map(f=>fetchJson('data/snapshots/'+f).catch(()=>null)));
+    for(const s of snaps){
+      if(!s||!s.emiten) continue;
+      const e=s.emiten.find(x=>x.kode===kode);
+      if(e&&e.harga!=null) bars.push({t:s.tanggal,harga:e.harga});
+    }
+  }catch(e){}
+  ctx.clearRect(0,0,cv.width,cv.height);
+  if(bars.length<2){ ctx.fillStyle=getCss('--muted'); ctx.font='12px sans-serif';
+    ctx.fillText('Riwayat harga belum cukup (butuh ≥2 snapshot harian).',10,22); return; }
+
+  const W=cv.width,H=cv.height,pad={l:48,r:10,t:12,b:24};
+  const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
+  const hs=bars.map(b=>b.harga);
+  const mn=Math.min(...hs), mx=Math.max(...hs), rg=(mx-mn)||1;
+  const X=i=>pad.l+(bars.length===1?cw/2:(i/(bars.length-1))*cw);
+  const Y=v=>pad.t+ch-((v-mn)/rg)*ch;
+
+  // grid
+  ctx.strokeStyle=getCss('--border'); ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){ const y=pad.t+ch*i/4; ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+    ctx.fillStyle=getCss('--muted'); ctx.font='10px sans-serif'; ctx.textAlign='right';
+    ctx.fillText(Math.round(mx-rg*i/4).toLocaleString('id-ID'),pad.l-6,y+3); }
+  // garis harga
+  ctx.strokeStyle=getCss('--accent'); ctx.lineWidth=2; ctx.beginPath();
+  bars.forEach((b,i)=>{ i?ctx.lineTo(X(i),Y(b.harga)):ctx.moveTo(X(i),Y(b.harga)); }); ctx.stroke();
+  ctx.fillStyle=getCss('--accent');
+  bars.forEach((b,i)=>{ ctx.beginPath();ctx.arc(X(i),Y(b.harga),2,0,7);ctx.fill(); });
+  // label tanggal
+  ctx.fillStyle=getCss('--muted'); ctx.font='10px sans-serif'; ctx.textAlign='left';
+  ctx.fillText(bars[0].t,pad.l,H-8);
+  ctx.textAlign='right'; ctx.fillText(bars[bars.length-1].t,W-pad.r,H-8);
+}
+
+function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+async function fetchJson(u){ const r=await fetch(u+'?_='+Date.now(),{cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); }
+
+/* ---------- watchlist ---------- */
+function loadWL(){ try{ WATCHLIST=JSON.parse(localStorage.getItem(LS_WL)||'[]'); }catch(e){ WATCHLIST=[]; } }
+function saveWL(){ localStorage.setItem(LS_WL,JSON.stringify(WATCHLIST)); $('#wlCount').textContent=WATCHLIST.length?`(${WATCHLIST.length})`:''; }
+function renderWL(){
+  const cols=['kode','skor','sinyal','harga','chg_pct','rsi','per','pbv','roe','der'];
+  const map={kode:'Kode',skor:'Skor',sinyal:'Sinyal',harga:'Harga',chg_pct:'Chg%',rsi:'RSI',per:'PER',pbv:'PBV',roe:'ROE',der:'DER'};
+  $('#wlThead').innerHTML=cols.map(c=>`<th class="${c==='kode'?'stick':''}">${map[c]}</th>`).join('')+'<th>Aksi</th>';
+  if(!WATCHLIST.length){
+    $('#wlBody').innerHTML=`<tr><td colspan="${cols.length+1}" class="empty">Watchlist masih kosong. Tambahkan kode emiten di atas.</td></tr>`;
+    $('#wlInfo').textContent=''; return;
+  }
+  const rows=WATCHLIST.map(k=>cari(k)||{kode:k,_missing:true});
+  $('#wlBody').innerHTML=rows.map(r=>{
+    if(r._missing) return `<tr><td class="stick"><span class="kode">${esc(r.kode)}</span></td>
+      <td colspan="${cols.length}" class="na">tidak ada di universitas screening</td>
+      <td><button data-del="${esc(r.kode)}">Hapus</button></td></tr>`;
+    const cells=cols.map(c=>{
+      let v='';
+      if(c==='kode') v=`<span class="kode">${esc(r.kode)}</span>`;
+      else if(c==='skor') v=skorCell(r.skor);
+      else if(c==='sinyal') v=sinyalPill(r.sinyal);
+      else if(c==='harga') v=r.harga!=null?nf(r.harga,0):'<span class="na">–</span>';
+      else if(c==='chg_pct') v=pct(r.chg_pct);
+      else if(c==='rsi') v=r.rsi!=null?num(r.rsi,1):'<span class="na">–</span>';
+      else if(c==='per') v=ratio(r.per,1);
+      else if(c==='pbv') v=ratio(r.pbv,2);
+      else if(c==='roe') v=roePct(r.roe);
+      else if(c==='der') v=ratio(r.der,2);
+      return `<td class="${c==='kode'?'stick':''}">${v}</td>`;
+    }).join('');
+    return `<tr>${cells}<td><button data-del="${esc(r.kode)}">Hapus</button></td></tr>`;
+  }).join('');
+  $$('#wlBody button[data-del]').forEach(b=>b.onclick=()=>{
+    WATCHLIST=WATCHLIST.filter(x=>x!==b.dataset.del); saveWL(); renderWL();
   });
-});
+  $('#wlInfo').textContent=`${WATCHLIST.length} emiten dipantau · disimpan lokal di perangkat ini`;
+}
 
-['search', 'filterSektor', 'filterStatus', 'filterScore'].forEach(id => {
-  document.getElementById(id).addEventListener('input', renderFullTable);
-});
+/* ---------- backtest ---------- */
+async function loadBacktest(){
+  try{
+    const idx=await fetchJson(SNAP_INDEX_URL).catch(()=>null);
+    const files=(idx&&idx.files)||[];
+    if(files.length<2){
+      $('#btInfo').innerHTML='Belum ada cukup snapshot historis. Backtest mulai bisa dihitung setelah pipeline berjalan minimal 2 hari bursa.';
+      return;
+    }
+    const snaps={};
+    const loaded=await Promise.all(files.slice(-40).map(async f=>{
+      const s=await fetchJson('data/snapshots/'+f).catch(()=>null);
+      if(s&&s.tanggal) snaps[s.tanggal]=s;
+      return s;
+    }));
+    const dates=Object.keys(snaps).sort();
+    const horizons=[5,10,20];
+    const agg={};
+    for(let i=0;i<dates.length;i++){
+      const d=dates[i], s=snaps[d];
+      for(const e of (s.emiten||[])){
+        if(!e.sinyal||e.harga==null) continue;
+        let bucket=e.sinyal;
+        if(e.skor!=null&&e.skor>=70) bucket=bucket+' / skor≥70';
+        for(const h of horizons){
+          const j=i+h; if(j>=dates.length) continue;
+          const f=snaps[dates[j]].emiten.find(x=>x.kode===e.kode);
+          if(!f||f.harga==null||!e.harga) continue;
+          const ret=(f.harga/e.harga-1)*100;
+          const key=bucket+'|'+h;
+          agg[key]=agg[key]||{n:0,up:0,dn:0,sum:0};
+          agg[key].n++; if(ret>0)agg[key].up++; else if(ret<0)agg[key].dn++; agg[key].sum+=ret;
+        }
+      }
+    }
+    const keys=Object.keys(agg).sort((a,b)=>{
+      const [sa,ha]=a.split('|'),[sb,hb]=b.split('|');
+      return sa.localeCompare(sb)||(+ha)-(+hb);
+    });
+    if(!keys.length){
+      $('#btInfo').innerHTML='Snapshot ada, tetapi belum ada pasangan tanggal yang cukup untuk menghitung return 5/10/20 hari.';
+      return;
+    }
+    $('#btInfo').innerHTML=`Dihitung dari ${dates.length} snapshot (${dates[0]} → ${dates[dates.length-1]}). Sampel kecil = hasil belum bisa diandalkan.`;
+    $('#btBody').innerHTML=keys.map(k=>{
+      const [sig,h]=k.split('|'); const a=agg[k];
+      const wr=(a.up/a.n*100);
+      return `<tr><td style="text-align:left">${esc(sig)}</td><td>${h} hari</td><td>${a.n}</td>
+        <td class="up">${a.up}</td><td class="down">${a.dn}</td>
+        <td><b>${wr.toFixed(1)}%</b></td><td>${pct(a.sum/a.n)}</td></tr>`;
+    }).join('');
+  }catch(e){
+    $('#btInfo').textContent='Backtest tidak bisa dihitung: '+e.message;
+  }
+}
 
-loadData();
-setInterval(loadData, 300000); // refresh every 5 min
+/* ---------- risiko ---------- */
+function renderRisiko(){
+  const modal=+$('#rkModal').value||0, risk=+$('#rkRisk').value||0;
+  const entry=+$('#rkEntry').value||0, cut=+$('#rkCut').value||0, tgt=+$('#rkTarget').value||0;
+  const out=$('#rkOut');
+  if(!modal||!entry||!cut||entry<=cut){
+    out.innerHTML=`<div class="note">Isi modal, entry, dan cut loss (cut loss harus lebih rendah dari entry).</div>`; return;
+  }
+  const risikoRp=modal*risk/100;
+  const perSaham=entry-cut;
+  const lot=Math.floor(risikoRp/perSaham/100);      // 1 lot = 100 saham
+  const saham=lot*100;
+  const nilai=saham*entry;
+  const maksLot=Math.floor(modal/entry/100);
+  const dipakai=nilai/modal*100;
+  const rr=tgt>0?(tgt-entry)/perSaham:null;
+
+  out.innerHTML=`
+    <div class="stat"><span>Risiko maksimal</span><b>Rp ${nf(risikoRp,0)}</b></div>
+    <div class="stat"><span>Risiko per saham</span><b>Rp ${nf(perSaham,0)}</b></div>
+    <div class="stat"><span>Ukuran posisi</span><b>${nf(lot,0)} lot (${nf(saham,0)} saham)</b></div>
+    <div class="stat"><span>Nilai posisi</span><b>Rp ${nf(nilai,0)}</b></div>
+    <div class="stat"><span>% dari modal</span><b>${dipakai.toFixed(1)}%</b></div>
+    ${maksLot>lot?`<div class="note" style="margin-top:6px">Maksimal mampu ${nf(maksLot,0)} lot dengan modal ini — posisi di atas dibatasi oleh aturan risiko, bukan modal.</div>`:''}
+    ${lot===0?`<div class="disclaimer" style="margin-top:8px">Dengan risiko ${risk}%, modal ini belum cukup untuk 1 lot pada harga tersebut. Naikkan modal, turunkan entry, atau perlebar toleransi risiko.</div>`:''}
+    ${rr!=null?`<div class="stat" style="margin-top:8px"><span>Risk/Reward ke target</span><b>${rr.toFixed(2)}×</b></div>
+      <div class="note">${rr<1.5?'⚠️ R/R di bawah 1,5× — target terlalu dekat dibanding risiko.':(rr<2?'R/R cukup.':'R/R baik.')}</div>`:''}
+  `;
+}
+
+/* ---------- CSV ---------- */
+function unduhCSV(){
+  const cols=colsAktif().filter(c=>!c.sticky||c.always);
+  const rows=rowsTampil();
+  const head=cols.map(c=>c.t).join(';');
+  const body=rows.map(r=>cols.map(c=>{
+    let v=r[c.k];
+    if(v==null) return '';
+    if(c.k==='roe') return (v*100).toFixed(2).replace('.',',');
+    if(typeof v==='number') return String(v).replace('.',',');
+    return '"'+String(v).replace(/"/g,'""')+'"';
+  }).join(';')).join('\n');
+  const csv='\uFEFF'+head+'\n'+body;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download=`idx-screener-${(DATA.diperbarui_pada||'').slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(a.href);
+}
+
+/* ---------- init ---------- */
+function renderAll(){
+  renderTop10();
+  renderKPI();
+  const sek=new Set((DATA.emiten||[]).map(r=>r.sektor).filter(Boolean));
+  const cur=$('#fSektor').value;
+  $('#fSektor').innerHTML='<option value="">Semua sektor</option>'+
+    [...sek].sort().map(s=>`<option ${s===cur?'selected':''}>${esc(s)}</option>`).join('');
+  renderScreener(); renderWL(); renderRisiko();
+}
+
+function init(){
+  initTema();
+  try{ HIDDEN_COLS=new Set(JSON.parse(localStorage.getItem(LS_COLS)||'[]')); }catch(e){ HIDDEN_COLS=new Set(); }
+  loadWL(); saveWL();
+  renderColsPanel();
+
+  $('#btnRefresh').onclick=load;
+  $('#btnInfo').onclick=()=>$('#infoModal').classList.add('show');
+  $('#infoModal').onclick=e=>{ if(e.target.id==='infoModal') e.target.classList.remove('show'); };
+  $('#detailModal').onclick=e=>{ if(e.target.id==='detailModal') e.target.classList.remove('show'); };
+  $('#btnCols').onclick=()=>{ const p=$('#colsPanel'); p.style.display=p.style.display==='none'?'block':'none'; };
+  $('#btnCsv').onclick=unduhCSV;
+
+  $('#search').oninput=renderScreener;
+  $('#fSektor').onchange=renderScreener;
+  $('#fSinyal').onchange=renderScreener;
+  $('#fSkor').onchange=renderScreener;
+
+  $$('.tab').forEach(t=>t.onclick=()=>{
+    $$('.tab').forEach(x=>x.classList.remove('active'));
+    $$('.panel').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    $('#panel-'+t.dataset.tab).classList.add('active');
+    if(t.dataset.tab==='watchlist') renderWL();
+    if(t.dataset.tab==='akurasi') loadBacktest();
+    if(t.dataset.tab==='risiko') renderRisiko();
+    // Di layar sempit, tab aktif otomatis digeser ke tengah agar tidak terpotong
+    if(window.innerWidth<=700 && t.scrollIntoView){
+      t.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    }
+  });
+
+  $('#wlAdd').onclick=()=>{
+    const v=($('#wlInput').value||'').trim().toUpperCase();
+    if(!v) return;
+    if(!WATCHLIST.includes(v)){ WATCHLIST.push(v); saveWL(); renderWL(); }
+    $('#wlInput').value='';
+  };
+  $('#wlInput').onkeydown=e=>{ if(e.key==='Enter') $('#wlAdd').click(); };
+
+  ['#rkModal','#rkRisk','#rkEntry','#rkCut','#rkTarget'].forEach(s=>$(s).oninput=renderRisiko);
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){ $('#detailModal').classList.remove('show'); $('#infoModal').classList.remove('show'); }
+  });
+
+  load();
+}
+document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>
 </html>

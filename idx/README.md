@@ -16,8 +16,10 @@ HTML statis di `/root/idx-dashboard`.
 | `/root/scripts/idx/snapshot_index.py` | Membangun `data/snapshots/index.json` |
 | `/root/scripts/idx/notify.py` | Notifikasi Telegram |
 | `/root/scripts/idx/run_daily.py` | Wrapper cron (holiday guard) |
+| `/root/scripts/idx/history_store.py` | Menyimpan `data/history.json` (riwayat harga semua emiten) |
 | `/root/idx-dashboard/index.html` | Dashboard (self-contained, tanpa dependensi build) |
 | `/root/idx-dashboard/data/latest.json` | Output pipeline terakhir |
+| `/root/idx-dashboard/data/history.json` | Riwayat harga 120 sesi/emiten (SATU file) |
 | `/root/idx-dashboard/data/snapshots/` | Snapshot harian (skor per emiten per tanggal) |
 
 ## Satuan data (baku)
@@ -59,6 +61,38 @@ untuk `volume`: sumber yang tidak melaporkan volume menghasilkan `null`, bukan 0
 
 `latest.json` memuat `versi_skema` (saat ini `1.1.0`) dan peta `satuan`.
 Naikkan `VERSI_SKEMA` di `pipeline.py` setiap kali nama field atau satuan berubah.
+
+## Riwayat harga (Kelompok B)
+
+`data/history.json` — **SATU file** berisi riwayat harga semua emiten, maks
+**120 sesi bursa** per emiten. Format kolom (ringkas, ~3 MB untuk 975 emiten):
+
+```json
+{
+  "versi_skema": "1.2.0",
+  "sesi_maks": 120,
+  "jumlah_emiten": 975,
+  "jumlah_sesi": 117000,
+  "emiten": { "AALI": { "d": ["2026-04-23", "..."], "c": [8025.0, "..."], "v": [5180000, "..."] } }
+}
+```
+
+| Key | Isi | Satuan |
+|---|---|---|
+| `d` | Tanggal sesi (ISO) | `YYYY-MM-DD` |
+| `c` | Harga close | `IDR_per_lembar` |
+| `v` | Volume | `lembar_saham`, `null` = tidak dilaporkan sumber |
+
+Aturan:
+- Data diambil dari baris harga yang **sudah diunduh** `analyze_one` — tidak
+  menambah request jaringan sama sekali.
+- Emitten yang gagal diambil pada suatu run **dipertahankan** dari file lama
+  (`merge_lama`), jadi `history.json` tidak pernah bolong.
+- `volume` kosong tetap `null`, bukan `0`.
+- Ditulis **atomik** (file sementara → rename), sama seperti `latest.json`.
+- MA20/MA50 dihitung ulang di frontend dari seri `c` yang **sama** dengan
+  pipeline (`scoring.sma`), jadi angka chart dan angka tabel tidak berbeda.
+  Diverifikasi identik oleh `idx/test_history.py` (bagian 8).
 
 ## Menjalankan
 

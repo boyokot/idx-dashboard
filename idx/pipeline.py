@@ -26,6 +26,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from idx import providers as P  # noqa: E402
 from idx import scoring as S  # noqa: E402
 
+try:
+    from idx import history_store as HIST     # jalan sebagai modul paket
+except ImportError:
+    import history_store as HIST              # jalan sebagai script langsung
+
 REPO = "/root/idx-dashboard"
 DATA_DIR = os.path.join(REPO, "data")
 SNAP_DIR = os.path.join(DATA_DIR, "snapshots")
@@ -468,6 +473,16 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
 
     # median sektor untuk pembanding PER/PBV
     pe_med, pb_med = S.sector_medians(rows)
+
+    # (Kelompok B) Kumpulkan baris harga per emiten untuk history.json.
+    # diambil dari _bars yang SUDAH diunduh analyze_one — tanpa request
+    # tambahan, jadi history tidak menambah beban jaringan sama sekali.
+    bars_untuk_history: Dict[str, List[Dict[str, Any]]] = {}
+    for r in rows:
+        b = r.get("_bars")
+        if b:
+            bars_untuk_history[r["kode"]] = b
+
     for r in rows:
         fund_d = {"per": r.get("per"), "pbv": r.get("pbv"), "roe": r.get("roe"),
                   "der": r.get("der"), "earnings_growth": r.get("earnings_growth"),
@@ -525,6 +540,40 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
     out_path = os.path.join(DATA_DIR, out_name)
     _tulis_atomic(out_path, payload)
 
+    # ── (Kelompok B) history.json: SATU file riwayat harga untuk semua emiten ──
+    # Aman ditulis pada run parsial juga: merge_lama mempertahankan riwayat
+    # emiten yang gagal diambil pada run ini, jadi file tidak pernah bolong.
+    try:
+        hist_payload = HIST.build(
+            bars_untuk_history,
+            max_sesi=HIST.SESI_MAKS,
+            sumber=payload.get("sumber_utama", ""),
+        )
+        lama = HIST.load()
+        hist_payload, dipertahankan = HIST.merge_lama(hist_payload, lama)
+        # Kalau hasil akhirnya kosong TIDAK BOLEH menimpa history yang ada:
+        # lebih baik file lama (utuh) daripada file kosong.
+        if not hist_payload["emiten"] and lama and lama.get("emiten"):
+            print("[pipeline] history.json: run ini tidak menghasilkan baris "
+                  "-> file lama dipertahankan, tidak ditimpa", flush=True)
+            history_info = {"file": HIST.HISTORY_FILE,
+                            "emiten": len(lama.get("emiten", {})),
+                            "sesi": sum(len(x.get("d", []))
+                                       for x in lama.get("emiten", {}).values()),
+                            "dipertahankan": True}
+        else:
+            HIST.publish(hist_payload)
+            print(f"[pipeline] history.json: {hist_payload['jumlah_emiten']} emiten, "
+                  f"{hist_payload['jumlah_sesi']} sesi"
+                  + (f" ({dipertahankan} emiten dipertahankan dari run lama)"
+                     if dipertahankan else ""), flush=True)
+            history_info = {"file": HIST.HISTORY_FILE,
+                            "emiten": hist_payload["jumlah_emiten"],
+                            "sesi": hist_payload["jumlah_sesi"]}
+    except Exception as e:
+        print(f"[pipeline] history.json GAGAL: {type(e).__name__}: {e}", flush=True)
+        history_info = None
+
     # Snapshot harian hanya ditulis oleh run LENGAP. Run uji/partial akan
     # menimpa snapshot harian dengan data sebagian dan merusak riwayat skor.
     run_penuh = len(emiten) >= total_universe
@@ -534,6 +583,7 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
               f"-> snapshot harian tidak ditimpa", flush=True)
         return {"ok": True, "out": out_path, "snapshot": None,
                 "jumlah": len(rows),
+                "history": history_info,
                 "ada_harga": payload["jumlah_ada_harga"],
                 "ada_fundamental": payload["jumlah_ada_fundamental"]}
 
@@ -559,6 +609,7 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
 
     return {"ok": True, "out": out_path, "snapshot": snap,
             "jumlah": len(rows),
+            "history": history_info,
             "ada_harga": payload["jumlah_ada_harga"],
             "ada_fundamental": payload["jumlah_ada_fundamental"]}
 

@@ -364,6 +364,11 @@ const LIBUR_BURSA_FALLBACK = [
   '2027-05-17','2027-06-01','2027-08-17','2027-09-15',
 ];
 const SNAP_INDEX_URL = 'data/snapshots/index.json';
+/* (Kelompok B) SATU file riwayat harga untuk semua emiten.
+   Format kolom: {kode: {d:[tanggal], c:[close], v:[volume]}} */
+const HISTORY_URL = 'data/history.json';
+let HISTORY = null;           // cache di memori, isi = {emiten:{...}}
+let HISTORY_PROMISE = null;   // supaya 1 fetch saja walau modal dibuka berkali-kali
 let DATA = null;
 let SORT = {key:'skor', dir:-1};
 let WATCHLIST = [];
@@ -723,13 +728,13 @@ function bukaDetail(kode){
 
     <div style="margin-top:14px">
       <div style="font-weight:600;margin-bottom:6px">Harga + MA20/MA50 + Volume</div>
-      <canvas id="chart" width="820" height="260" style="width:100%;height:auto"></canvas>
+      <canvas id="chart" width="820" height="280" style="width:100%;height:auto"></canvas>
       <div class="legend">
-        <span><i style="background:var(--accent)"></i>Harga</span>
+        <span><i style="background:var(--accent)"></i>Harga (close)</span>
         <span><i style="background:#e0a020"></i>MA20</span>
         <span><i style="background:#8b5cf6"></i>MA50</span>
         <span><i style="background:var(--muted)"></i>Volume</span>
-        <span class="na">Grafik dari 60 sesi snapshot terakhir yang tersedia.</span>
+        <span class="na" id="chartInfo">–</span>
       </div>
     </div>
 
@@ -792,50 +797,160 @@ async function gambarTrenSkor(kode){
   $('#skorTrendInfo').textContent=`${pts.length} snapshot · skor ${fx(pts[0].v,1)} → ${fx(pts[pts.length-1].v,1)} (${delta>=0?'+':''}${fx(delta,1)})`;
 }
 
-/* grafik sederhana pakai canvas, data dari snapshot */
+/* ---------- (Kelompok B) history.json: 1 file untuk semua emiten ---------- */
+/* Muat history.json SEKALI lalu pakai cache. Modal bisa dibuka berkali-kali
+   tanpa fetch ulang. Kalau file belum ada -> pesan jelas, bukan crash. */
+async function muatHistory(){
+  if(HISTORY) return HISTORY;
+  if(HISTORY_PROMISE) return HISTORY_PROMISE;
+  HISTORY_PROMISE=(async()=>{
+    try{
+      const j=await fetchJson(HISTORY_URL);
+      if(j && j.emiten && typeof j.emiten==='object'){
+        HISTORY=j;
+      }else{
+        HISTORY={emiten:{}, alasan:'format history.json tidak dikenali'};
+      }
+    }catch(e){
+      HISTORY={emiten:{}, alasan:String(e.message||e)};
+    }
+    HISTORY_PROMISE=null;
+    return HISTORY;
+  })();
+  return HISTORY_PROMISE;
+}
+
+/* MA n-sesi. Menghitung ulang dari seri close yang SAMA dengan pipeline
+   (scoring.sma = mean window terakhir n) supaya garis MA di chart dan
+   angka MA di latest.json tidak berbeda. Sumbu dirata-ratakan kiri->kanan
+   seperti Python, jadi hasilnya identik. */
+function maSeri(vals,n){
+  const out=new Array(vals.length).fill(null);
+  for(let i=n-1;i<vals.length;i++){
+    let s=0;
+    for(let j=i-n+1;j<=i;j++) s+=vals[j];
+    out[i]=s/n;
+  }
+  return out;
+}
+
+/* grafik harga + MA20/MA50 + volume dari SATU file history.json */
 async function gambarChart(kode){
   const cv=$('#chart'); if(!cv) return;
   const ctx=cv.getContext('2d');
   ctx.clearRect(0,0,cv.width,cv.height);
   ctx.fillStyle=getCss('--muted'); ctx.font='12px sans-serif';
   ctx.fillText('Memuat riwayat…',10,20);
-  let bars=[];
-  try{
-    const idx=await fetchJson(SNAP_INDEX_URL);
-    const files=(idx&&idx.files)||[];
-    const pick=files.slice(-60);
-    const snaps=await Promise.all(pick.map(f=>fetchJson('data/snapshots/'+f).catch(()=>null)));
-    for(const s of snaps){
-      if(!s||!s.emiten) continue;
-      const e=s.emiten.find(x=>x.kode===kode);
-      if(e&&e.harga!=null) bars.push({t:s.tanggal,harga:e.harga});
+
+  const hist=await muatHistory();
+  const ent=hist&&hist.emiten?hist.emiten[kode]:null;
+  const info=$('#chartInfo');
+
+  const gagal=(pesan)=>{
+    ctx.clearRect(0,0,cv.width,cv.height);
+    ctx.fillStyle=getCss('--muted'); ctx.font='12px sans-serif';
+    ctx.fillText(pesan,10,22);
+    if(info) info.textContent=pesan;
+  };
+
+  if(!ent||!ent.d||ent.d.length<2){
+    const alasan=hist&&hist.alasan?hist.alasan:'';
+    gagal('Riwayat harga belum tersedia untuk '+kode+(alasan?' ('+alasan+')':'.')+
+          ' Pipeline perlu menulis data/history.json.');
+    return;
+  }
+
+  const tgl=ent.d, closes=ent.c, vols=ent.v||[];
+  const n=tgl.length;
+  const ma20=maSeri(closes,20), ma50=maSeri(closes,50);
+
+  /* ── layout: panel harga atas, panel volume bawah ── */
+  const W=cv.width, H=cv.height;
+  const pad={l:54,r:10};
+  const hargaTop=12, hargaBot=190;
+  const volTop=206, volBot=266;
+
+  /* skala harga: tutup + MA yang ada (bukan 0) */
+  let mn=Infinity, mx=-Infinity;
+  for(let i=0;i<n;i++){
+    for(const s of [closes[i],ma20[i],ma50[i]]){
+      if(s!=null && !Number.isNaN(s)){ if(s<mn)mn=s; if(s>mx)mx=s; }
     }
-  }catch(e){}
-  ctx.clearRect(0,0,cv.width,cv.height);
-  if(bars.length<2){ ctx.fillStyle=getCss('--muted'); ctx.font='12px sans-serif';
-    ctx.fillText('Riwayat harga belum cukup (butuh ≥2 snapshot harian).',10,22); return; }
+  }
+  if(!isFinite(mn)||!isFinite(mx)){ gagal('Data harga tidak valid untuk '+kode); return; }
+  const rg=(mx-mn)||1;
+  const plotW=W-pad.l-pad.r;
+  const X=i=>pad.l+(n===1?plotW/2:(i/(n-1))*plotW);
+  const Y=v=>hargaBot-((v-mn)/rg)*(hargaBot-hargaTop);
 
-  const W=cv.width,H=cv.height,pad={l:48,r:10,t:12,b:24};
-  const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
-  const hs=bars.map(b=>b.harga);
-  const mn=Math.min(...hs), mx=Math.max(...hs), rg=(mx-mn)||1;
-  const X=i=>pad.l+(bars.length===1?cw/2:(i/(bars.length-1))*cw);
-  const Y=v=>pad.t+ch-((v-mn)/rg)*ch;
+  /* skala volume: hanya nilai yang ada (null = tidak dilaporkan) */
+  let vmax=0;
+  for(let i=0;i<n;i++){ const v=vols[i]; if(v!=null && !Number.isNaN(v) && v>vmax) vmax=v; }
+  const VW=Math.max(1,plotW/n*0.7);
+  const VY=v=> vmax>0 ? volBot-(v/vmax)*(volBot-volTop) : volBot;
 
-  // grid
+  /* ── grid + label harga ── */
   ctx.strokeStyle=getCss('--border'); ctx.lineWidth=1;
-  for(let i=0;i<=4;i++){ const y=pad.t+ch*i/4; ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
-    ctx.fillStyle=getCss('--muted'); ctx.font='10px sans-serif'; ctx.textAlign='right';
-    ctx.fillText(Math.round(mx-rg*i/4).toLocaleString('id-ID'),pad.l-6,y+3); }
-  // garis harga
-  ctx.strokeStyle=getCss('--accent'); ctx.lineWidth=2; ctx.beginPath();
-  bars.forEach((b,i)=>{ i?ctx.lineTo(X(i),Y(b.harga)):ctx.moveTo(X(i),Y(b.harga)); }); ctx.stroke();
-  ctx.fillStyle=getCss('--accent');
-  bars.forEach((b,i)=>{ ctx.beginPath();ctx.arc(X(i),Y(b.harga),2,0,7);ctx.fill(); });
-  // label tanggal
+  ctx.font='10px sans-serif'; ctx.textAlign='right';
+  for(let i=0;i<=4;i++){
+    const y=hargaTop+(hargaBot-hargaTop)*i/4;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+    ctx.fillStyle=getCss('--muted');
+    ctx.fillText(Math.round(mx-rg*i/4).toLocaleString('id-ID'),pad.l-6,y+3);
+  }
+  /* pemisah panel volume */
+  ctx.strokeStyle=getCss('--border');
+  ctx.beginPath();ctx.moveTo(pad.l,volTop-8);ctx.lineTo(W-pad.r,volTop-8);ctx.stroke();
+  ctx.textAlign='right'; ctx.fillStyle=getCss('--muted');
+  ctx.fillText(vmax>0?Math.round(vmax).toLocaleString('id-ID'):'–',pad.l-6,volTop+4);
+  ctx.textAlign='left';
+  ctx.fillText('Volume',pad.l-46,volTop+4);
+
+  /* ── garis MA50 lalu MA20 lalu harga (harga paling atas) ── */
+  const garis=(seri,warna)=>{
+    ctx.strokeStyle=warna; ctx.lineWidth=1.5; ctx.beginPath();
+    let mulai=false;
+    for(let i=0;i<n;i++){
+      const v=seri[i];
+      if(v==null||Number.isNaN(v)){ mulai=false; continue; }
+      if(!mulai){ ctx.moveTo(X(i),Y(v)); mulai=true; } else ctx.lineTo(X(i),Y(v));
+    }
+    ctx.stroke();
+  };
+  garis(ma50,'#8b5cf6');
+  garis(ma20,'#e0a020');
+  garis(closes,getCss('--accent'));
+
+  /* ── volume bars ── */
+  ctx.fillStyle=getCss('--muted');
+  for(let i=0;i<n;i++){
+    const v=vols[i];
+    if(v==null||Number.isNaN(v)) continue;
+    const y=VY(v);
+    ctx.globalAlpha=0.5;
+    ctx.fillRect(X(i)-VW/2,y,VW,volBot-y);
+    ctx.globalAlpha=1;
+  }
+
+  /* ── label tanggal ── */
   ctx.fillStyle=getCss('--muted'); ctx.font='10px sans-serif'; ctx.textAlign='left';
-  ctx.fillText(bars[0].t,pad.l,H-8);
-  ctx.textAlign='right'; ctx.fillText(bars[bars.length-1].t,W-pad.r,H-8);
+  ctx.fillText(tgl[0],pad.l,H-8);
+  ctx.textAlign='center';
+  if(n>2) ctx.fillText(tgl[Math.floor(n/2)],pad.l+plotW/2,H-8);
+  ctx.textAlign='right';
+  ctx.fillText(tgl[n-1],W-pad.r,H-8);
+
+  /* ── legenda jujur: hanya seri yang benar-benar digambar ── */
+  if(info){
+    const adaMa20=ma20.some(v=>v!=null), adaMa50=ma50.some(v=>v!=null);
+    const adaVol=vols.some(v=>v!=null);
+    const bagian=[`${n} sesi bursa`];
+    bagian.push(adaMa20?`MA20 (mulai sesi ke-20)`:'MA20 tidak ada (butuh ≥20 sesi)');
+    if(n>=50) bagian.push(adaMa50?`MA50 (mulai sesi ke-50)`:'MA50 tidak ada');
+    else bagian.push('MA50 tidak ada (butuh ≥50 sesi)');
+    bagian.push(adaVol?'Volume (bar bawah)':'Volume tidak dilaporkan sumber');
+    info.textContent=bagian.join(' · ');
+  }
 }
 
 function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }

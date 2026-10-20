@@ -21,14 +21,16 @@ sys.path.insert(0, "/root/scripts")
 from idx import history_store as H  # noqa: E402
 
 LULUT = 0
+GAGAL = 0
 
 
 def cek(nama, kondisi, detail=""):
-    global LULUT
+    global LULUT, GAGAL
     if kondisi:
         LULUT += 1
         print(f"  OK   {nama}")
     else:
+        GAGAL += 1
         print(f"  FAIL {nama} {detail}")
 
 
@@ -152,5 +154,5 @@ cek("MA20 titik terakhir = 14,5",
     abs(ma[-1] - (19 * 10 + 100) / 20) < 1e-9, f"dapat {ma[-1]}")
 
 print()
-print(f"== TOTAL: {LULUT} tes lulus ==")
-sys.exit(0 if LULUT >= 30 else 1)
+print(f"== TOTAL: {LULUT} tes lulus, {GAGAL} gagal ==")
+sys.exit(0 if GAGAL == 0 else 1)

@@ -426,20 +426,9 @@ def _komponen_skor(r: Dict[str, Any], nama: str) -> Optional[float]:
 
 def _sinyal_label(ind: Dict[str, Any], tech: Dict[str, Any],
                   cat: Dict[str, Any]) -> str:
-    """Label sinyal ringkas: Breakout / Tembus Support / Waspada / Normal."""
-    if not ind:
-        # tidak ada baris harga sama sekali -> jangan beri label "Normal"
-        return "Data tidak tersedia"
-    if ind.get("support_break"):
-        return "Tembus Support"
-    if ind.get("breakout") and ind.get("vol_surge"):
-        return "Breakout"
-    if ind.get("breakout"):
-        return "Breakout (volume tipis)"
-    r = ind.get("rsi")
-    if r is not None and r > 75:
-        return "Waspada (RSI jenuh)"
-    return "Normal"
+    """Label sinyal ringkas. Delegasi ke S.label_sinyal supaya definisinya
+    SATU dengan modul backtest (tidak bisa melenceng)."""
+    return S.label_sinyal(ind)
 
 
 def run(universe_limit: int = 0, dengan_katalis: bool = True,
@@ -607,9 +596,35 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
         import snapshot_index                    # jalan sebagai script langsung
     snapshot_index.build()
 
+    # ── backtest vs IHSG (Kelompok C) ──────────────────────────────
+    # Dihitung dari history.json yang baru saja dipublish, jadi selalu
+    # konsisten dengan data yang dilihat dashboard. Kegagalan backtest
+    # TIDAK boleh menggagalkan pipeline: latest.json sudah aman ditulis,
+    # backtest lama (kalau ada) dibiarkan apa adanya.
+    backtest_info: Dict[str, Any] = {"ok": False, "alasan": "belum dijalankan"}
+    try:
+        try:
+            from idx import backtest as BT          # sebagai paket
+        except ImportError:
+            import backtest as BT                    # sebagai script langsung
+        bt = BT.build(tulis=True)
+        if bt.get("ok"):
+            c = bt.get("cakupan") or {}
+            backtest_info = {"ok": True,
+                             "emiten": c.get("emiten_dipakai"),
+                             "titik": c.get("titik_dihitung"),
+                             "ihsg_bar": bt.get("ihsg_bar")}
+        else:
+            backtest_info = {"ok": False, "alasan": bt.get("error")}
+            print(f"[pipeline] backtest dilewati: {bt.get('error')}", flush=True)
+    except Exception as e:  # jangan sampai mematikan publish utama
+        backtest_info = {"ok": False, "alasan": f"{type(e).__name__}: {e}"}
+        print(f"[pipeline] backtest error: {type(e).__name__}: {e}", flush=True)
+
     return {"ok": True, "out": out_path, "snapshot": snap,
             "jumlah": len(rows),
             "history": history_info,
+            "backtest": backtest_info,
             "ada_harga": payload["jumlah_ada_harga"],
             "ada_fundamental": payload["jumlah_ada_fundamental"]}
 

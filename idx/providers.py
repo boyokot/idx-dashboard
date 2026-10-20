@@ -267,7 +267,13 @@ def yfinance_history(symbol: str, period: str = "6mo",
     Riwayat OHLCV via yfinance. Dipakai kalau Sectors gagal/kosong.
     Mengembalikan list baris: {date, open, high, low, close, volume}.
     """
-    sym = f"{symbol.upper()}.JK"
+    # Indeks (^JKSE) & simbol yang sudah berakhiran .JK TIDAK boleh diberi
+    # suffix .JK lagi — kalau diberi, yfinance mencari "^JKSE.JK" dan gagal.
+    up = symbol.strip().upper()
+    if up.startswith("^") or up.endswith(".JK"):
+        sym = up
+    else:
+        sym = f"{up}.JK"
     ck = f"yf::hist::{sym}::{period}"
     if use_cache:
         hit = cache_get(ck, 1800)

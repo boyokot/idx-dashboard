@@ -207,6 +207,28 @@ def score_technical(bars: List[Dict[str, Any]]) -> Dict[str, Any]:
             "indikator": indikator}
 
 
+def label_sinyal(ind: Optional[Dict[str, Any]]) -> str:
+    """Label sinyal ringkas dari indikator teknikal.
+
+    Dipakai BERSAMA oleh pipeline (label hari ini) dan modul backtest
+    (label historis). Ditaruh di sini supaya keduanya tidak pernah
+    berbeda definisi — kalau logika label diubah, backtest ikut berubah.
+    """
+    if not ind:
+        # tidak ada baris harga sama sekali -> jangan beri label "Normal"
+        return "Data tidak tersedia"
+    if ind.get("support_break"):
+        return "Tembus Support"
+    if ind.get("breakout") and ind.get("vol_surge"):
+        return "Breakout"
+    if ind.get("breakout"):
+        return "Breakout (volume tipis)"
+    r = ind.get("rsi")
+    if r is not None and r > 75:
+        return "Waspada (RSI jenuh)"
+    return "Normal"
+
+
 # ───────────────────────── fundamental (40%) ─────────────────────────
 
 def _band(v: Optional[float], bands: List[Tuple[float, int, str]]

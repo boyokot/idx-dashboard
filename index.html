@@ -266,22 +266,31 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
   <!-- AKURASI -->
   <div class="panel" id="panel-akurasi">
     <div class="card">
-      <h2 style="font-size:15px;margin:0 0 8px">Akurasi Sinyal Historis</h2>
+      <h2 style="font-size:15px;margin:0 0 8px">Akurasi Sinyal vs IHSG</h2>
       <div class="note" id="btInfo">Memuat…</div>
     </div>
     <div class="tbl-wrap">
       <table><thead><tr>
-        <th style="text-align:left">Sinyal</th><th>Periode</th><th>Jumlah sinyal</th>
-        <th>Naik</th><th>Turun</th><th>% Naik</th><th>Rata-rata return</th>
+        <th style="text-align:left">Sinyal</th><th>Sesi</th><th>Jumlah</th>
+        <th>Rata-rata</th><th>IHSG</th><th>Selisih</th><th>% Naik</th><th>Terburuk</th>
       </tr></thead><tbody id="btBody"></tbody></table>
     </div>
     <div class="card" style="margin-top:14px">
-      <div class="note">
-        Backtest memakai snapshot harian yang tersimpan di <code>data/snapshots/</code>.
-        Hasil ditampilkan apa adanya, termasuk bila buruk. Angka kecil = sampel belum
-        cukup, jangan dijadikan patokan. Metode: sinyal diambil dari snapshot tanggal T,
-        lalu return dihitung dari harga T ke T+5/T+10/T+20 sesi bursa berikutnya yang
-        snapshotnya tersedia.
+      <h2 style="font-size:15px;margin:0 0 8px">Akurasi per Kelompok Skor</h2>
+      <div class="note" id="btSkorInfo" style="margin-bottom:10px"></div>
+      <div class="tbl-wrap">
+        <table><thead><tr>
+          <th style="text-align:left">Kelompok skor</th><th>Sesi</th><th>Jumlah</th>
+          <th>Rata-rata</th><th>IHSG</th><th>Selisih</th><th>% Naik</th>
+        </tr></thead><tbody id="btSkorBody"></tbody></table>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="note" id="btCatatan">
+        Backtest dihitung pipeline dari <code>data/history.json</code> dengan pembanding IHSG
+        pada tanggal yang sama. Horizon dalam <b>sesi bursa</b> (bukan hari kalender), jadi
+        5 sesi bisa berarti 7 hari kalender bila melewati akhir pekan. Hasil ditampilkan apa
+        adanya, termasuk bila buruk.
       </div>
     </div>
   </div>
@@ -367,6 +376,9 @@ const SNAP_INDEX_URL = 'data/snapshots/index.json';
 /* (Kelompok B) SATU file riwayat harga untuk semua emiten.
    Format kolom: {kode: {d:[tanggal], c:[close], v:[volume]}} */
 const HISTORY_URL = 'data/history.json';
+/* (Kelompok C) Hasil backtest vs IHSG, dihitung pipeline dari history.json.
+   Berisi per_sinyal & per_skor untuk horizon 5/10/20 SESI BURSA. */
+const BACKTEST_URL = 'data/backtest.json';
 let HISTORY = null;           // cache di memori, isi = {emiten:{...}}
 let HISTORY_PROMISE = null;   // supaya 1 fetch saja walau modal dibuka berkali-kali
 let DATA = null;
@@ -996,11 +1008,93 @@ function renderWL(){
 
 /* ---------- backtest ---------- */
 async function loadBacktest(){
+  /* (Kelompok C) Sumber utama = data/backtest.json yang dihitung pipeline
+     dari history.json, dengan IHSG sebagai pembanding pada tanggal yang sama.
+     Fallback ke snapshot harian lama HANYA kalau backtest.json belum ada,
+     supaya fitur lama tidak hilang di deployment yang belum menjalankan
+     pipeline versi baru. */
+  try{
+    const bt = await fetchJson(BACKTEST_URL).catch(()=>null);
+    if(bt && bt.per_sinyal && Object.keys(bt.per_sinyal).length){
+      renderBacktest(bt);
+      return;
+    }
+    await loadBacktestSnapshot();
+  }catch(e){
+    $('#btInfo').textContent='Backtest tidak bisa dihitung: '+e.message;
+  }
+}
+
+function renderBacktest(bt){
+  const cak = bt.cakupan || {};
+  const per = bt.horizon_sesi || [5,10,20];
+  $('#btInfo').innerHTML =
+    `Dihitung dari <b>${fx(cak.titik_dihitung||0,0)}</b> titik sinyal pada ` +
+    `<b>${fx(cak.emiten_dipakai||0,0)}</b> emiten (dari ${fx(cak.emiten_history||0,0)} yang punya riwayat harga). ` +
+    `Selisih = rata-rata emiten − IHSG pada tanggal yang sama` +
+    (cak.titik_tanpa_ihsg ? `; ${fx(cak.titik_tanpa_ihsg,0)} titik dibuang karena IHSG tidak tersedia di tanggal itu` : '') +
+    `.`;
+
+  const urut = Object.keys(bt.per_sinyal || {}).sort();
+  const baris = [];
+  for(const sig of urut){
+    for(const h of per){
+      const st = (bt.per_sinyal[sig]||{})[String(h)];
+      if(!st || !st.n) continue;
+      const exc = st.excess;
+      const cls = exc==null ? '' : (exc>0 ? 'up' : (exc<0 ? 'down' : ''));
+      baris.push(`<tr>
+        <td style="text-align:left">${esc(sig)}</td><td>${h}</td><td>${fx(st.n,0)}</td>
+        <td>${st.rata2==null?'—':pct(st.rata2)}</td>
+        <td>${st.ihsg_rata2==null?'—':pct(st.ihsg_rata2)}</td>
+        <td class="${cls}"><b>${exc==null?'—':pct(exc)}</b></td>
+        <td>${st.menang==null?'—':fx(st.menang,1)+'%'}</td>
+        <td>${st.terburuk==null?'—':pct(st.terburuk)}</td>
+      </tr>`);
+    }
+  }
+  $('#btBody').innerHTML = baris.length ? baris.join('')
+    : '<tr><td colspan="8" style="text-align:left">Belum ada titik sinyal yang bisa dihitung.</td></tr>';
+
+  /* tabel per kelompok skor */
+  const kel = bt.per_skor || {};
+  const namaKel = Object.keys(kel).sort();
+  const barisSkor = [];
+  for(const k of namaKel){
+    for(const h of per){
+      const st = (kel[k]||{})[String(h)];
+      if(!st || !st.n) continue;
+      const exc = st.excess;
+      const cls = exc==null ? '' : (exc>0 ? 'up' : (exc<0 ? 'down' : ''));
+      barisSkor.push(`<tr>
+        <td style="text-align:left">${esc(k)}</td><td>${h}</td><td>${fx(st.n,0)}</td>
+        <td>${st.rata2==null?'—':pct(st.rata2)}</td>
+        <td>${st.ihsg_rata2==null?'—':pct(st.ihsg_rata2)}</td>
+        <td class="${cls}"><b>${exc==null?'—':pct(exc)}</b></td>
+        <td>${st.menang==null?'—':fx(st.menang,1)+'%'}</td>
+      </tr>`);
+    }
+  }
+  $('#btSkorBody').innerHTML = barisSkor.length ? barisSkor.join('')
+    : '<tr><td colspan="7" style="text-align:left">Belum ada data per kelompok skor.</td></tr>';
+  $('#btSkorInfo').textContent =
+    'Skor hari itu dibagi tiga kelompok. Kalau skor tinggi tidak unggul, artinya skor belum berguna sebagai penyaring.';
+
+  /* catatan risiko dari pipeline, ditampilkan apa adanya */
+  const risiko = Array.isArray(bt.catatan_risiko) ? bt.catatan_risiko : [];
+  if(risiko.length){
+    $('#btCatatan').innerHTML =
+      '<b>Yang perlu diwaspadai:</b><ul style="margin:6px 0 0 18px;padding:0">' +
+      risiko.map(r=>`<li>${esc(r)}</li>`).join('') + '</ul>';
+  }
+}
+
+async function loadBacktestSnapshot(){
   try{
     const idx=await fetchJson(SNAP_INDEX_URL).catch(()=>null);
     const files=(idx&&idx.files)||[];
     if(files.length<2){
-      $('#btInfo').innerHTML='Belum ada cukup snapshot historis. Backtest mulai bisa dihitung setelah pipeline berjalan minimal 2 hari bursa.';
+      $('#btInfo').innerHTML='Belum ada data backtest. Jalankan pipeline untuk membuat <code>data/backtest.json</code>.';
       return;
     }
     const snaps={};
@@ -1034,17 +1128,18 @@ async function loadBacktest(){
       return sa.localeCompare(sb)||(+ha)-(+hb);
     });
     if(!keys.length){
-      $('#btInfo').innerHTML='Snapshot ada, tetapi belum ada pasangan tanggal yang cukup untuk menghitung return 5/10/20 hari.';
+      $('#btInfo').innerHTML='Snapshot ada, tetapi belum ada pasangan tanggal yang cukup untuk menghitung return 5/10/20 sesi.';
       return;
     }
-    $('#btInfo').innerHTML=`Dihitung dari ${dates.length} snapshot (${dates[0]} → ${dates[dates.length-1]}). Sampel kecil = hasil belum bisa diandalkan.`;
+    $('#btInfo').innerHTML=`Mode cadangan: dihitung dari ${dates.length} snapshot (${dates[0]} → ${dates[dates.length-1]}), tanpa pembanding IHSG. Sampel kecil = hasil belum bisa diandalkan.`;
     $('#btBody').innerHTML=keys.map(k=>{
       const [sig,h]=k.split('|'); const a=agg[k];
       const wr=(a.up/a.n*100);
-      return `<tr><td style="text-align:left">${esc(sig)}</td><td>${h} hari</td><td>${a.n}</td>
-        <td class="up">${a.up}</td><td class="down">${a.dn}</td>
-        <td><b>${fx(wr,1)}%</b></td><td>${pct(a.sum/a.n)}</td></tr>`;
+      return `<tr><td style="text-align:left">${esc(sig)}</td><td>${h}</td><td>${a.n}</td>
+        <td>${pct(a.sum/a.n)}</td><td>—</td><td>—</td><td>${fx(wr,1)}%</td><td>—</td></tr>`;
     }).join('');
+    $('#btSkorBody').innerHTML='<tr><td colspan="7" style="text-align:left">Tidak tersedia di mode cadangan.</td></tr>';
+    $('#btSkorInfo').textContent='';
   }catch(e){
     $('#btInfo').textContent='Backtest tidak bisa dihitung: '+e.message;
   }

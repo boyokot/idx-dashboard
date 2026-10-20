@@ -94,6 +94,45 @@ Aturan:
   pipeline (`scoring.sma`), jadi angka chart dan angka tabel tidak berbeda.
   Diverifikasi identik oleh `idx/test_history.py` (bagian 8).
 
+## Backtest sinyal vs IHSG (Kelompok C)
+
+`data/backtest.json` — dihitung pipeline dari `history.json` + bar `^JKSE`,
+lalu ditampilkan di tab **Akurasi Sinyal**.
+
+```json
+{
+  "versi_skema": "1.3.0",
+  "ok": true,
+  "horizon_sesi": [5, 10, 20],
+  "cakupan": { "emiten_history": 916, "emiten_dipakai": 916,
+               "titik_dihitung": 69333, "titik_tanpa_ihsg": 0 },
+  "per_sinyal": { "Breakout": { "20": { "n": 3041, "rata2": 0.0489,
+                  "ihsg_rata2": -0.0037, "excess": 0.0526,
+                  "menang": 48.7, "terburuk": -0.9648 } } },
+  "per_skor": { "tinggi": { "20": { "n": 5748, "excess": 0.0459 } } },
+  "catatan_risiko": ["..."]
+}
+```
+
+Aturan yang **tidak boleh dilanggar** (semua diuji `idx/test_backtest.py`):
+
+| Aturan | Kenapa |
+|---|---|
+| Horizon = **sesi bursa**, bukan hari kalender | 5 sesi = 7 hari kalender (melompati Sabtu-Minggu). Hari libur bursa dilewati. |
+| Pembanding IHSG pada **tanggal yang sama** | Kalau IHSG diambil dari tanggal lain, `excess` jadi omong kosong. |
+| Titik tanpa IHSG **dibuang**, bukan diisi 0 | Mengisi 0 membuat `excess` seolah-olah mengalahkan pasar. |
+| **Tidak ada look-ahead** | Label di titik *i* hanya memakai bar ≤ *i*. Diuji dengan dua seri identik s/d *i* lalu berbeda setelahnya. |
+| `excess == rata2 − ihsg_rata2` | Diuji ulang di frontend; kalau tidak sama, tabel menampilkan angka palsu. |
+| Label sinyal dari `scoring.label_sinyal()` | Satu definisi untuk pipeline **dan** backtest, supaya tidak melenceng. |
+
+`^JKSE` dan simbol berakhiran `.JK` **tidak** ditambah suffix `.JK` lagi
+(bug lama: `^JKSE.JK` tidak ada). Prioritas: `get_market_index()` untuk KPI,
+`yfinance_history()` untuk seri harian backtest.
+
+Kalau backtest gagal, pipeline tetap mempublikasikan `latest.json` — backtest
+hanya pelengkap, bukan syarat. Frontend punya fallback ke snapshot harian lama
+kalau `backtest.json` belum ada, jadi fitur lama tidak hilang.
+
 ## Menjalankan
 
 ```bash

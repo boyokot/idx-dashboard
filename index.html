@@ -966,6 +966,23 @@ function renderRisiko(){
 }
 
 /* ---------- CSV ---------- */
+/* (A4) Format nilai CSV per kolom — mengikuti satuan baku, bukan String(v) mentah.
+   Tanpa ini kolom angka jadi desimal penuh (mis. 8.7221985) di file CSV.
+   CATATAN: pakai toFixed (bukan nf/toLocaleString) karena pemisah ribuan "."
+   akan bentrok dengan desimal "," pada file CSV. */
+const CSV_FMT={
+  skor:      v=>Number(v).toFixed(1),
+  harga:     v=>Number(v).toFixed(0),
+  chg_pct:   v=>Number(v).toFixed(2),
+  per:       v=>Number(v).toFixed(1),
+  pbv:       v=>Number(v).toFixed(2),
+  roe:       v=>(Number(v)*100).toFixed(2),   /* satuan baku: fraksi -> persen */
+  der:       v=>Number(v).toFixed(2),
+  rsi:       v=>Number(v).toFixed(1),
+  ma20:      v=>Number(v).toFixed(0),
+  ma50:      v=>Number(v).toFixed(0),
+  volume:    v=>Number(v).toFixed(0),
+};
 function unduhCSV(){
   const cols=colsAktif().filter(c=>!c.sticky||c.always);
   const rows=rowsTampil();
@@ -973,7 +990,7 @@ function unduhCSV(){
   const body=rows.map(r=>cols.map(c=>{
     let v=r[c.k];
     if(v==null) return '';
-    if(c.k==='roe') return (v*100).toFixed(2).replace('.',',');
+    if(CSV_FMT[c.k]){ const s=CSV_FMT[c.k](v); return s==null||s==='NaN'?'':s.replace('.',','); }
     if(typeof v==='number') return String(v).replace('.',',');
     return '"'+String(v).replace(/"/g,'""')+'"';
   }).join(';')).join('\n');

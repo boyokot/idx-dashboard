@@ -3,6 +3,7 @@ data/uji*.json
 data/test_*.json
 data/*.tmp.json
 data/.pipeline.lock
+data/.notify_state.json
 _mobile_test.html
 
 # Salinan lokal dashboard (duplikat index.html)

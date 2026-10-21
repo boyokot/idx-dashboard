@@ -24,6 +24,10 @@ body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,H
 header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:4px}
 h1{font-size:19px;margin:0 0 2px}
 .sub{color:var(--muted);font-size:12px}
+.meta{color:var(--muted);font-size:11px;margin-top:2px;line-height:1.5}
+.meta b{color:inherit;font-weight:600}
+.meta-warn{color:#e0a800}
+.meta-bad{color:#e5484d;font-weight:600}
 .hdr-right{display:flex;gap:8px;align-items:center;flex-shrink:0}
 button{font:inherit;cursor:pointer;border:1px solid var(--border);background:var(--card);
   color:var(--text);border-radius:8px;padding:7px 12px;transition:.15s}
@@ -202,6 +206,7 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
   <div>
     <h1>IDX Stock Screener</h1>
     <div class="sub" id="lastUpdate">Memuat data…</div>
+    <div class="meta" id="metaSkema"></div>
     <div class="warnbox" id="staleWarn" style="display:none">⚠️ Data mungkin sudah kedaluwarsa</div>
   </div>
   <div class="hdr-right">
@@ -582,6 +587,7 @@ async function load(){
   DATA=j;
   const tgl=j.diperbarui_pada_teks || j.diperbarui_pada || '–';
   $('#lastUpdate').textContent = 'Terakhir diperbarui: '+tgl;
+  renderMetaSkema(j);
   cekKedaluwarsa(j.diperbarui_pada);
   try{
     showApp(); renderAll();
@@ -592,6 +598,46 @@ async function load(){
     return;
   }
   loadBacktest();
+}
+
+/* (E) Metadata skema & sumber. Ditampilkan apa adanya — termasuk saat ada
+   warning validasi. Menyembunyikan warning akan membuat dashboard tampak
+   lebih sehat daripada datanya. */
+function renderMetaSkema(j){
+  const box=$('#metaSkema'); if(!box) return;
+  j=j||{};
+  const parts=[];
+  const tglData=j.tanggal_data||'–';
+  const ver=j.versi_skema||'–';
+  parts.push('Data sesi: <b>'+esc(tglData)+'</b>');
+  parts.push('Skema <b>v'+esc(ver)+'</b>');
+
+  const sd=j.sumber_data_ringkas||null;
+  if(sd && sd.harga){
+    const utama=Object.keys(sd.harga).sort((a,b)=>sd.harga[b]-sd.harga[a])[0];
+    const n=sd.harga[utama]||0;
+    const tot=sd.emiten_total||0;
+    parts.push('Sumber: '+esc(utama)+' '+nf(n)+'/'+nf(tot)+' emiten');
+    if(sd.emiten_tanpa_data>0){
+      parts.push('<span class="meta-warn">'+nf(sd.emiten_tanpa_data)+
+        ' emiten tanpa data</span>');
+    }
+  }else if(j.sumber_utama){
+    parts.push('Sumber: '+esc(j.sumber_utama));
+  }
+
+  const v=j.validasi||null;
+  if(v && v.ok===false){
+    parts.push('<span class="meta-bad">validasi GAGAL</span>');
+  }else if(v && Array.isArray(v.warnings) && v.warnings.length){
+    parts.push('<span class="meta-warn">'+v.warnings.length+
+      ' peringatan validasi</span>');
+  }
+
+  box.innerHTML=parts.join(' · ');
+  if(v && Array.isArray(v.warnings) && v.warnings.length){
+    box.title=v.warnings.join('\n');
+  }
 }
 
 /* (A7) Peringatan data basi: lebih tua dari 1 hari bursa (akhir pekan + libur bursa diabaikan). */

@@ -77,6 +77,71 @@ def ensure_dirs() -> None:
     os.makedirs(SNAP_DIR, exist_ok=True)
 
 
+def _ringkas_sumber(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Hitung asal data per field (Kelompok E).
+
+    `sumber_utama` hanya menyebut satu nilai untuk seluruh run. Itu
+    menyembunyikan fakta penting: sebagian emiten bisa punya harga tapi
+    tidak punya fundamental, atau tidak punya data sama sekali. Fungsi ini
+    melaporkan sebaran nyatanya supaya UI tidak bisa mengklaim lebih dari
+    yang sebenarnya ada.
+    """
+    def hitung(field: str) -> Dict[str, int]:
+        c: Dict[str, int] = {}
+        for r in rows:
+            k = r.get(field) or "tidak diketahui"
+            c[str(k)] = c.get(str(k), 0) + 1
+        return dict(sorted(c.items(), key=lambda kv: -kv[1]))
+
+    n = len(rows)
+    tanpa_data = sum(1 for r in rows
+                     if r.get("harga") is None and r.get("per") is None
+                     and r.get("roe") is None)
+    return {
+        "harga": hitung("sumber_harga"),
+        "fundamental": hitung("sumber_fundamental"),
+        "gabungan": hitung("sumber_data"),
+        "emiten_tanpa_data": tanpa_data,
+        "emiten_total": n,
+    }
+
+
+def snapshot_layak_timpa(snap_path: str,
+                         snap_rows: List[Dict[str, Any]]) -> tuple:
+    """Putuskan apakah snapshot harian boleh ditimpa (Kelompok E).
+
+    Aturan: snapshot yang SUDAH ada di tanggal ini hanya boleh ditimpa bila
+    run baru punya cakupan harga >= run lama. Alasannya: `run_penuh` (975
+    emiten tersapu) tetap bisa menghasilkan separuh harga gagal diambil —
+    menimpanya akan membuang snapshot pagi yang lebih lengkap, dan riwayat
+    skor yang sudah tersimpan jadi tidak bisa dipulihkan.
+
+    Fungsi murni (hanya membaca file snapshot lama) supaya bisa diuji tanpa
+    menjalankan pipeline penuh.
+    """
+    baru = sum(1 for x in snap_rows if x.get("harga") is not None)
+    lama_data = _baca_json(snap_path)
+    if not (isinstance(lama_data, dict) and lama_data.get("emiten")):
+        return True, {"baru": baru, "lama": 0}
+    lama = sum(1 for x in lama_data["emiten"]
+               if isinstance(x, dict) and x.get("harga") is not None)
+    return (baru >= lama), {"baru": baru, "lama": lama}
+
+
+def _baca_json(path: str) -> Optional[Any]:
+    """Baca JSON; None kalau file tidak ada atau rusak.
+
+    Dipakai untuk memastikan file lama benar-benar bisa dibaca sebelum kita
+    memutuskan 'data lama dipertahankan'. Kalau file lama ternyata rusak,
+    pemanggil tahu bahwa tidak ada data sehat yang tersisa.
+    """
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return None
+
+
 def _tulis_atomic(path: str, payload: Any) -> None:
     """
     Tulis JSON lewat file sementara lalu rename. Dashboard tidak pernah membaca
@@ -610,6 +675,10 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
         "hari_libur_bursa": _hari_libur_bursa(),
         "sumber_utama": "sectors" if P.sectors_available() else "yfinance",
         "sectors_aktif": P.sectors_available(),
+        # (E) Metadata sumber: dari mana tiap field berasal, dihitung per
+        # emiten. Dashboard generik "yfinance" saja menyembunyikan fakta
+        # bahwa 59 emiten tidak punya data sama sekali.
+        "sumber_data_ringkas": _ringkas_sumber(rows),
         "jumlah_emiten": len(rows),
         "jumlah_ada_harga": sum(1 for r in rows if r.get("harga") is not None),
         "jumlah_ada_fundamental": sum(1 for r in rows if r.get("per") is not None
@@ -631,6 +700,43 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
         "disclaimer": "Hasil screening otomatis, bukan rekomendasi beli.",
     }
     out_path = os.path.join(DATA_DIR, out_name)
+
+    # ── (Kelompok E) Validasi prepublish ──────────────────────────────
+    # Sebelum ini latest.json ditulis tanpa pemeriksaan apa pun: run yang
+    # menghasilkan harga kosong / satuan kacau langsung merusak dashboard.
+    # Sekarang data divalidasi dulu; kalau GAGAL, file lama DIPERTAHANKAN
+    # dan pipeline melaporkan gagal (bukan diam-diam menimpa data sehat).
+    run_penuh_e = len(emiten) >= total_universe
+    try:
+        from idx import validate as VALID
+    except ImportError:
+        import validate as VALID
+    vres = VALID.validasi(payload, total_universe=total_universe,
+                          run_penuh=run_penuh_e)
+    payload["validasi"] = {
+        "ok": vres["ok"],
+        "errors": vres["errors"],
+        "warnings": vres["warnings"],
+        "stats": vres["stats"],
+    }
+    print(VALID.ringkas(vres), flush=True)
+    for w in vres["warnings"]:
+        print(f"[validasi] warning: {w}", flush=True)
+
+    if not vres["ok"]:
+        for e in vres["errors"]:
+            print(f"[validasi] ERROR: {e}", flush=True)
+        lama = _baca_json(out_path)
+        print(f"[pipeline] publish DITOLAK — {out_name} lama "
+              f"({'ada' if lama else 'tidak ada'}) tidak ditimpa", flush=True)
+        return {"ok": False, "out": None, "ditolak": True,
+                "alasan": vres["errors"],
+                "warnings": vres["warnings"],
+                "validasi": vres["stats"],
+                "jumlah": len(rows),
+                "ada_harga": payload["jumlah_ada_harga"],
+                "ada_fundamental": payload["jumlah_ada_fundamental"]}
+
     _tulis_atomic(out_path, payload)
 
     # ── (Kelompok B) history.json: SATU file riwayat harga untuk semua emiten ──
@@ -691,8 +797,34 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
         "katalis": _komponen_skor(r, "katalis"),
         "sumber_data": r.get("sumber_data"),
     } for r in rows]
+
+    # ── (Kelompok E) Perlindungan snapshot harian ─────────────────────
+    # `run_penuh` saja tidak cukup: run bisa menyapu seluruh universe tapi
+    # separuh harganya gagal diambil. Menimpanya di tanggal yang sama akan
+    # membuang snapshot pagi yang lebih lengkap. Jadi bandingkan cakupan
+    # harga dengan snapshot yang SUDAH ada di tanggal ini.
+    layak, info_snap = snapshot_layak_timpa(snap, snap_rows)
+    if not layak:
+        print(f"[pipeline] snapshot {os.path.basename(snap)} TIDAK ditimpa: "
+              f"run ini {info_snap['baru']} emiten berharga, "
+              f"snapshot lama {info_snap['lama']}", flush=True)
+        return {"ok": True, "out": out_path, "snapshot": snap,
+                "snapshot_dipertahankan": True,
+                "snapshot_harga_lama": info_snap["lama"],
+                "snapshot_harga_baru": info_snap["baru"],
+                "jumlah": len(rows),
+                "history": history_info,
+                "ada_harga": payload["jumlah_ada_harga"],
+                "ada_fundamental": payload["jumlah_ada_fundamental"]}
+
+    snap_baru_harga = info_snap["baru"]
     _tulis_atomic(snap, {"tanggal": P.now_wib().strftime("%Y-%m-%d"),
-                         "diperbarui_pada": P.stamp_wib(), "emiten": snap_rows})
+                         "tanggal_data": tanggal_data,
+                         "diperbarui_pada": P.stamp_wib(),
+                         "versi_skema": VERSI_SKEMA,
+                         "jumlah_emiten": len(snap_rows),
+                         "jumlah_ada_harga": snap_baru_harga,
+                         "emiten": snap_rows})
     # index snapshot dibuat SETELAH snapshot hari ini ditulis
     try:
         from idx import snapshot_index          # jalan sebagai modul paket

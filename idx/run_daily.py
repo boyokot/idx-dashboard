@@ -25,6 +25,17 @@ from idx import calendar_id as CAL          # noqa: E402
 from idx import pipeline as PIPE           # noqa: E402
 
 
+def _kabari_gagal(judul: str, alasan, stats=None) -> None:
+    """Kirim notifikasi kegagalan; kegagalan notifikasi tidak boleh
+    mengubah exit code pipeline (kalau tidak, cron melihat sukses jadi gagal)."""
+    try:
+        from idx import notify
+        r = notify.kirim_gagal(judul, alasan, stats)
+        print(f"[cron] notifikasi gagal: {json.dumps(r, ensure_ascii=False)}")
+    except Exception as e:                   # noqa: BLE001
+        print(f"[cron] notifikasi gagal dilewati: {type(e).__name__}: {e}")
+
+
 def main() -> int:
     # 1) cek hari bursa
     now = CAL.now_wib()
@@ -45,10 +56,22 @@ def main() -> int:
         res = PIPE.run(universe_limit=0, dengan_katalis=True)
     except Exception as e:                   # noqa: BLE001
         print(f"[cron] pipeline GAGAL: {type(e).__name__}: {e}")
+        _kabari_gagal("Pipeline IDX gagal", f"{type(e).__name__}: {e}")
+        return 1
+
+    # Ditolak validasi = data rusak, dashboard TIDAK diperbarui.
+    # Ini kegagalan yang WAJIB dikabarkan, bukan sekadar dicatat.
+    if res.get("ditolak"):
+        alasan = res.get("alasan") or ["validasi prepublish gagal"]
+        print(f"[cron] pipeline DITOLAK validasi: {alasan}")
+        _kabari_gagal("Publish IDX ditolak validasi", alasan,
+                      res.get("validasi"))
         return 1
 
     if not res.get("ok"):
         print(f"[cron] pipeline tidak ok: {res}")
+        _kabari_gagal("Pipeline IDX tidak ok",
+                      res.get("alasan") or "tanpa alasan")
         return 1
 
     print(f"[cron] selesai: {json.dumps(res, ensure_ascii=False)}")

@@ -226,6 +226,121 @@ python3 idx/test_alert.py        # 45 tes
 python3 idx/test_frontend_D.py   # 44 tes (termasuk viewport 390px)
 ```
 
+## Validasi & publikasi (Kelompok E)
+
+### Kenapa ada
+
+Sebelum Kelompok E, `latest.json` ditulis **tanpa satu pun pemeriksaan**.
+Run yang menghasilkan 3 emiten, atau harga kosong semua, atau nilai dengan
+satuan kacau, langsung menimpa dashboard yang sehat. Tidak ada yang tahu
+sampai membuka dashboard dan melihat angkanya aneh. Snapshot harian punya
+masalah yang sama: run "penuh" yang separuh harganya gagal diambil tetap
+menimpa snapshot pagi yang lengkap.
+
+Sekarang data diperiksa dulu. Kalau tidak lolos, **file lama dipertahankan**
+dan kegagalannya dikabarkan.
+
+### `idx/validate.py`
+
+`validasi(payload, total_universe, run_penuh)` mengembalikan
+`{"ok", "errors", "warnings", "stats"}`. Fungsi ini **tidak memutasi
+payload** (ada tesnya).
+
+**ERROR — publish ditolak:**
+
+| Pemeriksaan | Ambang |
+|---|---|
+| `emiten` kosong / bukan list | — |
+| jumlah emiten | `< MIN_EMITEN` (20) |
+| kode duplikat (case-insensitive) | > 0 |
+| cakupan harga | `< 50%` emiten punya harga |
+| `tanggal_data` kosong | — |
+| `skor` / `rsi` di luar rentang | 0–100 |
+| `chg_pct` | \|x\| > 100% |
+| `volume` negatif | > 0 baris |
+| `der` | > 100 |
+| `\|roe\|` (fraksi) | > 10 |
+
+**WARNING — publish tetap jalan, tapi dilaporkan:**
+
+- cakupan harga < 95% saat run penuh
+- fundamental kosong pada banyak emiten
+- **DER negatif** — ini bukan data rusak. Artinya total ekuitas negatif,
+  yang memang terjadi pada emiten distress (LAPD, CNKO, MYTX, BATA, …).
+  ROE mereka `None` karena laba/ekuitas negatif tidak menghasilkan rasio
+  bermakna. Menolak publish karena ini akan **membekukan dashboard pada
+  data yang benar** — jadi hanya warning.
+- tidak ada emiten berskor penuh (indikasi komponen katalis kosong)
+- `alerts.total == 0`
+
+Ambang batas ini bukan selera: setiap nilai di luar rentang di atas berarti
+salah satuan (mis. `roe` dikirim sebagai persen 12.81 alih-alih fraksi
+0.1281), bukan emiten yang kebetulan ekstrem.
+
+### Perlindungan snapshot
+
+`snapshot_layak_timpa(path, rows)` — fungsi murni, bisa diuji tanpa
+menjalankan pipeline:
+
+- Belum ada snapshot → boleh tulis.
+- Cakupan harga baru **< lama** → **jangan timpa**. Snapshot pagi yang
+  lebih lengkap dipertahankan; run parsial tidak boleh menghapusnya.
+- Cakupan sama atau lebih tinggi → boleh tulis.
+- Snapshot lama rusak / `emiten` kosong → anggap tidak ada, boleh tulis.
+- Nol harga tidak akan pernah menimpa snapshot sehat.
+
+Run parsial (`< total_universe`) tetap tidak menulis snapshot sama sekali,
+seperti sebelumnya.
+
+### Notifikasi kegagalan
+
+`notify.kirim_gagal(judul, alasan, stats)` mengirim pesan pendek berisi
+penyebab konkret — bukan "terjadi kesalahan". Kegagalan notifikasi **tidak
+pernah** mengubah exit code pipeline: kalau Telegram mati, run yang sukses
+tetap exit 0 (kalau dibalik, cron akan mengira sukses sebagai gagal).
+
+`run_daily.py` sekarang mengabarkan tiga jenis kegagalan:
+
+1. pipeline melempar exception
+2. **publish ditolak validasi** (data lama dipertahankan)
+3. pipeline selesai tapi `ok == False`
+
+Sebelumnya ketiganya hanya jadi `print()` di log.
+
+### Metadata skema & sumber
+
+`latest.json` sekarang memuat:
+
+- `tanggal_data` — tanggal **sesi bursa** data ini, bukan jam pipeline
+  jalan. Pipeline yang jalan 07:47 pada hari kerja belum punya bar sesi
+  hari itu, jadi membandingkannya dengan `diperbarui_pada` selalu gagal
+  palsu. **Jangan** pakai `diperbarui_pada` untuk menentukan tanggal data.
+- `validasi` — `{ok, errors, warnings, stats}`
+- `sumber_data_ringkas` — sebaran asal data per field (`harga`,
+  `fundamental`, `gabungan`), plus `emiten_tanpa_data`. `sumber_utama`
+  saja menyembunyikan fakta bahwa sebagian emiten tidak punya data sama
+  sekali.
+- `versi_skema` — `1.4.0`
+
+Snapshot harian memuat `tanggal_data`, `versi_skema`, `jumlah_emiten`, dan
+`jumlah_ada_harga` — supaya bisa diperiksa tanpa memuat seluruh array.
+
+UI menampilkan metadata ini di bawah "Terakhir diperbarui". Warning
+validasi muncul sebagai penanda berwarna dengan isi lengkap di `title` —
+**tidak disembunyikan**, karena dashboard yang menyembunyikan warning
+tampak lebih sehat daripada datanya.
+
+### Menjalankan tes
+
+```bash
+cd /root/idx-dashboard
+python3 idx/test_validate.py        # 86 tes — validasi, snapshot, notifikasi
+python3 idx/test_frontend_E.py      # 27 tes — metadata UI, desktop + mobile
+```
+
+Butuh server lokal di port 8099 untuk tes frontend:
+`python3 -m http.server 8099`.
+
 ## Menjalankan
 
 ```bash

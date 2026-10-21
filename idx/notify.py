@@ -22,14 +22,48 @@ import urllib.request
 from typing import Any, Dict, List
 
 
+_ENV_DIMUAT = False
+
+
+def _muat_env() -> None:
+    """Muat /root/.hermes/.env sekali, tanpa menimpa environment yang sudah ada.
+
+    Cron menjalankan run_daily.py sebagai proses terpisah yang tidak mewarisi
+    .env milik Hermes, jadi TELEGRAM_BOT_TOKEN tidak terlihat dan notifikasi
+    gagal senyap. Membaca file ini membuat notifikasi benar-benar terkirim
+    tanpa menaruh token di kode/repo.
+    """
+    global _ENV_DIMUAT
+    if _ENV_DIMUAT:
+        return
+    _ENV_DIMUAT = True
+    path = os.environ.get("IDX_ENV_FILE") or os.path.expanduser(
+        "~/.hermes/.env")
+    try:
+        with open(path, encoding="utf-8") as f:
+            for baris in f:
+                baris = baris.strip()
+                if not baris or baris.startswith("#") or "=" not in baris:
+                    continue
+                k, _, v = baris.partition("=")
+                k, v = k.strip(), v.strip().strip('"').strip("'")
+                if k and v and not os.environ.get(k):
+                    os.environ[k] = v
+    except OSError:
+        pass
+
+
 def _token() -> str:
+    _muat_env()
     return (os.environ.get("TELEGRAM_BOT_TOKEN")
             or os.environ.get("IDX_TELEGRAM_TOKEN") or "").strip()
 
 
 def _chat() -> str:
+    _muat_env()
     return (os.environ.get("TELEGRAM_CHAT_ID")
-            or os.environ.get("IDX_TELEGRAM_CHAT") or "").strip()
+            or os.environ.get("IDX_TELEGRAM_CHAT")
+            or os.environ.get("TELEGRAM_HOME_CHANNEL") or "").strip()
 
 
 def tersedia() -> bool:
@@ -144,6 +178,107 @@ def kirim_ringkasan(payload: Dict[str, Any], watchlist: List[str] | None = None)
     if msg is None:
         return {"terkirim": False, "alasan": "tidak ada sinyal penting hari ini"}
     ok = _kirim(msg)
+    return {"terkirim": ok, "alasan": "ok" if ok else "gagal kirim"}
+
+
+def bangun_pesan_gagal(judul: str, alasan: List[str] | str,
+                       stats: Dict[str, Any] | None = None) -> str:
+    """Pesan kegagalan pipeline.
+
+    Sebelum Kelompok E, kegagalan hanya jadi `print()` di log — tidak ada
+    yang tahu dashboard berhenti diperbarui sampai membuka log. Pesan ini
+    sengaja pendek dan memuat penyebab konkret, bukan "terjadi kesalahan".
+    """
+    L: List[str] = [f"<b>⚠️ {judul}</b>"]
+    if isinstance(alasan, str):
+        alasan = [alasan]
+    for a in alasan[:6]:
+        L.append(f"• {a}")
+    if len(alasan) > 6:
+        L.append(f"• … dan {len(alasan) - 6} alasan lain")
+    if stats:
+        L.append("")
+        L.append(f"<i>emiten {stats.get('emiten', 0)} · "
+                 f"harga {stats.get('ada_harga', 0)} · "
+                 f"fundamental {stats.get('ada_fundamental', 0)}</i>")
+    L.append("")
+    L.append("<i>Data lama dipertahankan; dashboard tidak diperbarui.</i>")
+    return "\n".join(L)
+
+
+_STATE_NYAMPAI = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..", "data", ".notify_state.json")
+
+
+def _hari_ini() -> str:
+    """Tanggal WIB (UTC+7). Server jalan di WIB, tapi jangan bergantung itu."""
+    import datetime as _dt
+    return (_dt.datetime.now(_dt.timezone.utc)
+            + _dt.timedelta(hours=7)).strftime("%Y-%m-%d")
+
+
+def _sudah_dikirim(kunci: str) -> bool:
+    try:
+        with open(_STATE_NYAMPAI, encoding="utf-8") as f:
+            st = json.load(f)
+    except (OSError, ValueError):
+        return False
+    return st.get("tanggal") == _hari_ini() and kunci in (st.get("kunci") or [])
+
+
+def _tandai_terkirim(kunci: str) -> None:
+    """Catat kunci yang sudah dikirim HARI INI. Tanggal berubah = reset.
+
+    Kegagalan menulis state tidak boleh menggagalkan pengiriman: lebih baik
+    dobel sekali daripada tidak pernah mengabari.
+    """
+    hari = _hari_ini()
+    try:
+        with open(_STATE_NYAMPAI, encoding="utf-8") as f:
+            st = json.load(f)
+    except (OSError, ValueError):
+        st = {}
+    if st.get("tanggal") != hari:
+        st = {"tanggal": hari, "kunci": []}
+    kunci_list = st.setdefault("kunci", [])
+    if kunci not in kunci_list:
+        kunci_list.append(kunci)
+    st["kunci"] = kunci_list[-20:]          # jangan tumbuh tanpa batas
+    try:
+        os.makedirs(os.path.dirname(_STATE_NYAMPAI), exist_ok=True)
+        tmp = _STATE_NYAMPAI + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(st, f)
+        os.replace(tmp, _STATE_NYAMPAI)
+    except OSError:
+        pass
+
+
+def kirim_gagal(judul: str, alasan: List[str] | str,
+                stats: Dict[str, Any] | None = None,
+                sekali_per_hari: bool = True) -> Dict[str, Any]:
+    """Kirim notifikasi kegagalan. Tidak pernah melempar exception.
+
+    Anti-spam: kegagalan yang SAMA hanya dikabarkan sekali per hari WIB.
+    Tanpa ini, pipeline intraday yang gagal 3x akan mengirim 3 pesan
+    identik — dan orang berhenti membaca notifikasi. Kegagalan berbeda
+    tetap dikirim; besok, kegagalan yang sama dikirim lagi sekali
+    (supaya masalah yang tidak diperbaiki tidak jadi senyap).
+    """
+    if not tersedia():
+        return {"terkirim": False, "alasan": "telegram tidak dikonfigurasi"}
+    import hashlib
+    isi = bangun_pesan_gagal(judul, alasan, stats)
+    kunci = hashlib.sha1(isi.encode("utf-8")).hexdigest()[:16]
+    if sekali_per_hari and _sudah_dikirim(kunci):
+        return {"terkirim": False, "alasan": "sudah dikirim hari ini (anti-spam)",
+                "kunci": kunci}
+    try:
+        ok = _kirim(isi)
+    except Exception as e:                      # noqa: BLE001
+        return {"terkirim": False, "alasan": f"{type(e).__name__}: {e}"}
+    if ok:
+        _tandai_terkirim(kunci)
     return {"terkirim": ok, "alasan": "ok" if ok else "gagal kirim"}
 
 

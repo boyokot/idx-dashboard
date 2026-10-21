@@ -59,7 +59,7 @@ untuk `volume`: sumber yang tidak melaporkan volume menghasilkan `null`, bukan 0
 
 ### Kontrak skema
 
-`latest.json` memuat `versi_skema` (saat ini `1.1.0`) dan peta `satuan`.
+`latest.json` memuat `versi_skema` (saat ini `1.4.0`) dan peta `satuan`.
 Naikkan `VERSI_SKEMA` di `pipeline.py` setiap kali nama field atau satuan berubah.
 
 ## Riwayat harga (Kelompok B)
@@ -132,6 +132,99 @@ Aturan yang **tidak boleh dilanggar** (semua diuji `idx/test_backtest.py`):
 Kalau backtest gagal, pipeline tetap mempublikasikan `latest.json` — backtest
 hanya pelengkap, bukan syarat. Frontend punya fallback ke snapshot harian lama
 kalau `backtest.json` belum ada, jadi fitur lama tidak hilang.
+
+## Alert & ringkasan pasar (Kelompok D)
+
+`idx/alert.py` — mesin alert **murni turunan** indikator yang sudah dihitung
+pipeline. Modul ini **tidak melakukan request jaringan sama sekali**: tidak
+ada `requests`, tidak ada `yfinance`. Semua masukannya berasal dari baris
+`latest.json` (`rsi`, `volume`, `ma20`, `skor`, `sinyal`, `_bars`).
+
+Karena itu modul ini aman dijalankan kapan pun dan tidak menambah beban
+jaringan. Ini juga alasan alert tidak bisa "menemukan" hal yang tidak ada di
+data: kalau indikatornya kosong, alert untuk indikator itu tidak dibuat.
+
+### Tiga field baru di `latest.json`
+
+```json
+{
+  "tanggal_data": "2026-10-21",
+  "alerts": {
+    "total": 804, "ditampilkan": 200, "dipotong": true,
+    "per_severity": {"kritis": 52, "perhatian": 101, "info": 651},
+    "per_jenis": {"likuiditas_tipis": 439, "rsi_oversold": 102,
+                  "support_break": 52, "rsi_jenuh": 53,
+                  "lonjakan_harga": 40, "breakout": 6,
+                  "konflik_skor": 5, "breakout_tanpa_volume": 3},
+    "daftar": [{"kode": "BBMD", "severity": "kritis",
+                "jenis": "support_break", "pesan": "...", "detail": "..."}]
+  },
+  "skor_parsial": {
+    "penuh": 0, "sebagian": 916, "tanpa_skor": 59, "total": 975,
+    "bobot_terisi_min": 0.8, "komponen_sering_hilang": {"katalis": 916}
+  }
+}
+```
+
+**`tanggal_data` vs `diperbarui_pada`** — dua hal berbeda dan sering
+tertukar:
+
+| Field | Arti |
+|---|---|
+| `diperbarui_pada` | Jam **pipeline jalan** (mis. `07:47` pagi hari kerja) |
+| `tanggal_data` | Tanggal **sesi bursa** data ini berasal (`2026-10-20`) |
+
+Pipeline yang jalan pagi belum punya bar sesi hari itu, jadi
+`diperbarui_pada[:10]` bisa **lebih maju satu hari** dari tanggal data.
+Membandingkan tanggal bar terakhir dengan `diperbarui_pada` menghasilkan
+kegagalan palsu — ini bug nyata yang ditemukan dan diperbaiki di tes
+integritas. **Selalu pakai `tanggal_data`** untuk pertanyaan "data ini
+tanggal berapa".
+
+### Aturan alert
+
+| Aturan | Kenapa |
+|---|---|
+| Tidak ada request jaringan di `idx/alert.py` | Alert hanya turunan indikator; pipeline sudah mengambil data. |
+| Kegagalan modul alert **tidak** menggagalkan publish | `_alerts_payload()` mengembalikan struktur aman. `latest.json` tetap terbit. |
+| Maksimum 200 alert ditampilkan, `dipotong: true` | 804 alert tidak berguna sebagai daftar datar; filter ada di UI. |
+| Nilai kosong → `None`, bukan 0 | "Tidak ada data" ≠ "nol". |
+| Tidak ada order / eksekusi | Dashboard hanya memantau dan melaporkan. |
+
+### `skor_parsial` — kenapa 916 emiten "sebagian"
+
+Bukan bug. Bobot skor: teknikal 0,5 · fundamental 0,3 · **katalis 0,2**.
+Komponen katalis butuh API berita berkey yang belum tersedia, sehingga
+`bobot_terisi` maksimum **0,8** untuk **semua** emiten. Artinya skor saat ini
+belum memakai 20% bobot yang direncanakan.
+
+UI menampilkan ini sebagai peringatan eksplisit, bukan menyembunyikannya.
+Kalau katalis diaktifkan (butuh kredensial), `penuh` akan naik sendiri.
+
+### Median valuasi sektor
+
+`sector_medians()` mengembalikan `{sektor: {"per": .., "pbv": .., "n": ..}}`.
+Bug lama: fungsi membaca `r["fundamental"]["per"]`, padahal baris pipeline
+menyimpan `per` di **top-level** → median **selalu kosong sejak awal**.
+Sekarang menerima **dua bentuk** (top-level dan nested).
+
+Sektor dengan **< 3 emiten berdata** sengaja **tidak** diberi median — median
+dari 1-2 sampel menyesatkan, dan `None` lebih jujur daripada angka tebakan.
+Di UI sel seperti itu tampil `–`.
+
+### Layout mobile
+
+Di bawah 700px tabel Alert berubah jadi **kartu bertumpuk**, bukan tabel
+yang di-scroll horizontal. Alasannya: kolom Detail tadinya terdorong keluar
+layar (548px pada viewport 390px). Sekarang kartu 342px, tanpa scroll
+horizontal. Diuji otomatis di `idx/test_frontend_D.py`.
+
+### Tes
+
+```bash
+python3 idx/test_alert.py        # 45 tes
+python3 idx/test_frontend_D.py   # 44 tes (termasuk viewport 390px)
+```
 
 ## Menjalankan
 

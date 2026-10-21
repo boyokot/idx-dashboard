@@ -25,6 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from idx import providers as P  # noqa: E402
 from idx import scoring as S  # noqa: E402
+from idx import alert as AL  # noqa: E402
 
 try:
     from idx import history_store as HIST     # jalan sebagai modul paket
@@ -40,7 +41,7 @@ UNIVERSE_LIMIT = int(os.environ.get("IDX_UNIVERSE_LIMIT", "0") or 0)  # 0 = semu
 
 # ─────────────────── kontrak data (versi & satuan baku) ───────────────────
 # Naikkan versi_skema setiap kali nama field / satuan di latest.json berubah.
-VERSI_SKEMA = "1.1.0"
+VERSI_SKEMA = "1.4.0"
 
 # SATUAN BAKU untuk semua field di latest.json. Semua sumber (Sectors v2,
 # yfinance) dinormalisasi ke satuan ini di providers.normalisasi_satuan_fundamental.
@@ -152,6 +153,34 @@ class _PipelineLock:
 
 
 # ───────────────────────── daftar emiten ─────────────────────────
+
+def _tanggal_data_hist(bars_per_kode):
+    """Tanggal SESI BURSA terbaru dari bar harga per emiten (YYYY-MM-DD).
+
+    Berbeda dari `diperbarui_pada` (jam pipeline jalan). Pipeline yang
+    jalan 07:47 pagi hari kerja belum punya bar sesi hari itu, sehingga
+    `diperbarui_pada[:10]` lebih maju 1 hari dari tanggal data terakhir.
+    """
+    tgl = []
+    for b in bars_per_kode.values():
+        if b:
+            d = b[-1].get("date") or b[-1].get("tanggal")
+            if d:
+                tgl.append(str(d)[:10])
+    return max(tgl) if tgl else None
+
+
+def _f(v: Any) -> Optional[float]:
+    """Konversi aman ke float; bool & non-angka -> None (bukan 0)."""
+    if isinstance(v, bool) or v is None:
+        return None
+    if isinstance(v, (int, float)):
+        return float(v)
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return None
+
 
 def _hari_libur_bursa() -> List[str]:
     """
@@ -339,6 +368,69 @@ def analyze_one(item: Dict[str, Any], dengan_katalis: bool = True) -> Dict[str, 
     }
 
 
+def _alerts_payload(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """(Kelompok D) Alert pasar. Kegagalan alert tidak boleh menggagalkan
+    publish data utama — kalau modul alert error, kirim struktur kosong
+    yang jujur (tersedia: false), bukan menghentikan pipeline."""
+    try:
+        a = AL.kumpulkan(rows)
+        a["tersedia"] = True
+        return a
+    except Exception as e:
+        print(f"[pipeline] alert gagal: {type(e).__name__}: {e}", flush=True)
+        return {"tersedia": False, "total": 0, "per_jenis": {},
+                "per_severity": {"kritis": 0, "perhatian": 0, "info": 0},
+                "dipotong": False, "daftar": [],
+                "catatan": f"alert tidak dapat dihitung: {type(e).__name__}"}
+
+
+def _median_valuasi_sektor(rows: List[Dict[str, Any]],
+                           pe_med: Dict[str, float],
+                           pb_med: Dict[str, float]) -> Dict[str, Any]:
+    """(Kelompok D) Median valuasi per sektor + posisi tiap emiten
+    terhadap median sektornya sendiri.
+
+    Pembanding HARUS median sektor yang sama, bukan median seluruh pasar:
+    PER 12 itu murah untuk bank tapi biasa untuk ritel.
+    Sektor dengan < 3 emiten berdata tidak diberi median (terlalu tipis
+    untuk disebut "median" — itu hanya rata-rata 1-2 angka).
+    """
+    sec_rows: Dict[str, List[Dict[str, Any]]] = {}
+    for r in rows:
+        s = (r.get("sektor") or "LAINNYA").upper()
+        sec_rows.setdefault(s, []).append(r)
+
+    out_sector: List[Dict[str, Any]] = []
+    for s, rs in sorted(sec_rows.items()):
+        pe = _f(pe_med.get(s))
+        pb = _f(pb_med.get(s))
+        n_pe = sum(1 for r in rs if _f(r.get("per")) is not None
+                   and (_f(r.get("per")) or 0) > 0)
+        n_pb = sum(1 for r in rs if _f(r.get("pbv")) is not None
+                   and (_f(r.get("pbv")) or 0) > 0)
+        out_sector.append({
+            "sektor": s,
+            "jumlah_emiten": len(rs),
+            "median_per": round(pe, 2) if pe is not None else None,
+            "median_pbv": round(pb, 2) if pb is not None else None,
+            "n_per": n_pe,
+            "n_pbv": n_pb,
+            "cukup_data": bool(pe is not None or pb is not None),
+            "catatan": None if (pe is not None or pb is not None)
+            else f"data < 3 emiten (PER {n_pe}, PBV {n_pb}) — median tidak dihitung",
+        })
+
+    out_sector.sort(key=lambda x: (-x["jumlah_emiten"], x["sektor"]))
+    return {
+        "per_sektor": out_sector,
+        "jumlah_sektor": len(out_sector),
+        "sektor_dengan_median": sum(1 for x in out_sector if x["cukup_data"]),
+        "ambang_min_emiten": 3,
+        "catatan": ("Median dihitung per sektor dengan minimal 3 emiten "
+                    "berdata; sektor tipis ditandai, bukan diisi angka."),
+    }
+
+
 def _market_summary(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
     """
     Ringkasan pasar: IHSG, sektor terkuat/terlemah (dari rata-rata Chg% emiten
@@ -472,6 +564,10 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
         if b:
             bars_untuk_history[r["kode"]] = b
 
+    # (D) Tanggal sesi bursa terbaru dari bar yang benar-benar ada.
+    # Harus dihitung DI SINI: `_bars` di-pop di loop di bawah.
+    tanggal_data = _tanggal_data_hist(bars_untuk_history)
+
     for r in rows:
         fund_d = {"per": r.get("per"), "pbv": r.get("pbv"), "roe": r.get("roe"),
                   "der": r.get("der"), "earnings_growth": r.get("earnings_growth"),
@@ -519,9 +615,17 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
         "jumlah_ada_fundamental": sum(1 for r in rows if r.get("per") is not None
                                       or r.get("roe") is not None),
         "jumlah_waspada": sum(1 for r in rows if r.get("waspada")),
+        # Tanggal SESI BURSA data ini berasal -- BUKAN jam pipeline jalan.
+        # Pipeline jalan 16:30 WIB (sesi sudah tutup) atau pagi hari kerja
+        # (sesi belum buka), jadi `diperbarui_pada` bisa lebih maju 1 hari
+        # dari tanggal bar terakhir. Bandingkan tanggal data dengan ini.
+        "tanggal_data": tanggal_data,
         "median_per_sektor": pe_med,
         "median_pbv_sektor": pb_med,
         "ringkasan_pasar": _market_summary(rows),
+        "alerts": _alerts_payload(rows),
+        "skor_parsial": AL.skor_parsial(rows),
+        "median_valuasi_sektor": _median_valuasi_sektor(rows, pe_med, pb_med),
         "top10": top10,
         "emiten": rows,
         "disclaimer": "Hasil screening otomatis, bukan rekomendasi beli.",

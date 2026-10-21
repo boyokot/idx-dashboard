@@ -136,6 +136,30 @@ tbody tr:hover td.stick{background:var(--accent-soft)}
   /* Tabel: scroll horizontal + kolom sticky tetap menempel */
   .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
   .tbl-wrap table{min-width:640px}
+  /* (D) Tabel alert & ringkasan pasar cukup 2-4 kolom sempit: jangan
+     dipaksa 640px, kalau tidak kolom Detail terdorong keluar layar. */
+  #panel-alert .tbl-wrap table{min-width:0;width:100%}
+  #panel-alert .tbl-wrap th,#panel-alert .tbl-wrap td{padding:6px 7px;font-size:12px}
+  #panel-alert .card{padding:12px}
+  /* (D) Di HP tabel alert jadi KARTU bertumpuk: tidak ada scroll
+     horizontal, tidak ada kolom yang terdorong keluar layar. */
+  #alTbl thead{display:none}
+  #alTbl tbody tr{display:block;border:1px solid var(--border);
+    border-radius:10px;padding:9px 10px;margin-bottom:8px}
+  #alTbl tbody td{display:block;border:0;padding:2px 0;text-align:left;
+    white-space:normal}
+  #alTbl tbody td:nth-child(1){margin-bottom:3px}
+  #alTbl tbody td:nth-child(2){font-weight:700;font-size:14px}
+  #alTbl tbody td:nth-child(3){font-weight:600;font-size:13px}
+  #alTbl tbody td:nth-child(4){color:var(--muted);font-size:12.5px;
+    line-height:1.45}
+  /* Tabel sektor ringkasan pasar: label kiri, nilai kanan */
+  #mkTbl thead{display:none}
+  #mkTbl tbody tr{display:flex;justify-content:space-between;gap:10px;
+    border-bottom:1px solid var(--border);padding:6px 0;font-size:12.5px}
+  #mkTbl tbody td{display:block;border:0;padding:0;text-align:right}
+  #mkTbl tbody td:first-child{text-align:left;flex:1;color:var(--muted)}
+  #mvTbl th,#mvTbl td,#spTbl th,#spTbl td{font-size:11.5px;padding:5px 6px}
   /* Modal drawer: muat penuh di layar kecil */
   .overlay{padding:8px}
   .drawer{width:100%;max-height:94vh;padding:14px;border-radius:12px;overflow-y:auto}
@@ -154,6 +178,8 @@ tbody tr:hover td.stick{background:var(--accent-soft)}
 .cmp .ln{font-weight:600}
 
 /* misc */
+.lbl{font-size:11px;color:var(--muted);letter-spacing:.02em;text-transform:uppercase;
+  font-weight:600;margin-bottom:3px}
 .note{font-size:12px;color:var(--muted);line-height:1.6}
 .warnbox{margin-top:8px;padding:8px 11px;background:var(--warnbg);color:var(--warn);
   border:1px solid var(--warn);border-radius:8px;font-size:12px;line-height:1.5;font-weight:600}
@@ -205,6 +231,7 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
 
   <div class="tabs">
     <button class="tab active" data-tab="screener">Screener</button>
+    <button class="tab" data-tab="alert">Alert <span id="alCount"></span></button>
     <button class="tab" data-tab="watchlist">Watchlist <span id="wlCount"></span></button>
     <button class="tab" data-tab="akurasi">Akurasi Sinyal</button>
     <button class="tab" data-tab="risiko">Kalkulator Risiko</button>
@@ -246,6 +273,72 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
     </div>
     <div class="tblnote" id="tableInfo"></div>
     <div class="disclaimer">Hasil screening otomatis, bukan rekomendasi beli.</div>
+  </div>
+
+  <!-- ALERT -->
+  <div class="panel" id="panel-alert">
+    <div class="card">
+      <h2 style="font-size:15px;margin:0 0 10px">Ringkasan Pasar</h2>
+      <div class="note" id="mkInfo">Memuat…</div>
+      <div class="grid2" style="margin-top:10px">
+        <div>
+          <div class="lbl">Sektor terkuat</div>
+          <div id="mkStrong" style="font-size:15px;font-weight:600">—</div>
+        </div>
+        <div>
+          <div class="lbl">Sektor terlemah</div>
+          <div id="mkWeak" style="font-size:15px;font-weight:600">—</div>
+        </div>
+      </div>
+      <div class="tbl-wrap" style="margin-top:12px">
+        <table id="mkTbl"><thead><tr>
+          <th style="text-align:left">Sektor</th><th>Emiten</th><th>Rata-rata Chg%</th>
+        </tr></thead><tbody id="mkSecBody"></tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+        <h2 style="font-size:15px;margin:0">Alert</h2>
+        <select id="alSev">
+          <option value="">Semua prioritas</option>
+          <option value="kritis">Kritis saja</option>
+          <option value="perhatian">Perhatian saja</option>
+          <option value="info">Info saja</option>
+        </select>
+        <select id="alJenis"><option value="">Semua jenis</option></select>
+        <span class="note" id="alInfo" style="margin:0"></span>
+      </div>
+      <div class="tbl-wrap">
+        <table id="alTbl"><thead><tr>
+          <th style="text-align:left">Prioritas</th><th style="text-align:left">Kode</th>
+          <th style="text-align:left">Alert</th><th style="text-align:left">Detail</th>
+        </tr></thead><tbody id="alBody"></tbody></table>
+      </div>
+      <div class="disclaimer">Hasil screening otomatis, bukan rekomendasi beli.</div>
+    </div>
+
+    <div class="card">
+      <h2 style="font-size:15px;margin:0 0 8px">Cakupan Data Skor</h2>
+      <div class="note" id="spInfo" style="margin-bottom:10px">Memuat…</div>
+      <div class="tbl-wrap">
+        <table id="spTbl"><thead><tr>
+          <th style="text-align:left">Kode</th><th>Skor</th><th>Bobot terisi</th>
+          <th style="text-align:left">Komponen hilang</th>
+        </tr></thead><tbody id="spBody"></tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 style="font-size:15px;margin:0 0 8px">Median Valuasi per Sektor</h2>
+      <div class="note" id="mvInfo" style="margin-bottom:10px">Memuat…</div>
+      <div class="tbl-wrap">
+        <table id="mvTbl"><thead><tr>
+          <th style="text-align:left">Sektor</th><th>Emiten</th><th>Median PER</th>
+          <th>Median PBV</th><th style="text-align:left">Catatan</th>
+        </tr></thead><tbody id="mvBody"></tbody></table>
+      </div>
+    </div>
   </div>
 
   <!-- WATCHLIST -->
@@ -403,10 +496,19 @@ function ratio(v,d=2){ if(v==null||Number.isNaN(v)) return '<span class="na">–
 /* ROE: satuan baku = FRAKSI (0.12814 = 12,814%). Pipeline menormalisasi
    Sectors & yfinance ke satuan yang sama. Lihat README.md -> "Satuan data". */
 function roePct(v){ if(v==null||Number.isNaN(v)) return '<span class="na">–</span>'; return nf(v*100,1)+'%'; }
-/* toFixed aman: null/undefined/NaN -> "–" (dipakai di KPI & teks apa pun) */
-function fx(v,d=2){ if(v==null||v===''||Number.isNaN(Number(v))) return '–'; return Number(v).toFixed(d); }
-/*-badge angka desimal dengan presisi, null-safe (bukan string HTML) */
-function fxNum(v,d=2){ const s=fx(v,d); return s==='–'?null:Number(s); }
+/* Format angka tampilan — SATU gaya untuk seluruh UI: id-ID
+   (ribuan ".", desimal ","). Dulu fungsi ini memakai toFixed sehingga
+   muncul "29.7" dan "11.11%" bercampur dengan "4.996,61" di kartu yang
+   sama. CATATAN: CSV tetap memakai CSV_FMT/toFixed + replace('.',',')
+   karena file CSV butuh titik desimal mentah sebelum diganti. */
+function fx(v,d=2){ if(v==null||v===''||Number.isNaN(Number(v))) return '–';
+  return Number(v).toLocaleString('id-ID',
+    {minimumFractionDigits:d,maximumFractionDigits:d}); }
+/*-badge angka desimal dengan presisi, null-safe (bukan string HTML).
+  Ambil dari nilai asli, BUKAN hasil fx() yang sudah berformat id-ID --
+  mem-parse "29,7" dengan Number() menghasilkan NaN. */
+function fxNum(v,d=2){ if(v==null||v===''||Number.isNaN(Number(v))) return null;
+  const n=Math.round(Number(v)*Math.pow(10,d))/Math.pow(10,d); return n; }
 
 function skorCell(v){
   if(v==null) return '<span class="skor sk-no" title="data tidak tersedia">n/a</span>';
@@ -1223,6 +1325,108 @@ function renderAll(){
   $('#fSektor').innerHTML='<option value="">Semua sektor</option>'+
     [...sek].sort().map(s=>`<option ${s===cur?'selected':''}>${esc(s)}</option>`).join('');
   renderScreener(); renderWL(); renderRisiko();
+  renderAlertTab();
+}
+
+/* ---------- (Kelompok D) alert, ringkasan pasar, cakupan skor, median ---------- */
+let ALERTS=null;
+
+function sevBadge(s){
+  const m={kritis:['#ff5b6e','KRITIS'],perhatian:['#f0a92b','PERHATIAN'],info:['#3fa9f5','INFO']};
+  const [c,t]=m[s]||['#8b93a7',String(s||'—').toUpperCase()];
+  return `<span style="display:inline-block;padding:1px 7px;border-radius:5px;font-size:11px;
+    font-weight:700;letter-spacing:.02em;color:#0b0e14;background:${c}">${t}</span>`;
+}
+
+function renderMarket(){
+  const m=(DATA&&DATA.ringkasan_pasar)||null;
+  if(!m){ $('#mkInfo').textContent='Ringkasan pasar tidak tersedia.'; return; }
+  const ih=m.ihsg||{};
+  if(ih.tersedia){
+    $('#mkInfo').innerHTML=`IHSG <b>${nf(ih.nilai,2)}</b> ${pct(ih.chg_pct)} `+
+      `<span class="na">· ${esc(ih.sumber_data||'')}</span>`;
+  } else {
+    $('#mkInfo').textContent='IHSG tidak tersedia pada run ini.';
+  }
+  const w=(s)=>s?`${esc(s.sektor)} ${pct(s.chg_pct)} <span class="na">(${s.jumlah} emiten)</span>`:'—';
+  $('#mkStrong').innerHTML=w(m.sektor_terkuat);
+  $('#mkWeak').innerHTML=w(m.sektor_terlemah);
+  const sec=m.sektor||[];
+  $('#mkSecBody').innerHTML=sec.length
+    ? sec.map(s=>`<tr><td>${esc(s.sektor)}</td><td>${s.jumlah}</td>
+        <td>${pct(s.chg_pct)}</td></tr>`).join('')
+    : '<tr><td colspan="3" class="empty">Belum ada sektor dengan perubahan harga.</td></tr>';
+}
+
+function renderAlerts(){
+  const A=(DATA&&DATA.alerts)||null;
+  if(!A||A.tersedia===false){
+    $('#alInfo').textContent='Alert tidak tersedia pada run ini.';
+    $('#alBody').innerHTML='<tr><td colspan="4" class="empty">Tidak ada data alert.</td></tr>';
+    return;
+  }
+  ALERTS=A.daftar||[];
+  // isi dropdown jenis sekali
+  const sel=$('#alJenis');
+  const jenis=Object.keys(A.per_jenis||{}).sort();
+  if(sel.options.length<=1){
+    jenis.forEach(j=>{ const o=document.createElement('option');
+      o.value=j; o.textContent=`${j} (${A.per_jenis[j]})`; sel.appendChild(o); });
+  }
+  const sv=A.per_severity||{};
+  $('#alCount').textContent=A.total?`(${A.total})`:'';
+  drawAlerts();
+  $('#alInfo').textContent=`${A.total} alert · kritis ${sv.kritis||0} · `+
+    `perhatian ${sv.perhatian||0} · info ${sv.info||0}`+
+    (A.dipotong?` · ditampilkan ${ALERTS.length}`:'');
+}
+
+function drawAlerts(){
+  if(!ALERTS) return;
+  const sev=$('#alSev').value, jen=$('#alJenis').value;
+  const rows=ALERTS.filter(a=>(!sev||a.severity===sev)&&(!jen||a.jenis===jen));
+  $('#alBody').innerHTML=rows.length
+    ? rows.map(a=>`<tr>
+        <td>${sevBadge(a.severity)}</td>
+        <td><span class="kode">${esc(a.kode)}</span></td>
+        <td>${esc(a.judul||'')}</td>
+        <td class="na" style="text-align:left">${esc(a.detail||'')}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="4" class="empty">Tidak ada alert untuk filter ini.</td></tr>';
+}
+
+function renderSkorParsial(){
+  const s=(DATA&&DATA.skor_parsial)||null;
+  if(!s){ $('#spInfo').textContent='Data cakupan skor tidak tersedia.'; return; }
+  const pp=s.persen_penuh==null?'—':nf(s.persen_penuh,1)+'%';
+  $('#spInfo').innerHTML=`Skor penuh <b>${s.penuh}</b> · sebagian <b>${s.sebagian}</b> · `+
+    `tanpa skor <b>${s.tanpa_skor}</b> · berdata penuh ${pp}`+
+    (s.catatan?`<br><span class="na">${esc(s.catatan)}</span>`:'');
+  const c=s.contoh_sebagian||[];
+  $('#spBody').innerHTML=c.length
+    ? c.map(x=>`<tr><td><span class="kode">${esc(x.kode)}</span></td>
+        <td>${num(x.skor,1)}</td><td>${nf((x.bobot_terisi||0)*100,0)}%</td>
+        <td style="text-align:left">${(x.komponen_hilang||[]).map(esc).join(', ')||'—'}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="4" class="empty">Semua skor dihitung dari data penuh.</td></tr>';
+}
+
+function renderMedianSektor(){
+  const m=(DATA&&DATA.median_valuasi_sektor)||null;
+  if(!m){ $('#mvInfo').textContent='Median valuasi sektor tidak tersedia.'; return; }
+  $('#mvInfo').innerHTML=`${m.jumlah_sektor} sektor · ${m.sektor_dengan_median} punya median `+
+    `<span class="na">(min. ${m.ambang_min_emiten} emiten berdata)</span>`;
+  const rows=m.per_sektor||[];
+  $('#mvBody').innerHTML=rows.length
+    ? rows.map(x=>`<tr><td>${esc(x.sektor)}</td><td>${x.jumlah_emiten}</td>
+        <td>${x.median_per!=null?ratio(x.median_per,2):'<span class="na">–</span>'}</td>
+        <td>${x.median_pbv!=null?ratio(x.median_pbv,2):'<span class="na">–</span>'}</td>
+        <td style="text-align:left" class="na">${esc(x.catatan||'')}</td></tr>`).join('')
+    : '<tr><td colspan="5" class="empty">Belum ada data valuasi per sektor.</td></tr>';
+}
+
+function renderAlertTab(){
+  renderMarket(); renderAlerts(); renderSkorParsial(); renderMedianSektor();
 }
 
 function init(){
@@ -1242,6 +1446,8 @@ function init(){
   $('#fSektor').onchange=renderScreener;
   $('#fSinyal').onchange=renderScreener;
   $('#fSkor').onchange=renderScreener;
+  $('#alSev').onchange=drawAlerts;
+  $('#alJenis').onchange=drawAlerts;
 
   $$('.tab').forEach(t=>t.onclick=()=>{
     $$('.tab').forEach(x=>x.classList.remove('active'));
@@ -1249,6 +1455,7 @@ function init(){
     t.classList.add('active');
     $('#panel-'+t.dataset.tab).classList.add('active');
     if(t.dataset.tab==='watchlist') renderWL();
+    if(t.dataset.tab==='alert') renderAlertTab();
     if(t.dataset.tab==='akurasi') loadBacktest();
     if(t.dataset.tab==='risiko') renderRisiko();
     // Di layar sempit, tab aktif otomatis digeser ke tengah agar tidak terpotong

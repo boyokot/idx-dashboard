@@ -140,20 +140,35 @@ if os.path.exists(LATEST):
     cek("tanggal akhir ⊆ tanggal sesi yang ada", akhir <= semua_tgl,
         str(sorted(akhir - semua_tgl)[:5]))
     cek("ada tepat 1 sesi terakhir (tanggal max)", len(akhir) >= 1, str(sorted(akhir)))
-    tgl_latest = d.get("tanggal") or d.get("diperbarui_pada", "")[:10]
-    cek("tanggal max history >= tanggal data latest.json",
-        max(semua_tgl) >= tgl_latest,
-        f"history max {max(semua_tgl)} vs latest {tgl_latest}")
+    # Tanggal DATA (sesi bursa) — bukan `diperbarui_pada` (jam pipeline
+    # jalan). Pipeline pagi hari kerja belum punya bar sesi hari itu,
+    # jadi membandingkan dengan jam run selalu gagal palsu.
+    tgl_latest = d.get("tanggal_data") or (d.get("diperbarui_pada") or "")[:10]
+    cek("tanggal_data latest ada di history (bukan lebih maju)",
+        (not tgl_latest) or (tgl_latest in semua_tgl),
+        f"tanggal_data {tgl_latest} tidak ada di history "
+        f"(max {max(semua_tgl)})")
 
-    # 3c-2. emiten yang tidak punya bar di sesi terakhir WAJIB tidak punya
-    # volume (tidak ada transaksi) pada bar terakhirnya.
+    # 3c-2. Tidak ada volume tanpa tanggal (forward-fill): array `d` dan `v`
+    # WAJIB sejajar. Dulu tes ini membandingkan volume terakhir emiten
+    # dengan sesi terakhir global, padahal volume itu milik tanggal
+    # terakhir emiten sendiri — pada sesi yang masih berjalan (baru
+    # sebagian emiten bertransaksi) itu selalu gagal palsu.
+    tidak_sejajar = [k for k, s in em.items()
+                     if len(s.get("d") or []) != len(s.get("v") or [])]
+    cek("array tanggal & volume sejajar (tidak ada forward-fill)",
+        not tidak_sejajar,
+        f"{len(tidak_sejajar)} emiten: {tidak_sejajar[:5]}")
+
+    # Sesi terakhir boleh belum lengkap bila bursa masih buka: sebagian
+    # emiten memang belum bertransaksi hari ini. Itu BUKAN data hilang.
     maxd = max(semua_tgl) if semua_tgl else None
     tak_ada_bar = [k for k, s in em.items()
                    if s.get("d") and maxd and s["d"][-1] != maxd]
-    dengan_vol = [k for k in tak_ada_bar if em[k]["v"][-1] is not None]
-    cek("emiten tanpa bar di sesi terakhir tidak melaporkan volume",
-        len(dengan_vol) <= 1,
-        f"{len(dengan_vol)} emiten: {dengan_vol[:5]}")
+    cek("emiten tanpa bar sesi terakhir punya volume di tanggalnya sendiri",
+        all(em[k]["v"][-1] is not None or em[k]["d"][-1] != maxd
+            for k in tak_ada_bar),
+        f"{len(tak_ada_bar)} emiten berakhir sebelum {maxd} (sesi berjalan)")
 
     # 3d. kode di history harus ada di latest
     yatim = set(em) - set(rows)

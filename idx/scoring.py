@@ -526,13 +526,29 @@ def combine(tech: Dict[str, Any], fund: Dict[str, Any],
 
 def sector_medians(rows: List[Dict[str, Any]]
                    ) -> Tuple[Dict[str, float], Dict[str, float]]:
-    """Median PER & PBV per sektor, untuk pembanding relatif."""
+    """Median PER & PBV per sektor, untuk pembanding relatif.
+
+    Menerima DUA bentuk baris yang dipakai di proyek ini:
+      - flat    : {"sektor": ..., "per": ..., "pbv": ...}   (rows pipeline)
+      - bersarang: {"sektor": ..., "fundamental": {"per": ...}}
+    Sebelumnya hanya bentuk bersarang yang dibaca, sementara pipeline
+    mengirim bentuk flat -> median SELALU kosong tanpa error.
+    """
     pe_map: Dict[str, List[float]] = {}
     pb_map: Dict[str, List[float]] = {}
     for r in rows:
         f = r.get("fundamental") or {}
         sec = (r.get("sektor") or "LAINNYA").upper()
-        pe, pb = f.get("per"), f.get("pbv")
+        pe = r.get("per")
+        if pe is None:
+            pe = f.get("per")
+        pb = r.get("pbv")
+        if pb is None:
+            pb = f.get("pbv")
+        if isinstance(pe, bool):
+            pe = None
+        if isinstance(pb, bool):
+            pb = None
         if isinstance(pe, (int, float)) and pe > 0:
             pe_map.setdefault(sec, []).append(float(pe))
         if isinstance(pb, (int, float)) and pb > 0:

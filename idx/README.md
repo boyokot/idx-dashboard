@@ -358,9 +358,9 @@ python3 idx/test_external.py     # 128 tes
 
 | Bagian | Isi | Sumber |
 |---|---|---|
-| `makro` | IHSG `^JKSE`, USD/IDR `USDIDR=X`, S&P 500 `^GSPC`, minyak `CL=F`, emas `GC=F`, CPO `CPO=F`, biji besi `TIO=F` | yfinance |
+| `makro` | IHSG `^JKSE`, USD/IDR `USDIDR=X`, S&P 500 `^GSPC`, minyak `CL=F`, emas `GC=F`, CPO `CPO=F` (**USD**, bukan MYR), biji besi `TIO=F` | yfinance |
 | `bi_rate` | BI-Rate terbaru + tanggal | tabel resmi `bi.go.id/id/statistik/indikator/bi-rate.aspx` |
-| `inflasi` | Inflasi YoY + periode | tabel resmi `bi.go.id/id/statistik/indikator/data-inflasi.aspx` |
+| `inflasi` | Inflasi YoY + periode | **BPS** (Utama) → `bi.go.id/.../data-inflasi.aspx` (fallback) |
 | `kalender_bi` | 12 jadwal RDG 2026 | `bi.go.id/id/publikasi/kalender/default.aspx` |
 | `kekuatan_sektor` | return 5 & 20 sesi per sektor + selisih vs IHSG | `data/history.json` + `^JKSE` |
 | `aliran_dana` | net asing, broker summary | Sectors (**butuh API key**) |
@@ -401,6 +401,97 @@ perubahan struktur akan terlihat sebagai tes gagal, bukan data salah diam-diam.
 2. **Regex tanggal RDG** ikut memindai digit tahun: "20-21 Januari 2026"
    terbaca **26 Januari**. Sekarang hanya kelompok hari di depan nama bulan
    yang di-parse.
+
+## Faktor eksternal — Tahap 2: rezim, anomali, sensitivitas sektor
+
+Tahap 2 menambah **konteks** di atas data Tahap 1. Skor **belum** memakai
+peta sensitivitas sektor (masih `dipakai_skor: false`, menunggu koreksi
+Bukhori) — yang ditambahkan di Tahap 2 adalah rezim pasar, penandaan
+anomali, dan kalender.
+
+### Modul baru
+
+| Modul | Fungsi |
+|---|---|
+| `idx/rezim.py` | **sumber tunggal** deteksi rezim pasar (stres / normal / positif) + pemicunya |
+| `idx/anomali.py` | **sumber tunggal** periode anomali + definisi jendela evaluasi |
+| `idx/test_rezim_integrasi.py` | 78 tes integrasi rezim → skor → payload → UI → backtest |
+
+### Rezim pasar
+
+`rezim.py` dipakai oleh `external.py` (data) dan `pipeline.py` (payload +
+flag skor) — hanya **satu** implementasi, supaya data dan skor tidak
+berbeda pendapat. Ambang awal: penurunan IHSG > 5% dalam lima sesi, atau
+trading halt.
+
+- Rezim **tidak mengubah angka skor**. Ia ditempel sebagai konteks
+  terpisah di `skor_detail` tiap baris emiten dengan flag
+  `"pasar stres"` + daftar pemicunya.
+- Kalau konteks tidak tersedia → `"data tidak tersedia"`, bukan
+  `"normal"`. Tidak ada tebakan.
+- Banner di dashboard menampilkan rezim + pemicunya apa adanya.
+
+### Anomali: irisan jendela evaluasi
+
+Definisi resmi (`idx/anomali.jendela_beririsan`): sebuah titik dihitung
+**dalam anomali** kalau **jendela evaluasinya** (tanggal sinyal s.d.
+T+h sesi) **beririsan** dengan periode anomali — bukan hanya kalau
+tanggal sinyalnya jatuh di dalam periode. Sifatnya **per-horizon**: satu
+titik bisa beririsan untuk T+5 tapi tidak untuk T+20.
+
+Periode aktif: **15–21 Okt 2026** (IHSG turun ~11,1% dalam lima sesi,
+disertai usulan reklasifikasi MSCI Emerging → Standalone, belum final).
+
+Konsekuensi yang dinyatakan terbuka di `backtest.json` dan di UI:
+
+- **Sinyal bertanggal 15–21 Okt 2026 belum bisa dievaluasi** pada horizon
+  5/10/20 sesi karena jendelanya belum selesai. Jadi angka "terpengaruh"
+  dihitung dari sinyal **sebelum** periode yang jendelanya menabrak
+  periode anomali.
+- Backtest melaporkan statistik **DENGAN** dan **TANPA** anomali, per
+  horizon, beserta jumlah titik yang terpengaruh.
+- Memperpanjang `history.json` bersifat **opsional** — bukan syarat agar
+  statistiknya Valid.
+
+Hasil 21 Okt 2026: horizon 5 & 10 → 0 titik terpengaruh; horizon 20 →
+**4.491 titik**. Dampak pada rata-rata kelompok skor T+20: skor rendah
++3,71% → +4,88%, sedang +2,75% → +3,82%, tinggi +4,88% → +5,53% (tanpa
+anomali). Kesimpulan: efek guncangan 15 Okt depressing rata-rata T+20.
+
+### Backtest: return mentah vs excess, dan jumlah sinyal unik
+
+**`rata2` adalah RETURN MENTAH emiten — BUKAN excess.** Ini penting
+dibaca: kalau pasar bullish, return mentah ikut terangkat oleh tren pasar
+dan itu **bukan** bukti strateginya bagus. Karena itu keduanya
+ditampilkan berdampingan:
+
+| Field | Arti |
+|---|---|
+| `rata2` | return mentah emiten (persen) |
+| `ihsg_rata2` | return IHSG pada titik yang sama |
+| `excess` | `rata2 − ihsg_rata2` (selisih dua rata-rata) |
+| `excess_rata2` / `excess_median` / `excess_menang` | statistik excess **point-wise** (emiten − IHSG per titik), dipakai untuk win-rate |
+| `jenis_rata2` | penanda eksplisit `"return mentah (bukan excess)"` |
+
+**Sinyal unik** (`sinyal_unik`): satu sinyal unik = satu **episode** per
+(emiten, label sinyal), dihitung pada **tanggal sinyal pertama** yang
+muncul. Sinyal beruntun (mis. Breakout 7 sesi berturut-turut) dihitung
+satu episode, bukan 7. Jumlah *titik* (n) menghitung ulang episode yang
+sama, jadi selalu ≥ jumlah sinyal unik. Dilaporkan per horizon dan per
+kategori (per sinyal & per kelompok skor), dengan versi `tanpa_anomali`.
+
+### Peta sensitivitas 56 sektor — MENUNGGU KOREKSI
+
+`config/sensitivitas_sektor.json` memuat 56 sektor × 9 faktor (USD/IDR,
+BI Rate, inflasi, minyak, CPO, emas, bijih besi, risk-off asing, beta IHSG)
+dengan arah −3..+3 dan alasan singkat. Nilai 0 = **tidak jelas**, bukan
+tebakan.
+
+- Status `usulan` · **`dipakai_skor: false`** — belum masuk skor.
+- Ubah `dipakai_skor` menjadi `true` HANYA setelah Bukhori mengoreksi
+  nilainya.
+- Berkas koreksi: `config/sensitivitas_sektor.csv` (bisa dibuka di
+  Sheets) dan `config/sensitivitas_sektor_review.md` (versi markdown).
 
 ## Menjalankan
 

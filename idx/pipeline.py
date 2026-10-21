@@ -25,6 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from idx import providers as P  # noqa: E402
 from idx import scoring as S  # noqa: E402
+from idx import rezim as RZ     # noqa: E402
 from idx import alert as AL  # noqa: E402
 
 try:
@@ -540,6 +541,11 @@ def _market_summary(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
         if ff.get("ok"):
             net_total = _parse_net_asing(ff.get("data"))
 
+    # Rezim pasar: sumber tunggal idx/rezim.py. Dihitung dari bar IHSG yang
+    # sama dengan ringkasan di atas (bukan fetch kedua -> tidak bisa beda).
+    ihsg_bars = idx.get("data") if idx.get("ok") and isinstance(idx.get("data"), list) else []
+    rezim = RZ.deteksi_rezim(ihsg_bars or [])
+
     return {
         "ihsg": ihsg,
         "sektor_terkuat": sec_stats[0] if sec_stats else None,
@@ -547,6 +553,8 @@ def _market_summary(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
         "sektor": sec_stats,
         "net_asing_total": net_total,
         "net_asing_tersedia": net_total is not None,
+        "rezim_pasar": rezim,
+        "konteks_pasar": RZ.ringkas_konteks(rezim),
     }
 
 
@@ -633,6 +641,12 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
     # Harus dihitung DI SINI: `_bars` di-pop di loop di bawah.
     tanggal_data = _tanggal_data_hist(bars_untuk_history)
 
+    # Konteks pasar dihitung SEBELUM skoring akhir supaya flag "pasar
+    # stres" bisa menempel ke tiap baris (tanpa mengubah angka skor).
+    ringkasan_pasar = _market_summary(rows)
+    konteks_pasar = ringkasan_pasar.get("konteks_pasar") or {}
+    flag_konteks = S.flag_konteks_pasar(konteks_pasar)
+
     for r in rows:
         fund_d = {"per": r.get("per"), "pbv": r.get("pbv"), "roe": r.get("roe"),
                   "der": r.get("der"), "earnings_growth": r.get("earnings_growth"),
@@ -650,6 +664,7 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
             "bobot_terisi": comb["bobot_terisi"],
             "catatan": comb["catatan"],
             "komponen": comb["komponen"],
+            "konteks_pasar": flag_konteks,
         }
         r.pop("_bars", None)
         r.pop("_news", None)
@@ -691,7 +706,8 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
         "tanggal_data": tanggal_data,
         "median_per_sektor": pe_med,
         "median_pbv_sektor": pb_med,
-        "ringkasan_pasar": _market_summary(rows),
+        "ringkasan_pasar": ringkasan_pasar,
+        "konteks_pasar": konteks_pasar,
         "alerts": _alerts_payload(rows),
         "skor_parsial": AL.skor_parsial(rows),
         "median_valuasi_sektor": _median_valuasi_sektor(rows, pe_med, pb_med),

@@ -179,7 +179,14 @@ def main():
                           ".map(t=>t.innerText.trim())")
         hdr_up = [h.upper() for h in (hdr or [])]
         cek("kolom IHSG ada di header", "IHSG" in hdr_up, hdr)
-        cek("kolom Selisih ada di header", "SELISIH" in hdr_up, hdr)
+        cek("kolom Selisih ada di header",
+            any("SELISIH" in h for h in hdr_up), hdr)
+        cek("kolom Excess ada di header",
+            any("EXCESS" in h for h in hdr_up), hdr)
+        cek("kolom Sinyal unik ada di header",
+            any("SINYAL UNIK" in h for h in hdr_up), hdr)
+        cek("header menyatakan rata-rata = return mentah",
+            any("MENTAH" in h for h in hdr_up), hdr)
 
         ns = eval_js(ws, "document.querySelectorAll('#btSkorBody tr').length")
         cek("tabel per skor terisi", (ns or 0) >= 3, ns)
@@ -190,11 +197,24 @@ def main():
             cek(f"tidak ada '{buruk}' di panel", buruk not in (teks or ""),
                 "" if buruk not in (teks or "") else "ditemukan")
 
-        # selisih harus tercetak dengan tanda +/- (bukan kosong)
-        sel = eval_js(ws, "[...document.querySelectorAll('#btBody tr')]"
-                          ".map(tr=>tr.children[5].innerText.trim()).slice(0,4)")
-        cek("kolom selisih berisi angka", all(
-            any(c.isdigit() for c in s) for s in (sel or [])), sel)
+        # kolom return mentah, IHSG, dan excess (selisih) harus berisi
+        # angka bertanda +/- (bukan kosong). KOLOM: 0 sinyal, 1 sesi,
+        # 2 titik, 3 sinyal unik, 4 rata-rata mentah, 5 IHSG, 6 excess,
+        # 7 % naik mentah, 8 % naik excess, 9 terburuk.
+        for idx_kol, label in ((4, "rata-rata mentah"), (5, "IHSG"),
+                               (6, "excess/selisih")):
+            sel = eval_js(ws, "[...document.querySelectorAll('#btBody tr')]"
+                              f".map(tr=>tr.children[{idx_kol}]"
+                              ".innerText.trim()).slice(0,4)")
+            cek(f"kolom {label} berisi angka", all(
+                any(c.isdigit() for c in s) for s in (sel or [])), sel)
+        # kolom sinyal unik harus terisi angka dan <= kolom titik
+        unik = eval_js(ws, "[...document.querySelectorAll('#btBody tr')]"
+                           ".map(tr=>[tr.children[2].innerText.trim(),"
+                           "tr.children[3].innerText.trim()]).slice(0,4)")
+        cek("kolom sinyal unik terisi angka", all(
+            u[1] and any(c.isdigit() for c in u[1]) for u in (unik or [])),
+            unik)
 
         cat = eval_js(ws, "document.getElementById('btCatatan').innerText")
         cek("catatan risiko tampil", "waspadai" in (cat or "").lower(),

@@ -524,6 +524,35 @@ def combine(tech: Dict[str, Any], fund: Dict[str, Any],
     }
 
 
+# ───────────────────── konteks pasar (flag skor) ─────────────────────
+
+def flag_konteks_pasar(konteks: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    """Flag "pasar stres" untuk ditempel ke skor.
+
+    PENTING: angka skor TIDAK diubah diam-diam. Fungsi ini hanya
+    menempelkan konteks (label + pemicu) supaya pembaca tahu skor itu
+    bornir di pasar stres. Kalau konteks tidak tersedia, hasilnya jujur
+    "tidak tersedia" — bukan "normal".
+    """
+    if not isinstance(konteks, dict) or not konteks.get("rezim"):
+        return {"label": "data tidak tersedia", "pasar_stres": None,
+                "flags": [], "pemicu": [],
+                "catatan": "konteks pasar tidak tersedia"}
+    stres = konteks.get("pasar_stres")
+    label = konteks.get("label") or ("pasar stres" if stres else
+                                     "rezim " + str(konteks.get("rezim")))
+    flags = ["pasar stres"] if stres else []
+    return {
+        "label": label,
+        "pasar_stres": stres,
+        "flags": flags,
+        "pemicu": konteks.get("pemicu") or [],
+        "catatan": ("Angka skor tidak diubah; konteks pasar ditampilkan "
+                    "terpisah supaya tidak disalahartikan sebagai sinyal "
+                    "buy/sell."),
+    }
+
+
 def sector_medians(rows: List[Dict[str, Any]]
                    ) -> Tuple[Dict[str, float], Dict[str, float]]:
     """Median PER & PBV per sektor, untuk pembanding relatif.

@@ -1,0 +1,57 @@
+sektor,usd_idr_naik,bi_rate_naik,inflasi_naik,minyak_naik,cpo_naik,emas_naik,iron_ore_naik,risk_off_asing,ihsg_beta,alasan
+"ADVERTISING,PRINTING AND MEDIA",-1,-1,-1,0,0,0,0,-1,2,belanja iklan ikut siklus ekonomi
+ANIMAL FEED,-1,-1,-1,0,-1,0,0,0,1,bahan baku jagung/gandum impor
+ANIMAL HUSBANDRY,-1,-1,-1,0,-1,0,0,0,1,pakan & daya beli
+AUTOMOTIVE AND COMPONENTS,-2,-3,-2,0,0,0,0,-2,3,kredit kendaraan paling tertekan suku bunga
+BANK,-1,1,-1,0,0,0,0,-3,2,"beban kredit naik saat BI Rate naik, tapi NIM jangka pendek terbantu"
+BUILDING CONSTRUCTION,-1,-3,-2,0,0,0,-1,-2,3,"proyek dibiayai utang, material ikut inflasi"
+CABLE,-1,-1,0,-1,0,0,-2,-1,1,tembaga = bahan baku utama
+CEMENT,-1,-3,-2,-1,0,0,0,-2,3,properti & konstruksi turun saat bunga naik
+"CERAMICS, GLASS, PORCELAIN",-1,-2,-1,-2,0,0,0,-1,2,"material bangunan, gas energi"
+CHEMICALS,-1,-1,-1,-3,0,0,0,-1,2,nafta/minyak = bahan baku utama
+COAL MINING,3,0,0,2,0,0,0,-1,2,"harga jual USD, bersaing dengan energi lain"
+COMPUTER AND SERVICES,-2,-1,0,0,0,0,0,-1,2,perangkat keras sebagian besar impor
+CONSTRUCTION,-1,-3,-2,0,0,0,-1,-2,3,sama seperti building construction
+COSMETICS AND HOUSEHOLD,-1,-2,-1,0,0,0,0,-1,1,"bahan baku impor, daya beli"
+CROPS,1,0,1,0,1,0,0,0,1,harga pangan & CPO
+CRUDE PETROLEUM & NATURAL GAS PROD.,2,0,0,3,0,0,0,-1,1,harga jual langsung ikut minyak
+ELECTRONICS,-2,-1,0,0,0,0,0,-1,2,komponen impor
+ENERGY,2,0,0,3,0,0,0,-1,1,harga jual langsung ikut minyak
+FINANCIAL INSTITUTION,-1,1,-1,0,0,0,0,-2,2,mirip bank tapi skala lebih kecil
+FISHERY,2,-1,-1,-1,0,0,0,0,1,"hasil laut diekspor, biaya BBM"
+FOOD & BEVERAGES,-1,-1,-1,0,-1,0,0,-2,1,sebagian bahan baku impor & minyak goreng
+FOOTWEAR,3,-1,-1,0,0,0,0,-1,2,eksportir besar
+FORESTRY,1,0,0,0,0,0,0,0,1,sebagian ekspor
+HEALTH CARE,-2,-1,-1,0,0,0,0,1,0,"relatif defensif, alat kesehatan impor"
+HOUSEWARE,-1,-2,-1,0,0,0,0,-1,2,daya beli & bahan baku
+INSURANCE,0,2,0,0,0,0,0,-2,2,hasil investasi terbantu suku bunga
+INVESTMENT COMPANY,-1,-1,0,0,0,0,0,-3,3,nilai portofolio mengikuti pasar
+LAND/STONE QUARRYING,-1,-1,-1,0,0,0,0,-1,2,material bangunan
+MACHINERY AND HEAVY EQUIPMENT,-2,-2,-1,0,0,0,0,-1,2,"alat impor, belanja modal turun saat bunga naik"
+METAL AND ALLIED PRODUCTS,1,-1,0,-1,0,0,-2,-1,2,"biji besi bahan baku, produk pakai baja"
+METAL AND MINERAL MINING,3,0,0,0,0,2,1,-1,2,"emas & mineral, harga USD"
+NON BUILDING CONSTRUCTION,-1,-2,-1,-1,0,0,0,-1,2,proyek infrastruktur dibiayai utang
+OTHER - BASIC INDUSTRY AND CHEMICALS,-1,-1,-1,-2,0,0,-1,-1,2,bahan baku kimia & energi
+OTHER SECTORS,0,0,0,0,0,0,0,0,0,tidak bisa dipetakan jelas -> semua 0
+OTHERS - AGRICULTURE,0,0,1,0,0,0,0,0,1,harga pangan
+OTHERS - CONSUMER GOODS INDUSTRY,-1,-1,-1,0,-1,0,0,-1,1,"barang konsumsi, ikut daya beli"
+OTHERS - FINANCE,-1,1,0,0,0,0,0,-2,2,mirip lembaga keuangan
+"OTHERS - INFRASTRUCTURE, UTILITIES & TRANSPORTATIO",-1,-2,0,0,0,0,0,-1,2,"sebagian diatur tarif, utang besar"
+OTHERS - MINING,3,0,0,0,0,0,1,-1,2,harga komoditas USD
+OTHERS - MISCELLANENEOUS INDUSTRY,-1,-1,-1,0,0,0,0,-1,2,"tidak spesifik, ikut pasar"
+"OTHERS - TRADE, SERVICES & INVESTMENT",-1,-1,-1,0,0,0,0,-2,2,"campuran, ikut siklus domestik"
+PHARMACEUTICALS,-2,-1,-1,0,0,0,0,1,0,"bahan baku impor, permintaan relatif kaku"
+PLANTATION,2,0,0,1,3,0,0,0,1,harga CPO acuan USD
+PLASTICS & PACKAGING,-2,-1,-1,-3,0,0,0,-1,1,resin dari turunan minyak
+PROPERTY AND REAL ESTATE,-1,-3,-2,0,0,0,0,-2,3,paling peka suku bunga (KPR) & beta tinggi
+PULP & PAPER,2,-1,0,0,0,0,0,-1,1,harga jual USD
+"RESTAURANT, HOTEL & TOURISM",-1,-1,-1,-1,0,0,0,-1,2,biaya operasi & daya beli
+RETAIL TRADE,-1,-2,-2,0,0,0,0,-1,2,daya beli turun saat inflasi & kredit mahal
+SECURITIES COMPANY,-1,1,0,0,0,0,0,-3,3,pendapatan ikut volume & nilai transaksi pasar
+TELECOMUNICATION,-2,-1,0,0,0,0,0,-2,1,"utang valas besar, pendapatan rupiah"
+"TEXTILE, GARMENT",3,-1,-1,0,0,0,0,-1,2,"eksportir besar, biaya bahan impor"
+TOBACCO MANUFACTURERS,-1,-1,-1,0,0,0,0,1,1,"permintaan kaku, cukai naik"
+"TOLL ROAD, AIRPORT, HARBOR & ALLIED PROD.",-1,-2,0,-1,0,0,0,-1,2,"utang besar, lalu lintas ikut ekonomi"
+TRANSPORTATION,-2,-2,-2,-3,0,0,0,-1,2,"BBM = biaya terbesar, sebagian impor"
+WHOLESALE (DURABLE & NON DURABLE GOODS),-1,-1,-1,0,0,0,0,-1,2,volume ikut daya beli
+WOOD INDUSTRIES,2,-1,0,0,0,0,0,0,1,produk kayu sebagian ekspor

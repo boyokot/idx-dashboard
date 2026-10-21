@@ -17,3 +17,28 @@ __pycache__/
 
 # Cache provider/calendar (lokal, jangan di-commit)
 idx/.cache/
+
+# ── Rahasia / kredensial — JANGAN PERNAH masuk repo ──
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.p12
+*.netrc
+*cookie*
+*token*
+*secret*
+*credential*
+data/*state*.json
+
+# ── Skrip bantu sekali pakai (bukan bagian repo) ──
+config/_*.py
+scripts/_*.py
+
+# ── Data mentah Stockbit / broker (jangan di-commit) ──
+data/stockbit*
+data/*stockbit*
+data/broker*
+data/*_raw*
+data/raw/

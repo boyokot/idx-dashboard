@@ -112,13 +112,41 @@ HTML_INFLASI = """
 """
 E._get_html = lambda url, timeout=30: (HTML_INFLASI, None)  # type: ignore
 inf = E.ambil_inflasi()
-cek("inflasi terbaca", inf.get("nilai_pct") == 3.19, str(inf)[:120])
-cek("inflasi bawa periode", inf.get("periode") == "August 2026")
-cek("inflasi bawa sumber", "bi.go.id" in (inf.get("sumber") or ""))
+# Sejak Tahap 2, BPS (September 3,28%) lebih baru dari bi.go.id (Agustus
+# 3,19%) -> BPS yang dipakai; bi.go.id tetap disimpan sebagai pembanding.
+cek("inflasi pilih periode TERBARU (BPS September 3,28)",
+    inf.get("nilai_pct") == 3.28, str(inf.get("periode")))
+cek("inflasi bawa periode", inf.get("periode") == "September 2026",
+    str(inf.get("periode")))
+cek("inflasi bawa sumber", "BPS" in (inf.get("sumber") or ""),
+    str(inf.get("sumber"))[:60])
+cek("inflasi simpan bi.go.id sebagai pembanding",
+    (inf.get("sumber_pembanding") or {}).get("nilai_pct") == 3.19,
+    str(inf.get("sumber_pembanding")))
+cek("inflasi catat jeda rilis BPS vs bi.go.id",
+    "Agustus" in (inf.get("catatan_jeda_rilis") or "")
+    or "August" in (inf.get("catatan_jeda_rilis") or ""),
+    str(inf.get("catatan_jeda_rilis"))[:80])
+
+# bi.go.id saja (BPS gagal) -> tetap terpakai, bukan "tidak tersedia".
+_asli_bps = E._inflasi_dari_bps
+E._inflasi_dari_bps = lambda: None  # type: ignore
+inf_bi = E.ambil_inflasi()
+cek("inflasi fallback bi.go.id saat BPS gagal", inf_bi.get("nilai_pct") == 3.19,
+    str(inf_bi.get("periode")))
+cek("inflasi fallback tetap bawa periode",
+    inf_bi.get("periode") == "August 2026", str(inf_bi.get("periode")))
+cek("inflasi fallback bawa sumber bi.go.id",
+    "bi.go.id" in (inf_bi.get("sumber") or ""), str(inf_bi.get("sumber"))[:60])
+E._inflasi_dari_bps = _asli_bps  # type: ignore
 
 E._get_html = lambda url, timeout=30: (None, "HTTPError: 503")  # type: ignore
+_asli_bps2 = E._inflasi_dari_bps
+E._inflasi_dari_bps = lambda: None  # type: ignore
 inf_b = E.ambil_inflasi()
 cek("inflasi gagal -> tidak tersedia", inf_b.get("nilai") == TIDAK_ADA)
+cek("inflasi gagal bawa alasan", "tidak" in (inf_b.get("alasan") or "").lower())
+E._inflasi_dari_bps = _asli_bps2  # type: ignore
 
 
 # ── 4. Kalender RDG: tanggal TIDAK boleh salah ─────────────────────────────
@@ -251,10 +279,17 @@ cek("aliran dana tanpa key -> tidak tersedia", ad["nilai"] == TIDAK_ADA)
 cek("aliran dana bawa alasan", bool(ad.get("alasan")))
 cek("aliran dana net_asing tidak tersedia", ad["net_asing"] == TIDAK_ADA)
 
-ke = E.ambil_kalender_emiten()
-cek("kalender emiten -> tidak tersedia", ke["nilai"] == TIDAK_ADA)
+# Kalender emiten kini memakai yfinance (idx.co.id 403, tidak dilewati).
+# Dengan 0 emiten yang dicek -> "tidak tersedia".
+_ke_tua = E.ambil_kalender_emiten
+ke = E.ambil_kalender_emiten(batas=5, maks_emiten=0)
+cek("kalender emiten tanpa kandidat -> tidak tersedia",
+    ke["nilai"] == TIDAK_ADA, str(ke.get("nilai")))
 cek("kalender emiten events kosong", ke["events"] == [])
 cek("kalender emiten catat 403 idx", "403" in json.dumps(ke.get("cek") or {}))
+cek("kalender emiten catat proteksi TIDAK dilewati",
+    "tidak dilewati" in json.dumps(ke.get("cek") or {}).lower(),
+    str(ke.get("cek"))[:120])
 
 
 # ── 8. Payload lengkap & penulisan atomik ──────────────────────────────────
@@ -317,6 +352,359 @@ cek("kurs USDIDR=X bukan emiten polos",
 cek("komoditas CL=F bukan emiten polos",
     re.fullmatch(r"[A-Z0-9]{1,6}", "CL=F") is None)
 cek("providers punya import re", hasattr(P, "re"))
+
+
+# ── 9b. TAHAP 2: rezim pasar, delta BI Rate, inflasi, proxy, MSCI, anomali ──
+bagian("9b. Tahap 2 — rezim pasar")
+
+# Naik >5% / turun >5% / datar, dibangun dari deret close sintetis.
+def _seri_close(close: list[float]) -> list[dict]:
+    return [{"close": c} for c in close]
+
+
+_datar = [100.0] * 25
+_rz = E.deteksi_rezim(_seri_close(_datar))
+cek("rezim: deret datar -> bukan stres", _rz.get("pasar_stres") is False,
+    str(_rz.get("rezim")))
+cek("rezim: deret datar -> 'normal'", _rz.get("rezim") == "normal",
+    str(_rz.get("rezim")))
+cek("rezim: ret5 datar = 0", _rz.get("ihsg_ret_5h_pct") == 0.0,
+    str(_rz.get("ihsg_ret_5h_pct")))
+cek("rezim: pemicu kosong saat datar", _rz.get("pemicu") == [],
+    str(_rz.get("pemicu")))
+
+# 5 sesi turun 6% -> kena ambang 5h.
+_turun = [100.0] * 19 + [100.0, 99.0, 98.0, 97.0, 96.0, 94.0]
+_rz2 = E.deteksi_rezim(_seri_close(_turun))
+cek("rezim: turun 6%/5 sesi -> stres", _rz2.get("pasar_stres") is True,
+    str(_rz2.get("ihsg_ret_5h_pct")))
+cek("rezim: pemicu ihsg_5h tercatat",
+    any(p["faktor"] == "ihsg_5h" for p in _rz2.get("pemicu") or []),
+    str(_rz2.get("pemicu")))
+_p5 = [p for p in _rz2.get("pemicu") or [] if p["faktor"] == "ihsg_5h"]
+cek("rezim: pemicu menyimpan nilai & ambang (transparan)",
+    bool(_p5) and _p5[0]["nilai_pct"] is not None
+    and _p5[0]["ambang_pct"] == -5.0,
+    str(_p5[:1]))
+
+# Turun 4,9% -> TIDAK boleh kena ambang 5%.
+_pas = [100.0] * 19 + [100.0, 99.5, 99.0, 98.5, 98.0, 95.1]
+_rz3 = E.deteksi_rezim(_seri_close(_pas))
+cek("rezim: turun 4,9%/5 sesi -> tidak stres",
+    _rz3.get("pasar_stres") is False, str(_rz3.get("ihsg_ret_5h_pct")))
+
+# 1 sesi jatuh 3,5% -> kena ambang 1h.
+_jatuh = [100.0] * 24 + [96.5]
+_rz4 = E.deteksi_rezim(_seri_close(_jatuh))
+cek("rezim: -3,5% 1 sesi -> stres", _rz4.get("pasar_stres") is True,
+    str(_rz4.get("ihsg_ret_1h_pct")))
+cek("rezim: pemicu ihsg_1h tercatat",
+    any(p["faktor"] == "ihsg_1h" for p in _rz4.get("pemicu") or []))
+
+# Data kurang -> "data tidak tersedia", bukan "normal" (menyesatkan).
+_rz5 = E.deteksi_rezim(_seri_close([100.0, 99.0]))
+cek("rezim: data < 6 bar -> 'data tidak tersedia'",
+    _rz5.get("rezim") == TIDAK_ADA, str(_rz5.get("rezim")))
+cek("rezim: data kurang -> pasar_stres None (bukan False)",
+    _rz5.get("pasar_stres") is None, str(_rz5.get("pasar_stres")))
+cek("rezim: data kurang -> alasan diisi", bool(_rz5.get("alasan")))
+cek("rezim: bar tanpa close diabaikan",
+    E.deteksi_rezim([{"close": None}, {"close": 100.0}]).get("rezim")
+    == TIDAK_ADA)
+cek("rezim: input None aman",
+    E.deteksi_rezim(None).get("rezim") == TIDAK_ADA)
+
+# Trading halt tidak boleh diklaim tanpa bukti.
+cek("rezim: halt tidak diklaim tanpa bukti",
+    _rz.get("trading_halt", {}).get("terdeteksi") is False,
+    str(_rz.get("trading_halt", {}).get("alasan"))[:80])
+cek("rezim: halt menyebut alasan tidak tersedia bila tak ada bukti",
+    "tidak ada sumber resmi" in (_rz.get("trading_halt", {}).get("alasan") or "").lower(),
+    str(_rz.get("trading_halt", {}).get("alasan"))[:90])
+cek("rezim: ambang disimpan di output (bisa diaudit)",
+    _rz.get("ambang", {}).get("ihsg_turun_5h_pct") == -5.0)
+cek("rezim: catatan menyebut 'tidak disembunyikan'",
+    "tidak" in (_rz.get("catatan") or "").lower())
+
+bagian("9c. Tahap 2 — BI Rate berubah (delta)")
+
+# Delta dihitung dari riwayat, bukan cuma level.
+_riwayat_turun = [
+    {"nilai_pct": 5.50, "tanggal": "2026-10-21"},
+    {"nilai_pct": 5.75, "tanggal": "2026-09-23"},
+]
+_d = E.hitung_delta_bi_rate(_riwayat_turun)
+cek("bi_rate: status turun", _d.get("status") == "turun", str(_d))
+cek("bi_rate: delta -0,25 pp", _d.get("delta_pp") == -0.25, str(_d.get("delta_pp")))
+cek("bi_rate: arah -1", _d.get("arah") == -1, str(_d.get("arah")))
+
+_riwayat_naik = [
+    {"nilai_pct": 6.00, "tanggal": "2026-10-21"},
+    {"nilai_pct": 5.75, "tanggal": "2026-09-23"},
+]
+_d2 = E.hitung_delta_bi_rate(_riwayat_naik)
+cek("bi_rate: status naik", _d2.get("status") == "naik", str(_d2))
+cek("bi_rate: delta +0,25 pp", _d2.get("delta_pp") == 0.25, str(_d2.get("delta_pp")))
+cek("bi_rate: arah +1", _d2.get("arah") == 1, str(_d2.get("arah")))
+
+_d3 = E.hitung_delta_bi_rate(_riwayat_turun[:1] + _riwayat_turun[:1])
+cek("bi_rate: sama -> 'tetap'", _d3.get("status") == "tetap", str(_d3))
+cek("bi_rate: sama -> delta 0", _d3.get("delta_pp") == 0.0)
+
+cek("bi_rate: riwayat kosong -> tidak tersedia",
+    E.hitung_delta_bi_rate([]).get("nilai") == TIDAK_ADA)
+cek("bi_rate: 1 entri -> delta tidak tersedia (tak ada pembanding)",
+    E.hitung_delta_bi_rate(_riwayat_turun[:1]).get("delta_pp") is None)
+cek("bi_rate: 'tetap' bukan 'tidak tersedia' (beda arti)",
+    _d3.get("status") == "tetap" and _d3.get("status") != TIDAK_ADA)
+
+bagian("9d. Tahap 2 — inflasi BPS lebih baru dari bi.go.id")
+
+_inf_bps = {"nilai_pct": 3.28, "periode": "September 2026",
+            "periode_iso": "2026-09", "sumber": "BPS"}
+_inf_bi = {"nilai_pct": 3.19, "periode": "Agustus 2026",
+           "periode_iso": "2026-08", "sumber": "bi.go.id"}
+_pilih = E.pilih_inflasi_terbaru(_inf_bps, _inf_bi)
+cek("inflasi: pilih periode terbaru (BPS September)",
+    _pilih.get("periode_iso") == "2026-09", str(_pilih.get("periode")))
+cek("inflasi: nilai = 3,28", _pilih.get("nilai_pct") == 3.28)
+cek("inflasi: pembanding disimpan", _pilih.get("sumber_pembanding", {})
+    .get("periode") == "Agustus 2026")
+cek("inflasi: catatan jeda rilis diisi",
+    "September" in (_pilih.get("catatan_jeda_rilis") or ""))
+_pilih2 = E.pilih_inflasi_terbaru(_inf_bi, _inf_bps)
+cek("inflasi: urutan argumen tidak mengubah hasil",
+    _pilih2.get("periode_iso") == "2026-09")
+_pilih3 = E.pilih_inflasi_terbaru(None, _inf_bi)
+cek("inflasi: BPS tidak ada -> pakai bi.go.id",
+    _pilih3.get("periode_iso") == "2026-08", str(_pilih3.get("periode")))
+cek("inflasi: keduanya tidak ada -> 'data tidak tersedia'",
+    E.pilih_inflasi_terbaru(None, None).get("nilai") == TIDAK_ADA
+    if "nilai" in E.pilih_inflasi_terbaru(None, None)
+    else E.pilih_inflasi_terbaru(None, None).get("nilai_pct") is None)
+cek("inflasi: konstanta BPS terverifikasi = 3,28",
+    E.INFLASI_BPS_TERVERIFIKASI.get("nilai_pct") == 3.28)
+cek("inflasi: konstanta punya tanggal rilis 2026-10-01",
+    E.INFLASI_BPS_TERVERIFIKASI.get("tanggal_rilis") == "2026-10-01")
+cek("inflasi: konstanta menandai verifikasi manual",
+    "verifikasi" in json.dumps(E.INFLASI_BPS_TERVERIFIKASI,
+                               ensure_ascii=False).lower())
+
+bagian("9e. Tahap 2 — mata uang & satuan komoditas")
+
+_mk = E.ambil_makro
+_meta = {m["kunci"]: m for m in E.MAKRO_YF}
+cek("komoditas: CPO bermata uang USD (BUKAN MYR)",
+    _meta["cpo"]["mata_uang"] == "USD", str(_meta["cpo"]))
+cek("komoditas: CPO satuan per metrik ton",
+    "metrik ton" in _meta["cpo"]["satuan"], str(_meta["cpo"]["satuan"]))
+cek("komoditas: WTI minyak USD per barel",
+    _meta["minyak"]["mata_uang"] == "USD"
+    and "barel" in _meta["minyak"]["satuan"])
+cek("komoditas: emas USD per troy ounce",
+    _meta["emas"]["mata_uang"] == "USD"
+    and "troy" in _meta["emas"]["satuan"])
+cek("komoditas: biji besi USD per metrik ton",
+    _meta["iron_ore"]["mata_uang"] == "USD"
+    and "metrik ton" in _meta["iron_ore"]["satuan"])
+cek("komoditas: IHSG dalam IDR (poin indeks)",
+    _meta["ihsg"]["mata_uang"] == "IDR")
+cek("komoditas: USD/IDR satuan rupiah per 1 USD",
+    "rupiah" in _meta["usdidr"]["satuan"].lower())
+cek("komoditas: S&P 500 dalam USD", _meta["sp500"]["mata_uang"] == "USD")
+cek("komoditas: SEMUA seri punya mata_uang",
+    all(m.get("mata_uang") for m in E.MAKRO_YF),
+    str([m["kunci"] for m in E.MAKRO_YF if not m.get("mata_uang")]))
+cek("komoditas: SEMUA seri punya satuan",
+    all(m.get("satuan") for m in E.MAKRO_YF))
+
+bagian("9f. Tahap 2 — batubara & nikel = PROXY berlabel")
+
+_proxy = {p["kunci"]: p for p in E.PROXY_KOMODITAS}
+cek("proxy: batubara ada", "batubara" in _proxy)
+cek("proxy: nikel ada", "nikel" in _proxy)
+cek("proxy: batubara pakai sektor COAL MINING",
+    any("COAL" in s.upper() for s in _proxy["batubara"]["sektor_proxy"]),
+    str(_proxy["batubara"]["sektor_proxy"]))
+cek("proxy: nikel pakai sektor METAL AND MINERAL MINING",
+    any("METAL AND MINERAL" in s.upper()
+        for s in _proxy["nikel"]["sektor_proxy"]),
+    str(_proxy["nikel"]["sektor_proxy"]))
+
+_makro_uji = {"batubara": {"nilai": TIDAK_ADA}, "nikel": {"nilai": TIDAK_ADA}}
+_kek_uji = {"per_sektor": [
+    {"sektor": "COAL MINING", "ret_5h_pct": -10.0, "ret_20h_pct": -9.0,
+     "rel_5h_pct": -1.5, "rel_20h_pct": -2.0},
+    {"sektor": "METAL AND MINERAL MINING", "ret_5h_pct": -18.0,
+     "ret_20h_pct": -22.0, "rel_5h_pct": -9.5, "rel_20h_pct": -12.0},
+]}
+E.lengkapi_proxy_komoditas(_makro_uji, _kek_uji)
+cek("proxy: batubara diberi label jenis 'proxy'",
+    _makro_uji["batubara"].get("jenis") == "proxy",
+    str(_makro_uji["batubara"].get("jenis")))
+cek("proxy: nikel diberi label jenis 'proxy'",
+    _makro_uji["nikel"].get("jenis") == "proxy")
+cek("proxy: nilai langsung TETAP 'data tidak tersedia' (tidak dikarang)",
+    _makro_uji["batubara"]["nilai"] == TIDAK_ADA,
+    str(_makro_uji["batubara"]["nilai"]))
+cek("proxy: angka sektor disimpan",
+    _makro_uji["batubara"]["proxy"]["ret_5h_pct"] == -10.0)
+cek("proxy: relatif vs IHSG diteruskan",
+    _makro_uji["nikel"]["proxy"].get("rel_5h_pct") == -9.5,
+    str(_makro_uji["nikel"]["proxy"]))
+cek("proxy: catatan menjelaskan bukan harga komoditas",
+    "proxy" in (_makro_uji["batubara"].get("catatan") or "").lower())
+cek("proxy: satuan menyebut return sektor, bukan harga",
+    "return" in (_makro_uji["batubara"].get("satuan") or "").lower(),
+    str(_makro_uji["batubara"].get("satuan")))
+# Relatif yang tidak ada di upstream TIDAK boleh dikarang.
+_makro_rel = {"batubara": {"nilai": TIDAK_ADA}, "nikel": {"nilai": TIDAK_ADA}}
+E.lengkapi_proxy_komoditas(_makro_rel, {"per_sektor": [
+    {"sektor": "COAL MINING", "ret_5h_pct": -10.0}]})
+cek("proxy: relatif tanpa data upstream -> None (bukan dikarang)",
+    _makro_rel["batubara"]["proxy"].get("rel_5h_pct") is None,
+    str(_makro_rel["batubara"]["proxy"]))
+# Sektor proxy hilang -> jujur "tidak tersedia".
+_makro_kosong = {"batubara": {"nilai": TIDAK_ADA}, "nikel": {"nilai": TIDAK_ADA}}
+E.lengkapi_proxy_komoditas(_makro_kosong, {"per_sektor": []})
+cek("proxy: sektor proxy tak ada -> jenis 'tidak tersedia'",
+    _makro_kosong["batubara"].get("jenis") == "tidak tersedia",
+    str(_makro_kosong["batubara"].get("jenis")))
+
+bagian("9g. Tahap 2 — event MSCI (tanpa menebak emiten)")
+
+_ev = E.ambil_event_risiko()
+cek("msci: event tersedia", _ev.get("nilai") == "tersedia", str(_ev)[:120])
+_msci = [e for e in _ev.get("events") or [] if "msci" in e.get("id", "")]
+cek("msci: event MSCI ada", len(_msci) == 1, str(len(_msci)))
+_m = _msci[0] if _msci else {}
+cek("msci: tanggal 15 Okt 2026", _m.get("tanggal_diumumkan") == "2026-10-15",
+    str(_m.get("tanggal_diumumkan")))
+cek("msci: status usulan belum final",
+    "belum final" in (_m.get("status") or "").lower(), str(_m.get("status")))
+cek("msci: arah Emerging -> Standalone",
+    "Standalone" in (_m.get("judul") or ""), str(_m.get("judul"))[:90])
+cek("msci: punya URL sumber", (_m.get("sumber_url") or "").startswith("http"),
+    str(_m.get("sumber_url")))
+cek("msci: punya sumber alternatif",
+    len(_m.get("sumber_url_alternatif") or []) >= 1)
+cek("msci: emiten_terdampak = 'data tidak tersedia' (TIDAK ditebak)",
+    _m.get("emiten_terdampak") == TIDAK_ADA, str(_m.get("emiten_terdampak")))
+cek("msci: alasan emiten dijelaskan", bool(_m.get("alasan_emiten")))
+cek("msci: catatan verifikasi jujur (sumber primer gagal)",
+    "BELUM DIVERIFIKASI" in (_m.get("catatan_verifikasi") or ""),
+    str(_m.get("catatan_verifikasi"))[:90])
+cek("msci: dampak menyebut kepemilikan asing",
+    "asing" in (_m.get("dampak") or "").lower())
+cek("msci: umur_hari dihitung", isinstance(_m.get("umur_hari"), int),
+    str(_m.get("umur_hari")))
+
+bagian("9h. Tahap 2 — periode anomali 15-21 Okt 2026")
+
+_pa = E.periode_anomali()
+cek("anomali: periode terdaftar", len(_pa.get("periode") or []) >= 1)
+_p0 = (_pa.get("periode") or [{}])[0]
+cek("anomali: mulai 2026-10-15", _p0.get("mulai") == "2026-10-15",
+    str(_p0.get("mulai")))
+cek("anomali: selesai 2026-10-21", _p0.get("selesai") == "2026-10-21",
+    str(_p0.get("selesai")))
+cek("anomali: ada sebab tercatat", bool(_p0.get("sebab")))
+cek("anomali: bukti angka IHSG disimpan", bool(_p0.get("bukti")))
+cek("anomali: catatan wajib dengan & tanpa periode",
+    "TANPA" in (_pa.get("catatan") or "").upper())
+cek("anomali: tanggal 15 Okt terdeteksi",
+    E.tanggal_dalam_anomali("2026-10-15") is True)
+cek("anomali: tanggal 21 Okt terdeteksi",
+    E.tanggal_dalam_anomali("2026-10-21") is True)
+cek("anomali: tanggal 14 Okt TIDAK terdeteksi",
+    E.tanggal_dalam_anomali("2026-10-14") is False)
+cek("anomali: tanggal 22 Okt TIDAK terdeteksi",
+    E.tanggal_dalam_anomali("2026-10-22") is False)
+cek("anomali: None aman", E.tanggal_dalam_anomali(None) is False)
+cek("anomali: string kosong aman", E.tanggal_dalam_anomali("") is False)
+cek("anomali: tanggal dengan jam tetap cocok",
+    E.tanggal_dalam_anomali("2026-10-16T10:30:00+07:00") is True)
+
+bagian("9i. Tahap 2 — kalender emiten tanpa lewati Cloudflare")
+
+_kal = E.ambil_kalender_emiten(batas=3)
+cek("kalender: bukan hasil bypass Cloudflare",
+    "tidak dilewati" in json.dumps(_kal.get("cek") or {},
+                                 ensure_ascii=False).lower(),
+    str(_kal.get("cek"))[:120])
+cek("kalender: idx.co.id ditandai 403",
+    "403" in json.dumps(_kal.get("cek") or {}))
+cek("kalender: RUPS tetap 'data tidak tersedia' (tidak dikarang)",
+    "tidak tersedia" in (_kal.get("catatan") or "").lower()
+    or "TIDAK tersedia" in (_kal.get("catatan") or ""),
+    str(_kal.get("catatan"))[:100])
+cek("kalender: catatan menyebut 'tidak dilewati'",
+    "tidak dilewati" in (_kal.get("catatan") or "").lower()
+    or "TIDAK tersedia" in (_kal.get("catatan") or ""))
+cek("kalender: semua tanggal event berformat YYYY-MM-DD",
+    all(re.fullmatch(r"\d{4}-\d{2}-\d{2}", e["tanggal"])
+        for e in (_kal.get("events") or [])),
+    str([e.get("tanggal") for e in (_kal.get("events") or [])][:5]))
+cek("kalender: TIDAK ada tanggal '[]' (bug 21 Okt)",
+    all(e["tanggal"] != "[]" for e in (_kal.get("events") or [])))
+cek("kalender: nilai 'sebagian' karena RUPS tidak ada",
+    _kal.get("nilai") in ("sebagian", TIDAK_ADA), str(_kal.get("nilai")))
+cek("kalender: event punya sumber yang bisa diverifikasi",
+    all(e.get("sumber") for e in (_kal.get("events") or [])))
+
+bagian("9j. Tahap 2 — peta sensitivitas sektor")
+
+_path_sens = os.path.join(E._ROOT, "config", "sensitivitas_sektor.json")
+_sens = json.load(open(_path_sens, encoding="utf-8")) if os.path.exists(_path_sens) else {}
+cek("sens: file ada", bool(_sens), _path_sens)
+cek("sens: status masih 'usulan'", "usulan" in (_sens.get("status") or ""),
+    str(_sens.get("status")))
+cek("sens: BELUM dipakai skor (gate tertutup)",
+    _sens.get("dipakai_skor") is False, str(_sens.get("dipakai_skor")))
+cek("sens: 56 sektor terpetakan", _sens.get("jumlah_sektor") == 56,
+    str(_sens.get("jumlah_sektor")))
+cek("sens: 9 faktor didefinisikan", len(_sens.get("faktor") or {}) == 9,
+    str(len(_sens.get("faktor") or {})))
+_sk = _sens.get("sektor") or {}
+cek("sens: setiap sektor punya 9 faktor + alasan",
+    all(len([k for k in v if k != "alasan"]) == 9
+        and v.get("alasan") for v in _sk.values()),
+    str([k for k, v in _sk.items() if not v.get("alasan")][:3]))
+cek("sens: semua nilai dalam -3..+3",
+    all(-3 <= v[k] <= 3 for v in _sk.values()
+        for k in v if k != "alasan"),
+    str([(s, k, v[k]) for s, v in _sk.items() for k in v
+         if k != "alasan" and not -3 <= v[k] <= 3][:3]))
+cek("sens: semua nilai bilangan bulat",
+    all(isinstance(v[k], int) for v in _sk.values()
+        for k in v if k != "alasan"))
+cek("sens: SEKTOR nyata di latest.json tercakup SEMUA",
+    all(s in _sk for s in (
+        "PROPERTY AND REAL ESTATE", "COAL MINING", "BANK",
+        "TELECOMUNICATION", "METAL AND MINERAL MINING")),
+    str([s for s in ("BANK", "COAL MINING") if s not in _sk]))
+cek("sens: OTHER SECTORS semua 0 (tidak jelas)",
+    all(_sk.get("OTHER SECTORS", {}).get(k) == 0
+        for k in _sk.get("OTHER SECTORS", {}) if k != "alasan"))
+cek("sens: COAL MINING diuntungkan rupiah lemah",
+    _sk.get("COAL MINING", {}).get("usd_idr_naik", 0) > 0)
+cek("sens: PROPERTY paling tertekan BI Rate naik",
+    _sk.get("PROPERTY AND REAL ESTATE", {}).get("bi_rate_naik", 0) <= -3,
+    str(_sk.get("PROPERTY AND REAL ESTATE", {}).get("bi_rate_naik")))
+cek("sens: beta PROPERTY tinggi", _sk.get("PROPERTY AND REAL ESTATE", {})
+    .get("ihsg_beta", 0) >= 3)
+cek("sens: skala didefinisikan", bool(_sens.get("skala")))
+
+bagian("9k. Tahap 2 — struktur external.json lengkap")
+
+import inspect as _inspect
+_struct = _inspect.getsource(E.bangun)
+for _kunci in ("rezim_pasar", "event_risiko", "periode_anomali", "bi_rate",
+               "inflasi", "makro", "kalender_emiten"):
+    cek(f"struktur: '{_kunci}' termasuk keluaran bangun()",
+        _kunci in _struct, _struct[:80])
+cek("struktur: versi skema naik ke 1.1.0",
+    E.VERSI_EKSTERNAL == "1.1.0", E.VERSI_EKSTERNAL)
 
 
 # ── 10. Data nyata (opsional, butuh jaringan) ──────────────────────────────

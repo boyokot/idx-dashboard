@@ -30,9 +30,12 @@ from typing import Any, Dict, List, Optional, Tuple
 try:  # dipakai sebagai paket (idx.backtest) maupun script langsung
     from . import providers as P
     from . import scoring as S
+    from . import anomali as ANOM
 except ImportError:  # pragma: no cover
-    import providers as P  # type: ignore
-    import scoring as S  # type: ignore
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from idx import providers as P      # type: ignore
+    from idx import scoring as S       # type: ignore
+    from idx import anomali as ANOM    # type: ignore
 
 REPO = "/root/idx-dashboard"
 DATA = os.path.join(REPO, "data")
@@ -53,6 +56,7 @@ KELOMPOK_SKOR = (
 
 
 # ───────────────────────── util ─────────────────────────
+
 
 def _tulis_atomic(path: str, payload: Dict[str, Any]) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -151,9 +155,14 @@ def iter_titik(seri: Dict[str, Any], ihsg: Dict[str, float],
 
         r_emit: Dict[int, Optional[float]] = {}
         r_ihsg: Dict[int, Optional[float]] = {}
+        # Tanggal ujung jendela evaluasi per horizon. Dipakai untuk
+        # menentukan apakah JENDELA (bukan hanya tanggal sinyal) beririsan
+        # dengan periode anomali.
+        jendela_akhir: Dict[int, str] = {}
         for N in horizon:
             j = i + N                      # N SESI bursa ke depan
             tglN = bars[j]["date"]
+            jendela_akhir[N] = tglN
             closeN = bars[j]["close"]
             ihN = ihsg.get(tglN)
             if not closeN or ihN is None:
@@ -166,6 +175,7 @@ def iter_titik(seri: Dict[str, Any], ihsg: Dict[str, float],
         yield {"i": i, "tanggal": tgl0, "alasan": None,
                "sinyal": S.label_sinyal(ind), "skor": skor,
                "kelompok_skor": kel,
+               "jendela_akhir": jendela_akhir,
                "return": r_emit, "return_ihsg": r_ihsg}
 
 
@@ -192,6 +202,12 @@ def hitung(hist: Dict[str, Any], ihsg_bars: List[Dict[str, Any]],
     """Hitung agregat backtest dari history emiten + bar IHSG.
 
     Tidak menyentuh jaringan — murni fungsi data, supaya bisa diuji.
+
+    Setiap statistik dihitung DUA kali:
+      - `dengan_anomali`  : seluruh titik, termasuk periode ekstrem
+      - `tanpa_anomali`   : titik di luar periode anomali saja
+    supaya user bisa melihat sendiri apakah angka dipengaruhi kejadian
+    sesaat (mis. guncangan 15-21 Okt 2026).
     """
     emiten = hist.get("emiten") or {}
     ihsg = _peta_harga_ihsg(ihsg_bars)
@@ -201,6 +217,42 @@ def hitung(hist: Dict[str, Any], ihsg_bars: List[Dict[str, Any]],
     per_sinyal_ihsg: Dict[str, Dict[int, List[float]]] = {}
     per_skor: Dict[str, Dict[int, List[float]]] = {}
     per_skor_ihsg: Dict[str, Dict[int, List[float]]] = {}
+    # Excess POINT-WISE: return emiten - return IHSG pada titik yang sama.
+    # Dipakai untuk statistik excess (median, win-rate excess). Nilai
+    # `excess` di bawah (rata2 emit - rata2 IHSG) tetap disimpan karena
+    # itu yang dipakai UI selama ini.
+    per_sinyal_ex: Dict[str, Dict[int, List[float]]] = {}
+    per_skor_ex: Dict[str, Dict[int, List[float]]] = {}
+
+    # Bucketed: tanpa_anomali = titik yang JENDELA evaluasinya TIDAK
+    # beririsan dengan periode anomali. Sifatnya PER-HORIZON: satu titik
+    # bisa beririsan untuk horizon 5 tapi tidak untuk horizon 20.
+    per_sinyal_b: Dict[str, Dict[int, List[float]]] = {}
+    per_sinyal_b_ihsg: Dict[str, Dict[int, List[float]]] = {}
+    per_skor_b: Dict[str, Dict[int, List[float]]] = {}
+    per_skor_b_ihsg: Dict[str, Dict[int, List[float]]] = {}
+    per_sinyal_ex_b: Dict[str, Dict[int, List[float]]] = {}
+    per_skor_ex_b: Dict[str, Dict[int, List[float]]] = {}
+    # Penghitung per horizon: berapa titik yang terpengaruh anomali.
+    titik_anomali_per_h: Dict[int, int] = {N: 0 for N in horizon}
+    titik_anomali = 0            # titik yang terpakai di >= 1 horizon
+    titik_anomali_semua_h = 0    # titik yang terpakai di SEMUA horizon
+    # Sinyal yang jatuh di dalam periode anomali tapi jendelanya BELUM
+    # selesai -> belum bisa dievaluasi sama sekali. Dihitung per emiten.
+    sinyal_anomali_belum_evaluable = 0
+    emiten_dengan_sinyal_anomali_belum_evaluable = 0
+
+    # ── sinyal UNIK (episode) ────────────────────────────────────────
+    # Satu emiten yang sinyalnya "Breakout" 7 sesi berturut-turut BUKAN 7
+    # sinyal — itu SATU episode yang tercatat pada tanggal pertama sinyal
+    # muncul. Tanpa dedupe ini, jumlah sampel terlihat besar padahal yang
+    # dihitung ulang-ulang cuma satu kejadian.
+    ep_sinyal: Dict[str, Dict[int, int]] = {}
+    ep_sinyal_b: Dict[str, Dict[int, int]] = {}
+    ep_skor: Dict[str, Dict[int, int]] = {}
+    ep_skor_b: Dict[str, Dict[int, int]] = {}
+    ep_total_per_h: Dict[int, int] = {N: 0 for N in horizon}
+    ep_total_b_per_h: Dict[int, int] = {N: 0 for N in horizon}
 
     dipakai_emiten = 0
     titik_total = 0
@@ -208,6 +260,24 @@ def hitung(hist: Dict[str, Any], ihsg_bars: List[Dict[str, Any]],
 
     for kode, seri in emiten.items():
         dipakai = False
+        # episode = (kode, label sinyal) -> tanggal sinyal PERTAMA.
+        # Kalau sinyal yang sama muncul lagi di sesi berikutnya dengan
+        # sinyal lain di antaranya, itu episode BARU.
+        _last_lbl = None
+        _ep_baru = True
+        # Sinyal yang jatuh di dalam periode anomali tapi JENDELANYA belum
+        # selesai (tidak bisa dievaluasi). Dihitung dari seri langsung,
+        # karena iter_titik tidak menghasilkan titik seperti itu sama sekali.
+        _d = seri.get("d") or []
+        _n_eval = max(0, len(_d) - max(horizon))
+        _sinyal_anomali = 0
+        for _i, _tgl in enumerate(_d):
+            if ANOM.tanggal_dalam_anomali(_tgl) and _i >= _n_eval:
+                _sinyal_anomali += 1
+        if _sinyal_anomali:
+            sinyal_anomali_belum_evaluable += _sinyal_anomali
+            emiten_dengan_sinyal_anomali_belum_evaluable += 1
+
         for t in iter_titik(seri, ihsg, horizon):
             if t["alasan"] == "tanpa_ihsg":
                 titik_tanpa_ihsg += 1
@@ -218,6 +288,19 @@ def hitung(hist: Dict[str, Any], ihsg_bars: List[Dict[str, Any]],
             dipakai = True
             sisi = t["sinyal"]
             kel = t["kelompok_skor"]
+            # Episode baru kalau label sinyal berbeda dari titik sebelumnya
+            # (atau titik pertama untuk emiten ini).
+            if _last_lbl is None or _last_lbl != sisi:
+                _ep_baru = True
+            else:
+                _ep_baru = False
+            _last_lbl = sisi
+            jk = t.get("jendela_akhir") or {}
+            # Anomali per horizon: JENDELA evaluasi [tanggal sinyal ..
+            # tanggal akhir jendela] beririsan dengan periode anomali.
+            anomali_h: Dict[int, bool] = {}
+            for N in horizon:
+                anomali_h[N] = ANOM.jendela_beririsan(t["tanggal"], jk.get(N))
             for N, r in t["return"].items():
                 if r is None or t["return_ihsg"].get(N) is None:
                     continue
@@ -227,12 +310,51 @@ def hitung(hist: Dict[str, Any], ihsg_bars: List[Dict[str, Any]],
                 per_skor.setdefault(kel, {}).setdefault(N, []).append(r)
                 per_skor_ihsg.setdefault(kel, {}).setdefault(N, []).append(
                     t["return_ihsg"][N])
+                ex = round(r - t["return_ihsg"][N], 6)
+                per_sinyal_ex.setdefault(sisi, {}).setdefault(N, []).append(ex)
+                per_skor_ex.setdefault(kel, {}).setdefault(N, []).append(ex)
+                # Sinyal UNIK: satu episode per (emiten, label sinyal),
+                # dihitung pada TANGGAL SIGNAL PERTAMA yang muncul.
+                if _ep_baru:
+                    ep_sinyal.setdefault(sisi, {}).setdefault(N, 0)
+                    ep_sinyal[sisi][N] += 1
+                    ep_skor.setdefault(kel, {}).setdefault(N, 0)
+                    ep_skor[kel][N] += 1
+                    ep_total_per_h[N] = ep_total_per_h.get(N, 0) + 1
+                    if not anomali_h.get(N, False):
+                        ep_sinyal_b.setdefault(sisi, {}).setdefault(N, 0)
+                        ep_sinyal_b[sisi][N] += 1
+                        ep_skor_b.setdefault(kel, {}).setdefault(N, 0)
+                        ep_skor_b[kel][N] += 1
+                        ep_total_b_per_h[N] = ep_total_b_per_h.get(N, 0) + 1
+                if not anomali_h.get(N, False):
+                    per_sinyal_b.setdefault(sisi, {}).setdefault(N, []).append(r)
+                    per_sinyal_b_ihsg.setdefault(sisi, {}).setdefault(N, []).append(
+                        t["return_ihsg"][N])
+                    per_skor_b.setdefault(kel, {}).setdefault(N, []).append(r)
+                    per_skor_b_ihsg.setdefault(kel, {}).setdefault(N, []).append(
+                        t["return_ihsg"][N])
+                    per_sinyal_ex_b.setdefault(sisi, {}).setdefault(N, []).append(ex)
+                    per_skor_ex_b.setdefault(kel, {}).setdefault(N, []).append(ex)
+                else:
+                    titik_anomali_per_h[N] = titik_anomali_per_h.get(N, 0) + 1
+            # titik "terpengaruh" = punya return valid di >=1 horizon
+            # dan jendelanya beririsan di >=1 horizon itu.
+            if any(anomali_h.get(N, False) for N in t["return"]
+                   if t["return"].get(N) is not None):
+                titik_anomali += 1
+            if all(anomali_h.get(N, False) for N in horizon
+                   if t["return"].get(N) is not None) and any(
+                   t["return"].get(N) is not None for N in horizon):
+                titik_anomali_semua_h += 1
 
         if dipakai:
             dipakai_emiten += 1
 
     def rangkum(grup: Dict[str, Dict[int, List[float]]],
-                grup_ihsg: Dict[str, Dict[int, List[float]]]) -> Dict[str, Any]:
+                grup_ihsg: Dict[str, Dict[int, List[float]]],
+                grup_ex: Optional[Dict[str, Dict[int, List[float]]]] = None
+                ) -> Dict[str, Any]:
         out: Dict[str, Any] = {}
         for nama in sorted(grup):
             out[nama] = {}
@@ -251,7 +373,24 @@ def hitung(hist: Dict[str, Any], ihsg_bars: List[Dict[str, Any]],
                     st["ihsg_rata2"] = None
                     st["excess"] = None
                     st["ihsg_menang"] = None
+                # Statistik EXCESS point-wise (emiten - IHSG per titik).
+                # Lebih jujur daripada selisih dua rata-rata, karena
+                # win-rate excess dihitung per titik, bukan rata-rata.
+                ex_list = (grup_ex or {}).get(nama, {}).get(N, [])
+                stex = _statistik(ex_list)
+                st["excess_rata2"] = stex["rata2"]
+                st["excess_median"] = stex["median"]
+                st["excess_menang"] = stex["menang"]
+                st["excess_n"] = stex["n"]
+                # Penanda: angka `rata2` = RETURN MENTAH (bukan excess).
+                st["jenis_rata2"] = "return mentah (bukan excess)"
                 out[nama][str(N)] = st
+        return out
+
+    def rangkum_ep(ep: Dict[str, Dict[int, int]]) -> Dict[str, Any]:
+        out: Dict[str, Any] = {}
+        for nama in sorted(ep):
+            out[nama] = {str(N): ep[nama].get(N, 0) for N in horizon}
         return out
 
     return {
@@ -259,14 +398,85 @@ def hitung(hist: Dict[str, Any], ihsg_bars: List[Dict[str, Any]],
         "min_sesi": MIN_SESI,
         "kelompok_skor": [{"nama": n, "batas_bawah": lo, "batas_atas": hi,
                            "label": lab} for n, lo, hi, lab in KELOMPOK_SKOR],
-        "per_sinyal": rangkum(per_sinyal, per_sinyal_ihsg),
-        "per_skor": rangkum(per_skor, per_skor_ihsg),
+        "per_sinyal": rangkum(per_sinyal, per_sinyal_ihsg, per_sinyal_ex),
+        "per_skor": rangkum(per_skor, per_skor_ihsg, per_skor_ex),
+        # ── sinyal UNIK (episode) ──────────────────────────────────
+        # Satu sinyal unik = satu episode per (emiten, label sinyal),
+        # dihitung pada tanggal sinyal PERTAMA. Jumlah TITIK (n) di
+        # atas menghitung ulang-ulang episode yang sama, jadi bisa jauh
+        # lebih besar dari jumlah sinyal unik.
+        "sinyal_unik": {
+            "definisi": ("satu sinyal unik = satu episode per "
+                         "(emiten, label sinyal), dihitung pada tanggal "
+                         "sinyal pertama yang muncul"),
+            "total_per_horizon": {str(N): ep_total_per_h.get(N, 0)
+                                  for N in horizon},
+            "per_sinyal": rangkum_ep(ep_sinyal),
+            "per_skor": rangkum_ep(ep_skor),
+            "tanpa_anomali": {
+                "total_per_horizon": {str(N): ep_total_b_per_h.get(N, 0)
+                                      for N in horizon},
+                "per_sinyal": rangkum_ep(ep_sinyal_b),
+                "per_skor": rangkum_ep(ep_skor_b),
+            },
+        },
+        "catatan_tren_pasar": (
+            "Angka `rata2` adalah RETURN MENTAH emiten, BUKAN excess. "
+            "Kalau pasar bullish, return mentah ikut terangkat oleh tren "
+            "pasar — itu bukan bukti strateginya bagus. Untuk menilai "
+            "kontribusi signal sendiri, pakai `excess` (emiten - IHSG "
+            "pada titik yang sama). `excess_rata2`, `excess_median`, dan "
+            "`excess_menang` dihitung point-wise; `excess` sendiri = "
+            "rata-rata return mentah - rata-rata return IHSG pada titik "
+            "yang sama."),
+        # Statistik DENGAN vs TANPA periode anomali (mis. guncangan
+        # 15-21 Okt 2026). Tanpa ini, efek kejadian sesaat tersembunyi
+        # di dalam rata-rata panjang.
+        "tanpa_anomali": {
+            "per_sinyal": rangkum(per_sinyal_b, per_sinyal_b_ihsg,
+                                 per_sinyal_ex_b),
+            "per_skor": rangkum(per_skor_b, per_skor_b_ihsg, per_skor_ex_b),
+            "sinyal_unik_total_per_horizon": {
+                str(N): ep_total_b_per_h.get(N, 0) for N in horizon},
+            "titik_dibuang": titik_anomali,
+            "titik_terpengaruh_per_horizon": {
+                str(N): titik_anomali_per_h.get(N, 0) for N in horizon
+            },
+            "definisi": ("titik dihitung anomali kalau JENDELA evaluasinya "
+                         "(tanggal sinyal s.d. T+h sesi) BERIRISAN dengan "
+                         "periode anomali; sifatnya per-horizon"),
+        },
+        "dengan_anomali": {
+            "per_sinyal": rangkum(per_sinyal, per_sinyal_ihsg, per_sinyal_ex),
+            "per_skor": rangkum(per_skor, per_skor_ihsg, per_skor_ex),
+            "sinyal_unik_total_per_horizon": {
+                str(N): ep_total_per_h.get(N, 0) for N in horizon},
+            "titik_dibuang": 0,
+            "titik_terpengaruh_per_horizon": {
+                str(N): titik_anomali_per_h.get(N, 0) for N in horizon
+            },
+        },
+        "periode_anomali": ANOM.ringkas(),
         "cakupan": {
             "emiten_history": len(emiten),
             "emiten_dipakai": dipakai_emiten,
             "titik_dihitung": titik_total,
             "titik_tanpa_ihsg": titik_tanpa_ihsg,
+            "titik_dalam_anomali": titik_anomali,
+            "titik_dalam_anomali_semua_horizon": titik_anomali_semua_h,
+            "titik_terpengaruh_per_horizon": {
+                str(N): titik_anomali_per_h.get(N, 0) for N in horizon
+            },
+            "sinyal_anomali_belum_evaluable": sinyal_anomali_belum_evaluable,
+            "emiten_dengan_sinyal_anomali_belum_evaluable":
+                emiten_dengan_sinyal_anomali_belum_evaluable,
         },
+        "catatan_evaluasi_anomali": (
+            "Sinyal bertanggal 15-21 Okt 2026 BELUM bisa dievaluasi pada "
+            "horizon 5/10/20 sesi karena jendelanya belum selesai. "
+            "Angka 'terpengaruh' dihitung dari sinyal SEBELUM periode yang "
+            "jendelanya beririsan dengan periode anomali. Memperpanjang "
+            "history bersifat opsional, bukan syarat."),
     }
 
 

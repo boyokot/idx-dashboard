@@ -197,6 +197,19 @@ canvas{max-width:100%;display:block}
 details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
 .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:8px}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px}
+
+/* Banner rezim pasar (Tahap 2) */
+.banner{position:relative;margin:0 0 12px;padding:10px 12px;border-radius:10px;
+  border:1px solid var(--border);background:var(--card);font-size:13px;line-height:1.5}
+.banner .bt{font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px}
+.banner.stres{border-color:#e5484d;background:rgba(229,72,77,.10)}
+.banner.positif{border-color:#30a46c;background:rgba(48,164,108,.10)}
+.banner.normal{border-color:var(--border)}
+.banner.na{border-color:var(--muted)}
+.banner .bm{color:var(--muted);font-size:12px;margin-top:4px}
+.banner .bm code{font-size:11px}
+.banner ul{margin:6px 0 0;padding-left:18px}
+.banner li{font-size:12px}
 </style>
 </head>
 <body>
@@ -225,6 +238,13 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
 <div id="app" style="display:none">
 
   <div class="kpis" id="kpis"></div>
+
+  <!-- Banner rezim pasar (Tahap 2): transparan, tampilkan pemicunya -->
+  <div class="banner na" id="rezimBanner" style="display:none">
+    <div class="bt" id="rezimTitle">Rezim pasar</div>
+    <div class="bm" id="rezimMeta"></div>
+    <ul id="rezimPemicu"></ul>
+  </div>
 
   <div class="card" id="top10Card" style="display:none">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
@@ -369,8 +389,10 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
     </div>
     <div class="tbl-wrap">
       <table><thead><tr>
-        <th style="text-align:left">Sinyal</th><th>Sesi</th><th>Jumlah</th>
-        <th>Rata-rata</th><th>IHSG</th><th>Selisih</th><th>% Naik</th><th>Terburuk</th>
+        <th style="text-align:left">Sinyal</th><th>Sesi</th><th>Titik</th>
+        <th>Sinyal unik</th>
+        <th>Rata-rata (mentah)</th><th>IHSG</th><th>Excess (selisih)</th>
+        <th>% Naik (mentah)</th><th>% Naik excess</th><th>Terburuk</th>
       </tr></thead><tbody id="btBody"></tbody></table>
     </div>
     <div class="card" style="margin-top:14px">
@@ -378,9 +400,23 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
       <div class="note" id="btSkorInfo" style="margin-bottom:10px"></div>
       <div class="tbl-wrap">
         <table><thead><tr>
-          <th style="text-align:left">Kelompok skor</th><th>Sesi</th><th>Jumlah</th>
-          <th>Rata-rata</th><th>IHSG</th><th>Selisih</th><th>% Naik</th>
+          <th style="text-align:left">Kelompok skor</th><th>Sesi</th><th>Titik</th>
+          <th>Sinyal unik</th>
+          <th>Rata-rata (mentah)</th><th>IHSG</th><th>Excess (selisih)</th>
+          <th>Median excess</th><th>% Naik (mentah)</th><th>% Naik excess</th>
         </tr></thead><tbody id="btSkorBody"></tbody></table>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <h2 style="font-size:15px;margin:0 0 8px">Statistik dengan vs tanpa periode anomali</h2>
+      <div class="note" id="btAnomaliInfo" style="margin-bottom:10px"></div>
+      <div class="tbl-wrap">
+        <table><thead><tr>
+          <th style="text-align:left">Perlakuan</th><th style="text-align:left">Kelompok skor</th><th>Sesi</th>
+          <th>Titik</th><th>Sinyal unik</th>
+          <th>Rata-rata (mentah)</th><th>IHSG</th><th>Excess (selisih)</th>
+          <th>% Naik (mentah)</th><th>% Naik excess</th>
+        </tr></thead><tbody id="btAnomaliBody"></tbody></table>
       </div>
     </div>
     <div class="card" style="margin-top:14px">
@@ -1179,11 +1215,14 @@ function renderBacktest(bt){
   $('#btInfo').innerHTML =
     `Dihitung dari <b>${fx(cak.titik_dihitung||0,0)}</b> titik sinyal pada ` +
     `<b>${fx(cak.emiten_dipakai||0,0)}</b> emiten (dari ${fx(cak.emiten_history||0,0)} yang punya riwayat harga). ` +
-    `Selisih = rata-rata emiten − IHSG pada tanggal yang sama` +
+    `<b>Rata-rata</b> = return <b>mentah</b> emiten (bukan excess); ` +
+    `<b>Excess</b> = emiten − IHSG pada tanggal yang sama` +
     (cak.titik_tanpa_ihsg ? `; ${fx(cak.titik_tanpa_ihsg,0)} titik dibuang karena IHSG tidak tersedia di tanggal itu` : '') +
     `.`;
 
   const urut = Object.keys(bt.per_sinyal || {}).sort();
+  const SU=(bt.sinyal_unik||{});
+  const suPerSinyal=(SU.per_sinyal||{});
   const baris = [];
   for(const sig of urut){
     for(const h of per){
@@ -1191,22 +1230,26 @@ function renderBacktest(bt){
       if(!st || !st.n) continue;
       const exc = st.excess;
       const cls = exc==null ? '' : (exc>0 ? 'up' : (exc<0 ? 'down' : ''));
+      const unik=((suPerSinyal[sig]||{})[String(h)]);
       baris.push(`<tr>
         <td style="text-align:left">${esc(sig)}</td><td>${h}</td><td>${fx(st.n,0)}</td>
+        <td>${unik==null?'—':fx(unik,0)}</td>
         <td>${st.rata2==null?'—':pct(st.rata2)}</td>
         <td>${st.ihsg_rata2==null?'—':pct(st.ihsg_rata2)}</td>
         <td class="${cls}"><b>${exc==null?'—':pct(exc)}</b></td>
         <td>${st.menang==null?'—':fx(st.menang,1)+'%'}</td>
+        <td>${st.excess_menang==null?'—':fx(st.excess_menang,1)+'%'}</td>
         <td>${st.terburuk==null?'—':pct(st.terburuk)}</td>
       </tr>`);
     }
   }
   $('#btBody').innerHTML = baris.length ? baris.join('')
-    : '<tr><td colspan="8" style="text-align:left">Belum ada titik sinyal yang bisa dihitung.</td></tr>';
+    : '<tr><td colspan="10" style="text-align:left">Belum ada titik sinyal yang bisa dihitung.</td></tr>';
 
   /* tabel per kelompok skor */
   const kel = bt.per_skor || {};
   const namaKel = Object.keys(kel).sort();
+  const suPerSkor=(SU.per_skor||{});
   const barisSkor = [];
   for(const k of namaKel){
     for(const h of per){
@@ -1214,19 +1257,94 @@ function renderBacktest(bt){
       if(!st || !st.n) continue;
       const exc = st.excess;
       const cls = exc==null ? '' : (exc>0 ? 'up' : (exc<0 ? 'down' : ''));
+      const unik=((suPerSkor[k]||{})[String(h)]);
       barisSkor.push(`<tr>
         <td style="text-align:left">${esc(k)}</td><td>${h}</td><td>${fx(st.n,0)}</td>
+        <td>${unik==null?'—':fx(unik,0)}</td>
         <td>${st.rata2==null?'—':pct(st.rata2)}</td>
         <td>${st.ihsg_rata2==null?'—':pct(st.ihsg_rata2)}</td>
         <td class="${cls}"><b>${exc==null?'—':pct(exc)}</b></td>
+        <td>${st.excess_median==null?'—':pct(st.excess_median)}</td>
         <td>${st.menang==null?'—':fx(st.menang,1)+'%'}</td>
+        <td>${st.excess_menang==null?'—':fx(st.excess_menang,1)+'%'}</td>
       </tr>`);
     }
   }
   $('#btSkorBody').innerHTML = barisSkor.length ? barisSkor.join('')
-    : '<tr><td colspan="7" style="text-align:left">Belum ada data per kelompok skor.</td></tr>';
-  $('#btSkorInfo').textContent =
-    'Skor hari itu dibagi tiga kelompok. Kalau skor tinggi tidak unggul, artinya skor belum berguna sebagai penyaring.';
+    : '<tr><td colspan="10" style="text-align:left">Belum ada data per kelompok skor.</td></tr>';
+  $('#btSkorInfo').innerHTML =
+    'Skor hari itu dibagi tiga kelompok. Kalau skor tinggi tidak unggul, artinya skor belum berguna sebagai penyaring. ' +
+    '<br><b>Rata-rata (mentah)</b> = return mentah emiten, <b>Excess</b> = emiten − IHSG pada titik yang sama. ' +
+    'Return mentah ikut terangkat kalau pasar bullish, jadi Excess yang dipakai untuk menilai kontribusi signal. ' +
+    '<b>Titik</b> = jumlah titik sinyal; <b>Sinyal unik</b> = jumlah episode berbeda per (emiten, label sinyal) — lebih kecil karena sinyal beruntun dihitung sebagai satu episode.';
+
+
+  /* statistik dengan vs tanpa periode anomali (Tahap 2) */
+  const anD=bt.dengan_anomali||null, anT=bt.tanpa_anomali||null;
+  const perAn=bt.periode_anomali||null;
+  if(anD||anT){
+  const barisAn=[];
+  const suAnD=((SU.tanpa_anomali||{}).per_skor||{});
+  for(const [label,blk] of [['Dengan anomali',anD],['Tanpa anomali',anT]]){
+    const kel2=(blk&&blk.per_skor)||{};
+    const suBlk=(label==='Tanpa anomali')?suAnD:((SU.per_skor)||{});
+    for(const k of Object.keys(kel2).sort()){
+      for(const h of per){
+        const st=(kel2[k]||{})[String(h)];
+        if(!st||!st.n) continue;
+        const exc=st.excess;
+        const cls=exc==null?'':(exc>0?'up':(exc<0?'down':''));
+        const unik=((suBlk[k]||{})[String(h)]);
+        barisAn.push(`<tr>
+          <td style="text-align:left">${esc(label)}</td>
+          <td style="text-align:left">${esc(k)}</td><td>${h}</td><td>${fx(st.n,0)}</td>
+          <td>${unik==null?'—':fx(unik,0)}</td>
+          <td>${st.rata2==null?'—':pct(st.rata2)}</td>
+          <td>${st.ihsg_rata2==null?'—':pct(st.ihsg_rata2)}</td>
+          <td class="${cls}"><b>${exc==null?'—':pct(exc)}</b></td>
+          <td>${st.menang==null?'—':fx(st.menang,1)+'%'}</td>
+          <td>${st.excess_menang==null?'—':fx(st.excess_menang,1)+'%'}</td>
+        </tr>`);
+      }
+    }
+  }
+  $('#btAnomaliBody').innerHTML = barisAn.length ? barisAn.join('')
+    : '<tr><td colspan="10" style="text-align:left">Belum ada titik untuk dibandingkan.</td></tr>';
+    const nT=(anT&&anT.titik_dibuang)||0, nD=(anD&&anD.titik_dibuang)||0;
+    const pr=(perAn&&perAn.periode)||[];
+    let infoAn='';
+    if(pr.length){
+      infoAn='Periode ditandai anomali: '+pr.map(p2=>`<b>${esc(p2.mulai)} → ${esc(p2.selesai)}</b>`).join(', ')+
+        ` — ${esc(pr[0].sebab||'')} `;
+    }
+    infoAn+=`Titik dibuang pada versi &quot;tanpa anomali&quot;: <b>${fx(nT,0)}</b>`+
+      (nD?` (versi dengan anomali: ${fx(nD,0)})`:'')+
+      '. Kedua versi ditampilkan supaya dampak periode ekstrem tidak tersembunyi.';
+    // Jumlah titik yang terpengaruh per horizon (jendela evaluasinya
+    // beririsan dengan periode anomali).
+    const perH=(anT&&anT.titik_terpengaruh_per_horizon)||null;
+    if(perH){
+      const perHS=Object.keys(perH).sort((a,b)=>a-b);
+      infoAn+='<br><b>Titik terpengaruh anomali per horizon</b> (jendela evaluasi T+h sesi beririsan dgn periode): '+
+        perHS.map(h=>`T+${h}: <b>${fx(perH[h],0)}</b>`).join(' · ');
+    }
+    const bl=bt.catatan_evaluasi_anomali;
+    if(bl) infoAn+='<br><i>'+esc(bl)+'</i>';
+    const tr=bt.catatan_tren_pasar;
+    if(tr) infoAn+='<br><b>Catatan tren pasar:</b> <i>'+esc(tr)+'</i>';
+    const suTot=SU.total_per_horizon;
+    if(suTot){
+      const ks=Object.keys(suTot).sort((a,b)=>a-b);
+      const suTan=((SU.tanpa_anomali||{}).total_per_horizon)||{};
+      infoAn+='<br><b>Sinyal unik total per horizon</b> (episode unik per emiten+label sinyal): '+
+        ks.map(h=>`T+${h}: <b>${fx(suTot[h],0)}</b>`).join(' · ')+
+        (suTan['20']!=null?` (tanpa anomali T+20: <b>${fx(suTan['20'],0)}</b>)`:'');
+    }
+    $('#btAnomaliInfo').innerHTML=infoAn;
+  } else {
+    $('#btAnomaliInfo').textContent='Statistik per periode anomali belum tersedia pada data ini (backtest.json versi lama).';
+    $('#btAnomaliBody').innerHTML='<tr><td colspan="8" style="text-align:left">Jalankan ulang pipeline untuk menghitung.</td></tr>';
+  }
 
   /* catatan risiko dari pipeline, ditampilkan apa adanya */
   const risiko = Array.isArray(bt.catatan_risiko) ? bt.catatan_risiko : [];
@@ -1284,9 +1402,10 @@ async function loadBacktestSnapshot(){
       const [sig,h]=k.split('|'); const a=agg[k];
       const wr=(a.up/a.n*100);
       return `<tr><td style="text-align:left">${esc(sig)}</td><td>${h}</td><td>${a.n}</td>
-        <td>${pct(a.sum/a.n)}</td><td>—</td><td>—</td><td>${fx(wr,1)}%</td><td>—</td></tr>`;
+        <td>—</td><td>${pct(a.sum/a.n)}</td><td>—</td><td>—</td>
+        <td>${fx(wr,1)}%</td><td>—</td><td>—</td></tr>`;
     }).join('');
-    $('#btSkorBody').innerHTML='<tr><td colspan="7" style="text-align:left">Tidak tersedia di mode cadangan.</td></tr>';
+    $('#btSkorBody').innerHTML='<tr><td colspan="10" style="text-align:left">Tidak tersedia di mode cadangan.</td></tr>';
     $('#btSkorInfo').textContent='';
   }catch(e){
     $('#btInfo').textContent='Backtest tidak bisa dihitung: '+e.message;
@@ -1363,6 +1482,40 @@ function unduhCSV(){
 }
 
 /* ---------- init ---------- */
+
+/* ---------- banner rezim pasar (Tahap 2) ---------- */
+function renderRezim(){
+  const k=(DATA&&DATA.konteks_pasar)||null;
+  const rz=(DATA&&DATA.ringkasan_pasar&&DATA.ringkasan_pasar.rezim_pasar)||null;
+  const box=$('#rezimBanner');
+  if(!k&&!rz){ box.style.display='none'; return; }
+  const stres=(k&&k.pasar_stres===true)||(rz&&rz.pasar_stres===true);
+  const rezim=(k&&k.rezim)||(rz&&rz.rezim)||'data tidak tersedia';
+  const cls = stres?'stres':(rezim==='positif'?'positif':(rezim==='normal'?'normal':'na'));
+  box.className='banner '+cls;
+  box.style.display='block';
+  const judul = stres ? '\u26a0\ufe0f PASAR STRES — skor jangan dibaca sebagai sinyal normal'
+                      : (rezim==='data tidak tersedia'
+                         ? '\u2139\ufe0f Rezim pasar: data tidak tersedia'
+                         : '\u2705 Rezim pasar: '+rezim);
+  $('#rezimTitle').textContent=judul;
+  const r5=(rz&&rz.ihsg_ret_5h_pct), r20=(rz&&rz.ihsg_ret_20h_pct);
+  const bits=[];
+  if(r5!=null) bits.push('IHSG 5 sesi '+(r5>=0?'+':'')+fx(r5,2)+'%');
+  if(r20!=null) bits.push('20 sesi '+(r20>=0?'+':'')+fx(r20,2)+'%');
+  if(rz&&rz.ihsg_terakhir!=null) bits.push('IHSG terakhir '+nf(rz.ihsg_terakhir,2));
+  const am=(rz&&rz.ambang)||null;
+  let meta = bits.length? bits.join(' · ') : 'Rincian retensi tidak tersedia.';
+  if(am) meta += ' · ambang: 5 sesi ≤ '+fx(am.ihsg_turun_5h_pct,0)+'% · 20 sesi ≤ '+fx(am.ihsg_turun_20h_pct,0)+'%';
+  if(k&&k.catatan) meta += ' — '+k.catatan;
+  $('#rezimMeta').textContent=meta;
+  const pem=(rz&&rz.pemicu)||(k&&k.pemicu)||[];
+  $('#rezimPemicu').innerHTML = pem.length
+    ? pem.map(x=>`<li>${esc(x.keterangan||x.faktor)}`+
+        (x.nilai_pct!=null?` (tercatat ${x.nilai_pct>=0?'+':''}${fx(x.nilai_pct,2)}%, ambang ${x.ambang_pct}%)`:'')+`</li>`).join('')
+    : '<li>Tidak ada pemicu yang tercatat.</li>';
+}
+
 function renderAll(){
   renderTop10();
   renderKPI();
@@ -1472,7 +1625,7 @@ function renderMedianSektor(){
 }
 
 function renderAlertTab(){
-  renderMarket(); renderAlerts(); renderSkorParsial(); renderMedianSektor();
+  renderRezim(); renderMarket(); renderAlerts(); renderSkorParsial(); renderMedianSektor();
 }
 
 function init(){

@@ -29,6 +29,10 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
+# String baku untuk "tidak ada data" — sama dengan yang dipakai modul eksternal,
+# supaya validasi tidak bergantung pada wording teks.
+TIDAK_ADA = "data tidak tersedia"
+
 # ── ambang ────────────────────────────────────────────────────────────────
 # ERROR ambang absolut: di bawah ini data dianggap tidak berguna sama sekali.
 MIN_EMITEN = 20          # universe IDX ~975; <20 jelas bukan run yang benar
@@ -208,6 +212,42 @@ def validasi(payload: Dict[str, Any],
     al = payload.get("alerts") or {}
     if isinstance(al, dict) and al.get("total") == 0:
         warnings.append("alert kosong — indikator tidak terisi?")
+
+
+    # ── Tahap 2: konteks pasar & konsistensi rezim (fail-closed) ─────
+    # Aturan: kalau pipeline mengklaim rezim, angka pendukungnya WAJIB ada.
+    # Klaim "normal" tanpa data lebih berbahaya daripada "tidak tersedia",
+    # jadi itu dijadikan ERROR, bukan warning.
+    kp = payload.get("konteks_pasar")
+    if kp is not None:
+        if not isinstance(kp, dict):
+            errors.append("konteks_pasar bukan objek")
+        else:
+            rez = kp.get("rezim")
+            if rez is not None and rez != TIDAK_ADA:
+                if rez not in ("normal", "stres", "positif"):
+                    errors.append(f"konteks_pasar.rezim tidak dikenal: {rez!r}")
+                # rezim sah wajib punya pemicu berbentuk list (boleh kosong)
+                if not isinstance(kp.get("pemicu"), list):
+                    errors.append("konteks_pasar.pemicu harus list")
+                # stres wajib punya minimal satu pemicu — kalau tidak,
+                # flag "pasar stres" tidak bisa dipertanggungjawabkan.
+                if rez == "stres" and not kp.get("pemicu"):
+                    errors.append("rezim 'stres' tanpa pemicu — tidak dapat dipertanggungjawabkan")
+            if kp.get("pasar_stres") is True and rez not in ("stres",):
+                errors.append("pasar_stres True tetapi rezim bukan 'stres'")
+            if kp.get("pasar_stres") is False and rez == "stres":
+                errors.append("rezim 'stres' tetapi pasar_stres False")
+    rp = (payload.get("ringkasan_pasar") or {}).get("rezim_pasar")
+    if rp is not None and isinstance(rp, dict):
+        rr = rp.get("rezim")
+        if rr is not None and rr != TIDAK_ADA and rr not in ("normal", "stres", "positif"):
+            errors.append(f"ringkasan_pasar.rezim_pasar.rezim tidak dikenal: {rr!r}")
+        # konsistensi antara dua tempat publikasi rezim
+        if kp and isinstance(kp, dict) and rr and kp.get("rezim") and rr != kp.get("rezim"):
+            errors.append(
+                f"rezim tidak konsisten: konteks_pasar={kp.get('rezim')!r} "
+                f"vs ringkasan_pasar={rr!r}")
 
     return {
         "ok": not errors,

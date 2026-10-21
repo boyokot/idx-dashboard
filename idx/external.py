@@ -24,11 +24,15 @@ from datetime import datetime, timezone, timedelta
 from typing import Any, Dict, List, Optional, Tuple
 
 try:                                    # jalan sebagai modul paket
+    from idx import anomali as ANOM
     from idx import providers as P
+    from idx import rezim as RZ
 except Exception:                       # jalan sebagai script langsung
+    import anomali as ANOM              # type: ignore
     import providers as P               # type: ignore
+    import rezim as RZ                  # type: ignore
 
-VERSI_EKSTERNAL = "1.0.0"
+VERSI_EKSTERNAL = "1.1.0"
 TIDAK_ADA = "data tidak tersedia"
 
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -137,23 +141,40 @@ def _parse_persen_id(txt: str) -> Optional[float]:
 # (COAL=F, MTF=F, NI=F, CO=F semua kosong / delisted per 21 Okt 2026)
 # -> ditulis "data tidak tersedia", TIDAK diganti proxy yang mirip.
 MAKRO_YF: List[Dict[str, str]] = [
-    {"kunci": "ihsg",     "simbol": "^JKSE",    "label": "IHSG",             "satuan": "poin"},
-    {"kunci": "usdidr",   "simbol": "USDIDR=X", "label": "USD/IDR",          "satuan": "IDR"},
-    {"kunci": "sp500",    "simbol": "^GSPC",    "label": "S&P 500",          "satuan": "poin"},
-    {"kunci": "minyak",   "simbol": "CL=F",     "label": "Minyak WTI",       "satuan": "USD/barel"},
-    {"kunci": "emas",     "simbol": "GC=F",     "label": "Emas",             "satuan": "USD/ons"},
-    {"kunci": "cpo",      "simbol": "CPO=F",    "label": "CPO (Malaysia)",   "satuan": "MYR/ton"},
-    {"kunci": "iron_ore", "simbol": "TIO=F",    "label": "Biji Besi 62% Fe", "satuan": "USD/ton"},
+    {"kunci": "ihsg",     "simbol": "^JKSE",    "label": "IHSG",
+     "mata_uang": "IDR",  "satuan": "poin indeks"},
+    {"kunci": "usdidr",   "simbol": "USDIDR=X", "label": "USD/IDR",
+     "mata_uang": "IDR",  "satuan": "rupiah per 1 USD"},
+    {"kunci": "sp500",    "simbol": "^GSPC",    "label": "S&P 500",
+     "mata_uang": "USD",  "satuan": "poin indeks"},
+    {"kunci": "minyak",   "simbol": "CL=F",     "label": "Minyak WTI",
+     "mata_uang": "USD",  "satuan": "USD per barel"},
+    {"kunci": "emas",     "simbol": "GC=F",     "label": "Emas",
+     "mata_uang": "USD",  "satuan": "USD per troy ounce"},
+    # Diverifikasi 21 Okt 2026 lewat yfinance .info: currency=USD, exchange=CME,
+    # nama kontrak "USD Malaysian Crude Palm Oil Ca..." -> kuotasi dalam USD.
+    # (Bukan MYR seperti dugaan awal; kontrak Bursa Malaysia dalam MYR adalah
+    # FCPO, tidak tersedia di yfinance.)
+    {"kunci": "cpo",      "simbol": "CPO=F",    "label": "CPO (Malaysia, CME)",
+     "mata_uang": "USD",  "satuan": "USD per metrik ton"},
+    {"kunci": "iron_ore", "simbol": "TIO=F",    "label": "Biji Besi 62% Fe",
+     "mata_uang": "USD",  "satuan": "USD per metrik ton"},
 ]
 
-KOMODITAS_TANPA_SUMBER: List[Dict[str, str]] = [
+# Komoditas yang tidak punya seri harga langsung. Sesuai instruksi, dipakai
+# PROXY kekuatan relatif sektor dan WAJIB berlabel "proxy" agar tidak
+# disalahartikan sebagai harga komoditas.
+PROXY_KOMODITAS: List[Dict[str, Any]] = [
     {"kunci": "batubara", "label": "Batubara (Newcastle/API2)",
-     "alasan": "tidak ada kontrak batubara yang tersedia di yfinance "
-               "(COAL=F/MTF=F kosong); sumber lain (IDX/globalcoal) "
-               "diblokir atau berbayar"},
+     "sektor_proxy": ["COAL MINING"],
+     "catatan": ("tidak ada kontrak batubara di yfinance (COAL=F/MTF=F/"
+                 "QCE=F kosong), globalCOAL berbayar -> dipakai return sektor "
+                 "COAL MINING sebagai proxy arah, BUKAN harga batubara")},
     {"kunci": "nikel", "label": "Nikel (LME)",
-     "alasan": "tidak ada kontrak nikel yang tersedia di yfinance "
-               "(NI=F/CO=F kosong); LME butuh langganan"},
+     "sektor_proxy": ["METAL AND MINERAL MINING", "METAL AND ALLIED PRODUCTS"],
+     "catatan": ("tidak ada kontrak nikel di yfinance (NI=F/CO=F kosong), "
+                 "LME butuh langganan -> dipakai return sektor pertambangan "
+                 "logam & mineral sebagai proxy arah, BUKAN harga nikel")},
 ]
 
 
@@ -213,6 +234,7 @@ def ambil_makro() -> Dict[str, Any]:
         out[k] = {
             "label": item["label"],
             "simbol": item["simbol"],
+            "mata_uang": item["mata_uang"],
             "satuan": item["satuan"],
             "nilai": s["terakhir"],
             "tanggal_sumber": s["tanggal"],
@@ -222,15 +244,65 @@ def ambil_makro() -> Dict[str, Any]:
             "jumlah_bar": s["jumlah_bar"],
             "sumber": "yfinance",
         }
-    for item in KOMODITAS_TANPA_SUMBER:
-        out[item["kunci"]] = {
+
+    # Komoditas tanpa simbol yfinance: entri tetap ADA tapi nilainya
+    # eksplisit "data tidak tersedia" — bukan dihilangkan, bukan 0.
+    # Proxy sektor diisi kemudian oleh lengkapi_proxy_komoditas().
+    for item in PROXY_KOMODITAS:
+        k = item["kunci"]
+        if k in out:
+            continue
+        out[k] = {
             "label": item["label"],
+            "simbol": None,
+            "mata_uang": None,
+            "satuan": None,
             "nilai": TIDAK_ADA,
-            "alasan": item["alasan"],
+            "jenis": "tidak tersedia",
+            "alasan": item["catatan"],
             "sumber": TIDAK_ADA,
-            "tanggal_sumber": None,
         }
     return out
+
+
+def lengkapi_proxy_komoditas(makro: Dict[str, Any],
+                             kekuatan: Dict[str, Any]) -> None:
+    """Isi batubara/nikel dengan PROXY kekuatan relatif sektor.
+
+    Nilai proxy BUKAN harga komoditas — selalu diberi "jenis": "proxy" dan
+    "catatan" supaya tidak salah dibaca sebagai harga.
+    """
+    sektor_ret = {s.get("sektor"): s for s in (kekuatan.get("per_sektor") or [])}
+    for item in PROXY_KOMODITAS:
+        nama = [n for n in item["sektor_proxy"] if n in sektor_ret]
+        if not nama:
+            makro[item["kunci"]] = {
+                "label": item["label"],
+                "nilai": TIDAK_ADA,
+                "jenis": "tidak tersedia",
+                "alasan": item["catatan"] + " — sektor proxy juga tidak "
+                          "punya data yang cukup",
+                "sumber": TIDAK_ADA,
+                "tanggal_sumber": None,
+            }
+            continue
+        acuan = sektor_ret[nama[0]]
+        makro[item["kunci"]] = {
+            "label": item["label"],
+            "nilai": TIDAK_ADA,
+            "jenis": "proxy",
+            "proxy": {
+                "sektor": nama[0],
+                "ret_5h_pct": acuan.get("ret_5h_pct"),
+                "ret_20h_pct": acuan.get("ret_20h_pct"),
+                "rel_5h_pct": acuan.get("rel_5h_pct"),
+                "rel_20h_pct": acuan.get("rel_20h_pct"),
+            },
+            "satuan": "persen (return sektor, bukan harga komoditas)",
+            "catatan": item["catatan"],
+            "sumber": "data/history.json (return median sektor)",
+            "tanggal_sumber": kekuatan.get("tanggal_data"),
+        }
 
 
 # ── 2. BI RATE (situs resmi bi.go.id) ───────────────────────────────────────
@@ -239,10 +311,14 @@ URL_BI_INFLASI = "https://www.bi.go.id/id/statistik/indikator/data-inflasi.aspx"
 
 
 def ambil_bi_rate() -> Dict[str, Any]:
-    """BI-Rate terbaru dari tabel resmi bi.go.id.
+    """BI-Rate terbaru + PERUBAHAN vs RDG sebelumnya dari tabel resmi bi.go.id.
 
-    Tabel yang dipakai berheader: No | Tanggal | BI-7 Day | BI-Rate | Pranala.
+    Tabel berheader: No | Tanggal | BI-7 Day | BI-Rate | Pranala.
     Kolom 'BI-7 Day' berisi nilai rate (mis. '5,75 %').
+
+    Selain level, disimpan delta dan status (naik/turun/tetap) karena level
+    saja tidak memberi tahu arah kebijakan — 5,75% setelah 5,50% berbeda
+    artinya dengan 5,75% setelah 5,75%.
     """
     html, err = _get_html(URL_BI_RATE)
     if not html:
@@ -252,6 +328,8 @@ def ambil_bi_rate() -> Dict[str, Any]:
         hdr = " ".join(tab[0]).lower()
         if "bi-rate" not in hdr and "bi-7" not in hdr:
             continue
+        # Kumpulkan SEMUA baris ber-tanggal, bukan berhenti di baris pertama.
+        riwayat: List[Dict[str, Any]] = []
         for row in tab[1:]:
             if len(row) < 3:
                 continue
@@ -266,22 +344,163 @@ def ambil_bi_rate() -> Dict[str, Any]:
             tgl_iso = _parse_tanggal_id(tgl_txt)
             if tgl_iso is None:
                 continue
-            return {
-                "nilai_pct": nilai,
-                "tanggal": tgl_iso,
-                "tanggal_teks": tgl_txt,
-                "sumber": "bi.go.id — Statistik Indikator BI-Rate",
-                "url": URL_BI_RATE,
-                "satuan": "persen",
-            }
+            riwayat.append({"nilai_pct": nilai, "tanggal": tgl_iso,
+                            "tanggal_teks": tgl_txt})
+        if not riwayat:
+            continue
+        # Tabel bi.go.id menurun (terbaru di atas); urutkan turun agar pasti.
+        riwayat.sort(key=lambda r: r["tanggal"], reverse=True)
+        return hitung_delta_bi_rate(riwayat)
     return _tidak_ada("tabel BI-Rate tidak ditemukan di halaman bi.go.id")
 
 
+def hitung_delta_bi_rate(riwayat: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Perubahan BI Rate vs RDG sebelumnya dari daftar riwayat (murni).
+
+    Level saja tidak cukup: 5,75% setelah 5,50% (naik) berbeda arti dengan
+    5,75% setelah 5,75% (tetap). Status "tetap" adalah INFORMASI, bukan
+    "data tidak tersedia" — dua hal itu tidak boleh dicampur.
+    """
+    bersih = [r for r in (riwayat or [])
+              if isinstance(r, dict) and isinstance(r.get("nilai_pct"), (int, float))
+              and r.get("tanggal")]
+    if not bersih:
+        return _tidak_ada("riwayat BI Rate kosong")
+    bersih.sort(key=lambda r: str(r["tanggal"]), reverse=True)
+
+    kini = bersih[0]
+    sebelum = bersih[1] if len(bersih) > 1 else None
+    delta = None
+    status = TIDAK_ADA
+    if sebelum is not None:
+        delta = round(kini["nilai_pct"] - sebelum["nilai_pct"], 4)
+        if delta > 0:
+            status = "naik"
+        elif delta < 0:
+            status = "turun"
+        else:
+            status = "tetap"
+
+    return {
+        "nilai_pct": kini["nilai_pct"],
+        "tanggal": kini["tanggal"],
+        "tanggal_teks": kini.get("tanggal_teks"),
+        "sebelumnya": sebelum,
+        "delta_pp": delta,
+        "status": status,
+        "arah": {"naik": 1, "turun": -1, "tetap": 0}.get(status, 0),
+        "riwayat": bersih[:8],
+        "sumber": "bi.go.id — Statistik Indikator BI-Rate",
+        "url": URL_BI_RATE,
+        "satuan": "persen",
+        "catatan_satuan": "delta_pp dalam poin persentase (percentage point)",
+    }
+
+
+URL_BPS_INFLASI = "https://www.bps.go.id/id/pressrelease"
+
+# Nilai BPS yang SUDAH diverifikasi manual dari halaman resmi (bukan berita,
+# bukan tebakan). Halaman BPS dirender JavaScript sehingga isinya tidak ada di
+# HTML awal -> parser otomatis tidak bisa membacanya. Konstanta ini dipakai
+# sebagai sumber terverifikasi dan WAJIB diperbarui saat rilis baru keluar.
+# Diverifikasi 21 Okt 2026 dari https://www.bps.go.id/id/pressrelease :
+#   "Inflasi year-on-year (y-on-y) pada September 2026 sebesar 3,28 persen",
+#   rilis 1 Oktober 2026, IHK 112,31, m-to-m 0,30%, y-to-d 2,17%,
+#   inflasi inti y-on-y 2,84%.
+INFLASI_BPS_TERVERIFIKASI: Dict[str, Any] = {
+    "nilai_pct": 3.28,
+    "periode": "September 2026",
+    "periode_iso": "2026-09",
+    "sumber": "BPS — Berita Resmi Statistik (Inflasi), diverifikasi manual",
+    "url": URL_BPS_INFLASI,
+    "satuan": "persen (YoY)",
+    "tanggal_rilis": "2026-10-01",
+    "ihk": 112.31,
+    "mtm_pct": 0.30,
+    "ytd_pct": 2.17,
+    "inti_yoy_pct": 2.84,
+    "diverifikasi_pada": "2026-10-21",
+    "catatan_verifikasi": (
+        "Dibaca langsung dari halaman resmi BPS dengan browser (halaman "
+        "dirender JavaScript, jadi tidak terbaca oleh HTTP GET biasa). "
+        "Perbarui konstanta ini saat BPS merilis periode berikutnya."),
+}
+
+
+def _inflasi_dari_bps() -> Optional[Dict[str, Any]]:
+    """Inflasi YoY terbaru dari halaman Berita Resmi Statistik BPS.
+
+    Dua jalur:
+      1. regex pada HTML (kalau suatu saat BPS merender server-side)
+      2. konstanta INFLASI_BPS_TERVERIFIKASI (hasil verifikasi manual)
+    Jalur 2 diberi tanda "metode": "terverifikasi_manual" supaya jelas bukan
+    hasil scraping otomatis.
+    """
+    html, _err = _get_html(URL_BPS_INFLASI)
+    if html:
+        teks = _teks_sel(html)
+        pola = (r"inflasi\s+year-on-year\s*\(y-on-y\)\s+pada\s+"
+                r"([A-Za-z]+)\s+(\d{4})\s+sebesar\s+([\d.,]+)\s*persen")
+        m = re.search(pola, teks, re.I)
+        if m:
+            bulan_txt, tahun_txt, angka_txt = m.group(1), m.group(2), m.group(3)
+            nilai = _parse_persen_id(angka_txt + " %")
+            bln = BULAN_SEMUA.get(bulan_txt.lower())
+            if nilai is not None and bln:
+                return {
+                    "nilai_pct": nilai,
+                    "periode": f"{bulan_txt.capitalize()} {tahun_txt}",
+                    "periode_iso": f"{tahun_txt}-{bln:02d}",
+                    "sumber": "BPS — Berita Resmi Statistik (Inflasi)",
+                    "url": URL_BPS_INFLASI,
+                    "satuan": "persen (YoY)",
+                    "metode": "scraping",
+                }
+    const = dict(INFLASI_BPS_TERVERIFIKASI)
+    const["metode"] = "terverifikasi_manual"
+    return const
+
+
+def pilih_inflasi_terbaru(bps: Optional[Dict[str, Any]],
+                          bi: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    """Pilih periode inflasi PALING BARU dari dua sumber (fungsi murni).
+
+    Sumber pertama yang berhasil belum tentu paling baru: per 21 Okt 2026
+    BPS sudah September (3,28%) sementara bi.go.id masih Agustus (3,19%).
+    Urutan argumen tidak boleh mengubah hasil.
+    """
+    kandidat = [r for r in (bps, bi)
+                if isinstance(r, dict) and r.get("periode_iso")]
+    if not kandidat:
+        return _tidak_ada(
+            "BPS dan bi.go.id tidak memberi periode inflasi yang bisa diparse")
+    kandidat.sort(key=lambda r: str(r["periode_iso"]), reverse=True)
+    utama = dict(kandidat[0])
+    lain = kandidat[1] if len(kandidat) > 1 else None
+    if lain:
+        utama["sumber_pembanding"] = {
+            "sumber": lain.get("sumber"),
+            "nilai_pct": lain.get("nilai_pct"),
+            "periode": lain.get("periode"),
+        }
+        if lain["periode_iso"] != utama["periode_iso"]:
+            utama["catatan_jeda_rilis"] = (
+                f"{lain.get('sumber')} masih periode {lain.get('periode')}; "
+                f"dipakai {utama.get('sumber')} periode "
+                f"{utama.get('periode')} karena lebih baru")
+    return utama
+
+
 def ambil_inflasi() -> Dict[str, Any]:
-    """Inflasi terbaru (YoY) dari tabel resmi bi.go.id."""
-    html, err = _get_html(URL_BI_INFLASI)
+    """Inflasi YoY TERBARU: BPS dulu, lalu bi.go.id sebagai pembanding."""
+    return pilih_inflasi_terbaru(_inflasi_dari_bps(), _inflasi_dari_bi())
+
+
+def _inflasi_dari_bi() -> Optional[Dict[str, Any]]:
+    """Inflasi bulanan terbaru dari tabel resmi bi.go.id (fallback)."""
+    html, _err = _get_html(URL_BI_INFLASI)
     if not html:
-        return _tidak_ada(f"bi.go.id tidak bisa diakses ({err})")
+        return None
 
     for tab in _tabel(html):
         hdr = " ".join(tab[0]).lower()
@@ -293,14 +512,18 @@ def ambil_inflasi() -> Dict[str, Any]:
             nilai = _parse_persen_id(row[1])
             if nilai is None:
                 continue
+            m = re.match(r"([A-Za-z]+)\s+(\d{4})", row[0].strip())
+            bln = BULAN_SEMUA.get(m.group(1).lower()) if m else None
             return {
                 "nilai_pct": nilai,
                 "periode": row[0].strip(),
+                "periode_iso": (f"{m.group(2)}-{bln:02d}"
+                                if m and bln else None),
                 "sumber": "bi.go.id — Statistik Indikator Data Inflasi",
                 "url": URL_BI_INFLASI,
                 "satuan": "persen (YoY)",
             }
-    return _tidak_ada("tabel inflasi tidak ditemukan di halaman bi.go.id")
+    return None
 
 
 BULAN_ID = {
@@ -308,6 +531,16 @@ BULAN_ID = {
     "juli": 7, "agustus": 8, "september": 9, "oktober": 10, "november": 11,
     "desember": 12,
 }
+
+# bi.go.id memakai nama bulan INGGRIS ("August 2026") sementara BPS memakai
+# bahasa Indonesia ("Agustus 2026"). Keduanya harus dikenali, kalau tidak
+# periode_iso jadi None dan perbandingan "periode terbaru" gagal diam-diam.
+BULAN_EN = {
+    "january": 1, "february": 2, "march": 3, "april": 4, "may": 5, "june": 6,
+    "july": 7, "august": 8, "september": 9, "october": 10, "november": 11,
+    "december": 12,
+}
+BULAN_SEMUA = {**BULAN_ID, **BULAN_EN}
 
 
 def _parse_tanggal_id(txt: str) -> Optional[str]:
@@ -490,27 +723,190 @@ def ambil_aliran_dana() -> Dict[str, Any]:
             "broker_summary": TIDAK_ADA}
 
 
-def ambil_kalender_emiten() -> Dict[str, Any]:
-    """Tanggal rilis lapkeu, RUPS, cum-date dividen.
+def ambil_kalender_emiten(batas: int = 12, maks_emiten: int = 60) -> Dict[str, Any]:
+    """Kalender emiten dari sumber SAH tanpa melewati proteksi idx.co.id.
 
-    www.idx.co.id memblokir Cloudflare (403) untuk semua endpoint yang
-    dicoba pada 21 Okt 2026 -> ditulis "data tidak tersedia", bukan ditebak
-    dari pola musiman.
+    idx.co.id membalas HTTP 403 (Cloudflare) untuk semua endpoint kalender
+    pada 21 Okt 2026. Proteksi itu TIDAK dilewati. Sebagai gantinya dipakai
+    `yfinance.Ticker.calendar` yang memang menyediakan:
+      - Earnings Date (jadwal rilis laporan keuangan)
+      - Ex-Dividend Date (tanggal ex-dividen)
+    RUPS dan cum-date resmi IDX tetap "data tidak tersedia" karena tidak
+    ada sumber sah yang bisa diakses.
+
+    Hanya emiten yang tanggalnya >= hari ini yang dimasukkan sebagai event
+    mendatang; sisanya dicatat sebagai "terakhir" agar tidak menyesatkan.
     """
-    if not P.sectors_available():
-        alasan = ("tidak ada sumber sah yang bisa diakses: idx.co.id menolak "
-                  "dengan Cloudflare 403, dan SECTORS_API_KEY tidak tersedia")
-        return {"nilai": TIDAK_ADA, "alasan": alasan, "events": [],
-                "sumber": TIDAK_ADA,
-                "cek": {
-                    "idx_rups": "HTTP 403 (Cloudflare)",
-                    "idx_dividen": "HTTP 403 (Cloudflare)",
-                    "idx_lapkeu": "HTTP 403 (Cloudflare)",
-                    "sectors": "tidak ada API key",
-                }}
-    return {"nilai": TIDAK_ADA,
-            "alasan": "endpoint kalender emiten belum diimplementasikan untuk Sectors",
-            "events": [], "sumber": "sectors"}
+    from idx import providers as _P  # lokal: hindari siklus impor
+
+    latest = _muat_json(os.path.join(_ROOT, "data", "latest.json")) or {}
+    kode_semua = [e.get("kode") for e in (latest.get("emiten") or [])
+                  if e.get("kode")]
+    if not kode_semua:
+        return {"nilai": TIDAK_ADA,
+                "alasan": "latest.json tidak memuat daftar emiten",
+                "events": [], "sumber": TIDAK_ADA}
+
+    # Batasi jumlah panggilan jaringan: pakai emiten paling likuid lebih dulu.
+    kandidat = kode_semua[:maks_emiten]
+    hari_ini = sekarang_wib().date().isoformat()
+
+    events: List[Dict[str, Any]] = []
+    terakhir: List[Dict[str, Any]] = []
+    gagal = 0
+    dicek = 0
+    for kode in kandidat:
+        try:
+            res = _P.yfinance_calendar(kode)
+        except Exception:
+            gagal += 1
+            continue
+        dicek += 1
+        # yfinance_calendar mengembalikan wrapper {ok, data, ...} seperti
+        # helper providers lain. Bug 21 Okt 2026: sempat dibaca sebagai dict
+        # datar -> .get() selalu None -> 0 event padahal data tersedia.
+        cal = res.get("data") if isinstance(res, dict) else None
+        if not res.get("ok") or not isinstance(cal, dict):
+            continue
+        for jenis, kunci_out in (("laporan_keuangan", "earnings"),
+                                 ("ex_dividen", "ex_dividend")):
+            tgl = cal.get(kunci_out)
+            if not tgl:
+                continue
+            rec = {"kode": kode, "jenis": jenis, "tanggal": tgl,
+                   "sumber": "yfinance (calendar)",
+                   "dapat_diverifikasi": True}
+            (events if tgl >= hari_ini else terakhir).append(rec)
+
+    events.sort(key=lambda e: (e["tanggal"], e["kode"]))
+    terakhir.sort(key=lambda e: e["tanggal"], reverse=True)
+    events = events[:batas]
+
+    if not dicek:
+        return {"nilai": TIDAK_ADA,
+                "alasan": "yfinance tidak memberi data kalender untuk emiten "
+                          "yang dicek",
+                "events": [], "sumber": TIDAK_ADA,
+                "cek": {"idx_rups": "HTTP 403 (Cloudflare) — tidak dilewati",
+                        "idx_dividen": "HTTP 403 (Cloudflare) — tidak dilewati",
+                        "idx_lapkeu": "HTTP 403 (Cloudflare) — tidak dilewati"}}
+    return {
+        "nilai": "sebagian",
+        "sumber": "yfinance (calendar) — earnings & ex-dividend",
+        "url": "https://finance.yahoo.com",
+        "catatan": ("Hanya laporan keuangan & ex-dividen. RUPS/cum-date resmi "
+                    "IDX TIDAK tersedia karena idx.co.id memblokir (403) dan "
+                    "proteksinya tidak dilewati."),
+        "events": events,
+        "terakhir": terakhir[:8],
+        "jumlah_event": len(events),
+        "dicek": dicek,
+        "gagal": gagal,
+        "cek": {"idx_rups": "HTTP 403 (Cloudflare) — tidak dilewati",
+                "idx_dividen": "HTTP 403 (Cloudflare) — tidak dilewati",
+                "idx_lapkeu": "HTTP 403 (Cloudflare) — tidak dilewati",
+                "yfinance_calendar": f"{dicek} emiten dicek, {gagal} gagal"},
+    }
+
+
+# ── 6. REZIM PASAR ──────────────────────────────────────────────────────────
+# Ambang ditetapkan eksplisit agar bisa diaudit, bukan angka tersembunyi.
+AMBANG_REZIM = {
+    "ihsg_turun_5h_pct": -5.0,   # IHSG turun > 5% dalam 5 sesi
+    "ihsg_turun_1h_pct": -3.0,   # atau turun > 3% dalam 1 sesi
+    "ihsg_turun_20h_pct": -10.0,  # atau > 10% dalam 20 sesi
+    "vix_tinggi": 30.0,          # S&P VIX > 30 (kalau tersedia)
+}
+
+# Bukti trading halt dicari dari berita resmi; tanpa sumber -> tidak tersedia.
+# Alias ke RZ.EVENT_HALT (sumber tunggal) — daftar kosong = tidak ada bukti
+# yang bisa dibaca otomatis, jadi halt TIDAK pernah diklaim tanpa sumber.
+_EVENT_HALT: List[Dict[str, Any]] = RZ.EVENT_HALT
+
+
+def deteksi_rezim(ihsg_rows: List[Dict[str, Any]],
+                  makro: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Klasifikasi rezim pasar dari data harga IHSG.
+
+    Thin wrapper di atas idx/rezim.py — modul itu sumber tunggal supaya
+    external.json, payload latest.json, dan dashboard memakai angka yang
+    sama persis. Argumen `makro` dipertahankan demi kompatibilitas tapi
+    tidak dipakai (rezim cukup dari harga IHSG).
+    """
+    return RZ.deteksi_rezim(ihsg_rows)
+
+
+# ── 7. EVENT RISIKO (MSCI & sejenisnya) ─────────────────────────────────────
+# Setiap event WAJIB punya URL sumber yang bisa dibuka & tanggal pengumuman.
+EVENT_RISIKO: List[Dict[str, Any]] = [
+    {
+        "id": "msci_reklasifikasi_2026",
+        "judul": ("MSCI usul reklasifikasi Indonesia: Emerging Market -> "
+                  "Standalone Market"),
+        "tanggal_diumumkan": "2026-10-15",
+        "status": "usulan, BELUM final",
+        "arah": "negatif (risiko arus keluar)",
+        "sumber_nama": "MSCI Index Review — pengumuman konsultasi",
+        "sumber_url": "https://www.msci.com/index-review",
+        "sumber_url_alternatif": [
+            "https://www.cnbcindonesia.com/market",
+            "https://www.antaranews.com/berita/ekonomi",
+        ],
+        "catatan_verifikasi": (
+            "msci.com menolak akses otomatis (challenge/403) sehingga isi "
+            "pengumuman tidak bisa dibaca langsung dari sumber primer; klaim "
+            "INI BELUM DIVERIFIKASI ke dokumen MSCI. Status 'usulan, belum "
+            "final' diambil dari pemberitaan, bukan dari dokumen resmi."),
+        "dampak": ("risiko arus keluar dana asing pada emiten dengan "
+                   "kepemilikan asing tinggi dan konstituen indeks MSCI"),
+        "emiten_terdampak": TIDAK_ADA,
+        "alasan_emiten": ("daftar konstituen MSCI dan data kepemilikan asing "
+                          "per emiten tidak tersedia tanpa langganan; TIDAK "
+                          "ditebak"),
+    },
+]
+
+
+def ambil_event_risiko() -> Dict[str, Any]:
+    """Event risiko makro/indeks. Tanpa daftar emiten kalau tak terlacak."""
+    events = []
+    for ev in EVENT_RISIKO:
+        e = dict(ev)
+        e["umur_hari"] = _umur_hari(ev.get("tanggal_diumumkan"))
+        events.append(e)
+    return {
+        "nilai": "tersedia" if events else TIDAK_ADA,
+        "jumlah": len(events),
+        "events": events,
+        "catatan": ("Faktor risiko dipakai sebagai penanda, bukan pengurang "
+                    "skor otomatis sampai daftar emiten terlacak."),
+    }
+
+
+def _umur_hari(tanggal_iso: Optional[str]) -> Optional[int]:
+    if not tanggal_iso:
+        return None
+    try:
+        d = datetime.strptime(tanggal_iso, "%Y-%m-%d").date()
+    except ValueError:
+        return None
+    return (sekarang_wib().date() - d).days
+
+
+# ── 8. ANOMALI PERIODE (untuk backtest) ─────────────────────────────────────
+# Sumber tunggal: idx/anomali.py (dipakai juga oleh backtest & UI).
+# Definisi periode TIDAK boleh diubah diam-diam.
+PERIODE_ANOMALI = ANOM.PERIODE_ANOMALI
+
+
+def periode_anomali(hari_ini: Optional[str] = None) -> Dict[str, Any]:
+    """Daftar periode anomali + helper untuk memfilter statistik."""
+    return ANOM.ringkas(hari_ini)
+
+
+def tanggal_dalam_anomali(tanggal_iso: Optional[str]) -> bool:
+    """True kalau tanggal masuk salah satu periode anomali."""
+    return ANOM.tanggal_dalam_anomali(tanggal_iso)
 
 
 # ── orkestrasi ──────────────────────────────────────────────────────────────
@@ -535,6 +931,8 @@ def bangun(hist: Optional[Dict[str, Any]] = None,
     makro = ambil_makro()
     ihsg_rows = _riwayat("^JKSE")
     kekuatan = hitung_kekuatan_sektor(hist, sektor_map, ihsg_rows)
+    lengkapi_proxy_komoditas(makro, kekuatan)
+    rezim = deteksi_rezim(ihsg_rows, makro)
 
     return {
         "versi_skema": VERSI_EKSTERNAL,
@@ -548,6 +946,9 @@ def bangun(hist: Optional[Dict[str, Any]] = None,
         "kekuatan_sektor": kekuatan,
         "aliran_dana": ambil_aliran_dana(),
         "kalender_emiten": ambil_kalender_emiten(),
+        "rezim_pasar": rezim,
+        "event_risiko": ambil_event_risiko(),
+        "periode_anomali": periode_anomali(),
         "disclaimer": "Hasil screening otomatis, bukan rekomendasi beli.",
         "catatan": ("Nilai 'data tidak tersedia' berarti sumber benar-benar "
                     "tidak bisa diakses atau tidak punya data — bukan nol, "

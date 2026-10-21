@@ -332,6 +332,97 @@ def yfinance_history(symbol: str, period: str = "6mo",
     return data_tidak_tersedia(f"yfinance gagal setelah {MAX_RETRY}x ({last_err})")
 
 
+def yfinance_calendar(symbol: str, use_cache: bool = True) -> Dict[str, Any]:
+    """Kalender emiten via yfinance: jadwal laporan keuangan & ex-dividen.
+
+    Sumber ini SAH dan tidak butuh melewati proteksi apa pun (idx.co.id
+    memblokir Cloudflare, dan proteksi itu tidak dilewati). Mengembalikan
+    dict datar:
+      {"earnings": "YYYY-MM-DD"|None, "ex_dividend": "YYYY-MM-DD"|None,
+       "revenue_avg": float|None, "eps_avg": float|None}
+
+    Tanggal earnings dari yfinance bisa berupa list beberapa tanggal
+    (estimasi rentang); dipakai tanggal PERTAMA dan ditandai "estimasi"
+    kalau jumlahnya > 1. Tidak ada tanggal = None (bukan tebakan).
+    """
+    base = symbol.strip().upper()
+    if not re.fullmatch(r"[A-Z0-9]{1,6}", base):
+        return data_tidak_tersedia(f"bukan kode emiten IDX: {base}")
+    sym = f"{base}.JK"
+    ck = f"yf::cal::{sym}"
+    if use_cache:
+        hit = cache_get(ck, 86400)
+        if hit:
+            return _wrap(hit, "yfinance")
+
+    try:
+        import yfinance as yf
+    except ImportError:
+        return data_tidak_tersedia("yfinance belum terpasang")
+
+    last_err = None
+    for attempt in range(MAX_RETRY):
+        try:
+            cal = yf.Ticker(sym).calendar
+            out: Dict[str, Any] = {
+                "earnings": None, "ex_dividend": None,
+                "revenue_avg": None, "eps_avg": None,
+                "estimasi": False,
+            }
+            if isinstance(cal, dict):
+                # yfinance kadang mengembalikan list bersarang / kosong
+                # (mis. [[]]) -> str([])[:10] == "[]" dan lolos sebagai
+                # "tanggal". Bug 21 Okt 2026: 11 dari 12 event berisi "[]".
+                # Semua tanggal WAJIB berformat YYYY-MM-DD.
+                def _tgl_valid(x: Any) -> Optional[str]:
+                    s = str(x)[:10]
+                    if len(s) != 10:
+                        return None
+                    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", s):
+                        return None
+                    return s
+
+                ed = cal.get("Earnings Date")
+                mentah: List[str] = []
+                if isinstance(ed, (list, tuple)):
+                    for x in ed:
+                        if isinstance(x, (list, tuple)):
+                            for y in x:
+                                t = _tgl_valid(y)
+                                if t:
+                                    mentah.append(t)
+                        else:
+                            t = _tgl_valid(x)
+                            if t:
+                                mentah.append(t)
+                elif ed is not None:
+                    t = _tgl_valid(ed)
+                    if t:
+                        mentah.append(t)
+                if mentah:
+                    out["earnings"] = min(mentah)
+                    out["estimasi"] = len(set(mentah)) > 1
+                xd = cal.get("Ex-Dividend Date")
+                if xd is not None:
+                    t = _tgl_valid(xd)
+                    if t:
+                        out["ex_dividend"] = t
+                ra = cal.get("Revenue Average")
+                if isinstance(ra, (int, float)):
+                    out["revenue_avg"] = float(ra)
+                ea = cal.get("Earnings Average")
+                if isinstance(ea, (int, float)):
+                    out["eps_avg"] = float(ea)
+            if use_cache:
+                cache_put(ck, out)
+            return _wrap(out, "yfinance")
+        except Exception as e:
+            last_err = f"{type(e).__name__}: {e}"
+            time.sleep(BASE_BACKOFF * (2 ** attempt))
+    return data_tidak_tersedia(
+        f"yfinance calendar gagal setelah {MAX_RETRY}x ({last_err})")
+
+
 def yfinance_info(symbol: str, use_cache: bool = True) -> Dict[str, Any]:
     """Fundamental via yfinance .info (PER, PBV, ROE, DER, growth)."""
     sym = f"{symbol.upper()}.JK"

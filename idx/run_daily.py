@@ -36,6 +36,28 @@ def _kabari_gagal(judul: str, alasan, stats=None) -> None:
         print(f"[cron] notifikasi gagal dilewati: {type(e).__name__}: {e}")
 
 
+def _kumpulkan_eksternal() -> dict:
+    """Tahap F1: ambil data eksternal harian SETELAH pipeline sukses.
+
+    Kegagalan di sini TIDAK boleh menggagalkan pipeline (dashboard inti sudah
+    terbit) dan TIDAK boleh menaikkan exit code — data eksternal hanya
+    pelengkap, dan setiap bagian yang gagal sudah tertulis "data tidak
+    tersedia" di dalam payload-nya sendiri.
+    """
+    try:
+        from idx import external as EXT
+        payload = EXT.jalankan(tulis=True)
+        n_makro = sum(1 for v in (payload.get("makro") or {}).values()
+                      if isinstance(v, dict) and isinstance(v.get("nilai"), (int, float)))
+        print(f"[cron] external.json diperbarui: makro {n_makro} seri berangka, "
+              f"sektor {payload.get('kekuatan_sektor', {}).get('jumlah_sektor')}")
+        return {"ok": True, "makro_berangka": n_makro,
+                "sektor": payload.get("kekuatan_sektor", {}).get("jumlah_sektor")}
+    except Exception as e:                   # noqa: BLE001
+        print(f"[cron] data eksternal dilewati: {type(e).__name__}: {e}")
+        return {"ok": False, "error": f"{type(e).__name__}: {e}"}
+
+
 def main() -> int:
     # 1) cek hari bursa
     now = CAL.now_wib()
@@ -75,6 +97,9 @@ def main() -> int:
         return 1
 
     print(f"[cron] selesai: {json.dumps(res, ensure_ascii=False)}")
+
+    # 2b) data eksternal harian (Tahap F1) — setelah dashboard inti terbit
+    res["eksternal"] = _kumpulkan_eksternal()
 
     # 3) notifikasi Telegram (opsional)
     try:

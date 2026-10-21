@@ -341,6 +341,67 @@ python3 idx/test_frontend_E.py      # 27 tes — metadata UI, desktop + mobile
 Butuh server lokal di port 8099 untuk tes frontend:
 `python3 -m http.server 8099`.
 
+## Faktor eksternal — Tahap 1: data (Kelompok F)
+
+`idx/external.py` mengumpulkan data eksternal harian → **`data/external.json`**
+(tulis atomic, timestamp WIB). Cron memanggilnya otomatis setelah pipeline
+sukses (`run_daily._kumpulkan_eksternal()`). **Modul ini belum mengubah skor
+apa pun** — pemakaian di skor baru ada di Tahap 4.
+
+```bash
+python3 -m idx.external          # tulis data/external.json
+python3 -m idx.external --dry    # cetak tanpa menulis
+python3 idx/test_external.py     # 128 tes
+```
+
+### Yang diambil & sumbernya
+
+| Bagian | Isi | Sumber |
+|---|---|---|
+| `makro` | IHSG `^JKSE`, USD/IDR `USDIDR=X`, S&P 500 `^GSPC`, minyak `CL=F`, emas `GC=F`, CPO `CPO=F`, biji besi `TIO=F` | yfinance |
+| `bi_rate` | BI-Rate terbaru + tanggal | tabel resmi `bi.go.id/id/statistik/indikator/bi-rate.aspx` |
+| `inflasi` | Inflasi YoY + periode | tabel resmi `bi.go.id/id/statistik/indikator/data-inflasi.aspx` |
+| `kalender_bi` | 12 jadwal RDG 2026 | `bi.go.id/id/publikasi/kalender/default.aspx` |
+| `kekuatan_sektor` | return 5 & 20 sesi per sektor + selisih vs IHSG | `data/history.json` + `^JKSE` |
+| `aliran_dana` | net asing, broker summary | Sectors (**butuh API key**) |
+| `kalender_emiten` | rilis lapkeu, RUPS, cum-date dividen | IDX / Sectors |
+
+Setiap nilai membawa `sumber`, `tanggal_sumber`/`url`, dan `alasan` bila gagal.
+
+### Aturan yang dipegang
+
+- **Tidak ada tebakan.** Sumber gagal → `"nilai": "data tidak tersedia"` +
+  `alasan`. Tidak pernah diisi `0`, tidak diganti proxy yang mirip.
+- **Batubara & nikel memang kosong.** Tidak ada kontraknya di yfinance
+  (`COAL=F`, `MTF=F`, `NI=F` semuanya kosong per 21 Okt 2026); LME butuh
+  langganan. Ditulis apa adanya, bukan ditebak dari harga emiten.
+- **`rel_*` = sektor − IHSG** pada jendela yang sama (5 atau 20 sesi).
+- **Return sektor = MEDIAN** return emiten (bukan mean, supaya satu emiten
+  liar tidak menggeser seluruh sektor). Sektor dengan < 3 emiten berdata
+  ditandai tidak tersedia, bukan diberi angka dari 1-2 saham.
+- **Tanggal RDG diambil tanggal TERAKHIR rentang** (hari keputusan rate).
+
+### Kendala sumber (jujur, bukan asumsi)
+
+| Sumber | Status 21 Okt 2026 |
+|---|---|
+| `www.idx.co.id` (RUPS/dividen/lapkeu) | **HTTP 403** Cloudflare di semua endpoint yang dicoba |
+| `SECTORS_API_KEY` | tidak tersedia → net asing & broker summary tidak bisa diambil |
+
+Keduanya ditulis `data tidak tersedia` beserta alasannya. Tata letak tabel
+`bi.go.id` bisa berubah sewaktu-waktu — tes memakai fixture HTML asli, jadi
+perubahan struktur akan terlihat sebagai tes gagal, bukan data salah diam-diam.
+
+### Bug yang ditemukan & diperbaiki
+
+1. **Suffix `.JK` pada simbol non-emiten** (`idx/providers.py`). Aturan lama
+   hanya mengecualikan `^` dan `.JK`, sehingga `USDIDR=X` menjadi
+   `USDIDR=X.JK` → 404 → kurs & komoditas dilaporkan "tidak tersedia" padahal
+   ada. Sekarang hanya kode emiten polos (`[A-Z0-9]{1,6}`) yang diberi `.JK`.
+2. **Regex tanggal RDG** ikut memindai digit tahun: "20-21 Januari 2026"
+   terbaca **26 Januari**. Sekarang hanya kelompok hari di depan nama bulan
+   yang di-parse.
+
 ## Menjalankan
 
 ```bash

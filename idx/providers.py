@@ -26,6 +26,7 @@ import hashlib
 import json
 import os
 import random
+import re
 import time
 import urllib.error
 import urllib.parse
@@ -267,13 +268,17 @@ def yfinance_history(symbol: str, period: str = "6mo",
     Riwayat OHLCV via yfinance. Dipakai kalau Sectors gagal/kosong.
     Mengembalikan list baris: {date, open, high, low, close, volume}.
     """
-    # Indeks (^JKSE) & simbol yang sudah berakhiran .JK TIDAK boleh diberi
-    # suffix .JK lagi — kalau diberi, yfinance mencari "^JKSE.JK" dan gagal.
+    # Hanya kode emiten IDX polos (mis. BBCA, AADI, BUMI) yang boleh diberi
+    # suffix .JK. Simbol non-emiten WAJIB dilewatkan apa adanya:
+    #   ^JKSE (indeks), USDIDR=X (kurs), CL=F/GC=F/CPO=F (komoditas).
+    # Bug 21 Okt 2026: aturan lama hanya mengecualikan "^" dan ".JK", sehingga
+    # "USDIDR=X" menjadi "USDIDR=X.JK" dan yfinance balas 404 -> seluruh data
+    # makro/komoditas dilaporkan "data tidak tersedia" padahal tersedia.
     up = symbol.strip().upper()
-    if up.startswith("^") or up.endswith(".JK"):
-        sym = up
+    if re.fullmatch(r"[A-Z0-9]{1,6}", up):
+        sym = f"{up}.JK"                 # kode emiten IDX polos
     else:
-        sym = f"{up}.JK"
+        sym = up                         # indeks / kurs / komoditas / sudah .JK
     ck = f"yf::hist::{sym}::{period}"
     if use_cache:
         hit = cache_get(ck, 1800)

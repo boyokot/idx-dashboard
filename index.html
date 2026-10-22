@@ -237,20 +237,25 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
 
 <div id="app" style="display:none">
 
-  <div class="kpis" id="kpis"></div>
-
-  <!-- Banner rezim pasar (Tahap 2): transparan, tampilkan pemicunya -->
+  <!-- Banner rezim pasar (Tahap 2): transparan, tampilkan pemicunya.
+       (Review 21 Okt) Banner dipindah KE ATAS kartu KPI. Sebelumnya ia
+       berada setelah 7 kartu KPI; di layar HP 390px itu berarti banner
+       terdorong ~600px ke bawah lipatan sehingga tidak pernah terlihat
+       tanpa scroll — terlihat seolah "banner tidak tampil" padahal
+       datanya benar dan elemennya ada. -->
   <div class="banner na" id="rezimBanner" style="display:none">
     <div class="bt" id="rezimTitle">Rezim pasar</div>
     <div class="bm" id="rezimMeta"></div>
     <ul id="rezimPemicu"></ul>
   </div>
 
+  <div class="kpis" id="kpis"></div>
+
   <div class="card" id="top10Card" style="display:none">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
       <b style="font-size:14px">Top 10 Emiten</b>
-      <span class="note">Emiten bertanda <span class="pill p-warn">waspada</span> tidak pernah masuk daftar ini.</span>
     </div>
+    <div class="note" id="top10Info" style="margin-bottom:10px"></div>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px" id="top10List"></div>
   </div>
 
@@ -336,11 +341,24 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
       </div>
       <div class="tbl-wrap">
         <table id="alTbl"><thead><tr>
-          <th style="text-align:left">Prioritas</th><th style="text-align:left">Kode</th>
-          <th style="text-align:left">Alert</th><th style="text-align:left">Detail</th>
+          <th style="text-align:left">Severity</th><th style="text-align:left">Kode</th>
+          <th style="text-align:left">Alert</th><th style="text-align:left">Prio</th>
+          <th style="text-align:left">Detail</th>
         </tr></thead><tbody id="alBody"></tbody></table>
       </div>
       <div class="disclaimer">Hasil screening otomatis, bukan rekomendasi beli.</div>
+    </div>
+
+    <div class="card">
+      <h2 style="font-size:15px;margin:0 0 8px">Rincian Waspada per Kriteria</h2>
+      <div class="note" id="wsInfo" style="margin-bottom:10px">Memuat…</div>
+      <div class="tbl-wrap">
+        <table id="wsTbl"><thead><tr>
+          <th style="text-align:left">Kriteria</th><th>Tingkat</th><th>Jumlah</th>
+          <th style="text-align:left">Contoh</th>
+        </tr></thead><tbody id="wsBody"></tbody></table>
+      </div>
+      <div class="disclaimer">Waspada tinggi = tidak masuk Top 10. Waspada ringan = catatan saja, tetap boleh masuk Top 10.</div>
     </div>
 
     <div class="card">
@@ -529,14 +547,54 @@ const $$ = s => Array.from(document.querySelectorAll(s));
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function nf(v,d=0){ if(v==null||v===''||Number.isNaN(v)) return null;
   return Number(v).toLocaleString('id-ID',{minimumFractionDigits:d,maximumFractionDigits:d}); }
-function pct(v,d=2){ if(v==null||Number.isNaN(v)) return '<span class="na">–</span>';
+
+/* ---------- (Review 21 Okt) sel kosong yang bisa dijelaskan ----------
+   Sebelumnya setiap sel tanpa data hanya menampilkan "–" tanpa keterangan,
+   sehingga tidak bisa dibedakan antara "sumber tidak melaporkan",
+   "sumber tidak dipakai" dan "kolom ini memang tidak dihitung".
+   Helper di bawah menempelkan `title` berisi alasan konkret. */
+const NA_ALASAN = {
+  chg_pct:'perubahan harga tidak dilaporkan sumber',
+  per:'PER tidak dilaporkan (emiten rugi / data fundamental kosong)',
+  pbv:'PBV tidak dilaporkan sumber fundamental',
+  roe:'ROE tidak tersedia (data fundamental kosong)',
+  der:'DER tidak tersedia (data fundamental kosong)',
+  rsi:'RSI butuh minimal 15 bar harga; bar tidak cukup',
+  ma20:'MA20 butuh minimal 20 bar harga; bar tidak cukup',
+  ma50:'MA50 butuh minimal 50 bar harga; bar tidak cukup',
+  volume:'volume sesi tidak dilaporkan sumber',
+  harga:'harga sesi terakhir tidak tersedia',
+  nilai_transaksi:'perlu volume DAN harga; salah satunya tidak tersedia',
+  skor:'skor tidak dihitung karena data tidak cukup',
+  sumber_data:'nama sumber tidak dicatat pada baris ini',
+  default:'data tidak tersedia dari sumber untuk emiten ini'
+};
+function naCell(kolom){
+  const alasan = NA_ALASAN[kolom] || NA_ALASAN.default;
+  return `<span class="na" title="data tidak tersedia — ${esc(alasan)}">–</span>`;
+}
+/* Nilai transaksi harian dalam ringkas rupiah yang SATUANNYA benar.
+   (Review 22 Okt) Versi lama selalu bagi 1e9 dan selalu menambah " M",
+   jadi nilai 12 juta tampil "Rp0,01 M" — angka yang technically benar
+   tapi menyesatkan karena ambang default-nya justru Rp1 miliar.
+   Sekarang satuan ikut menyesuaikan: T / M / jt. */
+function rpRingkas(v){
+  if(v==null||Number.isNaN(Number(v))) return '—';
+  const f=Number(v);
+  if(f>=1e12) return 'Rp'+nf(f/1e12,2)+' T';
+  if(f>=1e9)  return 'Rp'+nf(f/1e9,2)+' M';
+  if(f>=1e6)  return 'Rp'+nf(f/1e6,0)+' jt';
+  return 'Rp'+nf(f,0);
+}
+
+function pct(v,d=2,kolom='chg_pct'){ if(v==null||Number.isNaN(v)) return naCell(kolom);
   const c=v>0?'up':(v<0?'down':''); const s=(v>0?'+':'')+Number(v).toLocaleString('id-ID',{minimumFractionDigits:d,maximumFractionDigits:d})+'%';
   return `<span class="${c}">${s}</span>`; }
-function num(v,d=1){ if(v==null||Number.isNaN(v)) return '<span class="na">–</span>'; return nf(v,d); }
-function ratio(v,d=2){ if(v==null||Number.isNaN(v)) return '<span class="na">–</span>'; return nf(v,d); }
+function num(v,d=1,kolom='default'){ if(v==null||Number.isNaN(v)) return naCell(kolom); return nf(v,d); }
+function ratio(v,d=2,kolom='default'){ if(v==null||Number.isNaN(v)) return naCell(kolom); return nf(v,d); }
 /* ROE: satuan baku = FRAKSI (0.12814 = 12,814%). Pipeline menormalisasi
    Sectors & yfinance ke satuan yang sama. Lihat README.md -> "Satuan data". */
-function roePct(v){ if(v==null||Number.isNaN(v)) return '<span class="na">–</span>'; return nf(v*100,1)+'%'; }
+function roePct(v){ if(v==null||Number.isNaN(v)) return naCell('roe'); return nf(v*100,1)+'%'; }
 /* Format angka tampilan — SATU gaya untuk seluruh UI: id-ID
    (ribuan ".", desimal ","). Dulu fungsi ini memakai toFixed sehingga
    muncul "29.7" dan "11.11%" bercampur dengan "4.996,61" di kartu yang
@@ -729,42 +787,103 @@ function cekKedaluwarsa(timestamp){
 }
 
 /* ---------- KPI ---------- */
+
+// Nama sektor dipendekkan untuk kartu KPI; nama penuh tetap di tooltip.
+function sektorSingkat(s){
+  if(!s) return null;
+  const k=String(s).toUpperCase();
+  const M={'BANK':'Bank','FINANCIALS':'Keuangan','FINANCE':'Keuangan',
+    'CONSUMER NON-CYCLICALS':'Kons. Primer','CONSUMER CYCLICALS':'Kons. Sekunder',
+    'BASIC MATERIALS':'Barang Baku','INDUSTRIALS':'Industri','ENERGY':'Energi',
+    'HEALTHCARE':'Kesehatan','TECHNOLOGY':'Teknologi','PROPERTIES & REAL ESTATE':'Properti',
+    'PROPERTY & REAL ESTATE':'Properti','INFRASTRUCTURES':'Infrastruktur',
+    'INFRASTRUCTURE':'Infrastruktur','TRANSPORTATION & LOGISTICS':'Transportasi',
+    'TRANSPORTATION':'Transportasi','TELECOMMUNICATIONS':'Telekomunikasi',
+    'UTILITIES':'Utilitas','LAINNYA':'Lainnya'};
+  return M[k] || (k.length>14 ? k.slice(0,13)+'…' : k);
+}
+
 function renderTop10(){
   const t=(DATA.top10||[]);
   const card=$('#top10Card');
   if(!t.length){ card.style.display='none'; return; }
   card.style.display='block';
-  $('#top10List').innerHTML=t.map(r=>`
+  const kr=DATA.kriteria_top10||{};
+  const sy=(kr.syarat_likuiditas||{});
+  const info=$('#top10Info');
+  if(info){
+    const gugur=(kr.yang_gugur_dari_tanpa_syarat||[]);
+    info.innerHTML=`Syarat: skor ada · bukan waspada tinggi · nilai transaksi ≥ `
+      +`<b>${esc(sy.nilai_transaksi_min_teks||'data tidak tersedia')}</b>`
+      +(gugur.length?` · gugur karena likuiditas: <b>${gugur.map(esc).join(', ')}</b>`:'')
+      +`<br><span class="na">Nilai transaksi = volume × harga sesi terakhir.</span>`;
+  }
+  $('#top10List').innerHTML=t.map(r=>{
+    const parsial=r.skor_parsial===true;
+    const bt=r.bobot_terisi;
+    const btag=parsial
+      ?`<span class="tag" title="Skor dihitung dari data sebagian — komponen hilang: ${esc((r.komponen_hilang||[]).join(', ')||'tidak diketahui')}. Bobot terisi ${bt!=null?nf(bt*100,0)+'%':'tidak tersedia'}.">parsial ${bt!=null?nf(bt*100,0)+'%':''}</span>`
+      :'';
+    const wt=r.waspada_tingkat==='ringan'
+      ?`<span class="tag" title="Waspada ringan: ${esc((r.flag_waspada||[]).join(', '))}">ringan</span>`
+      :'';
+    const nt=r.nilai_transaksi;
+    return `
     <div style="border:1px solid var(--border);border-radius:9px;padding:9px;cursor:pointer" data-kode="${esc(r.kode)}">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span class="kode">${r.peringkat}. ${esc(r.kode)}</span>${skorCell(r.skor)}
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
+        <span class="kode">${r.peringkat}. ${esc(r.kode)}${btag}${wt}</span>${skorCell(r.skor)}
       </div>
       <div class="nm" style="margin:3px 0">${esc(r.nama||'')}</div>
       <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px">
-        <span>${r.harga!=null?nf(r.harga,0):'–'}</span>${pct(r.chg_pct)}
+        <span>${r.harga!=null?nf(r.harga,0):naCell('harga')}</span>${pct(r.chg_pct,2,'chg_pct')}
       </div>
-    </div>`).join('');
+      <div style="font-size:11px;margin-top:3px" class="na"
+        title="Nilai transaksi harian = volume × harga">Vol ${nt!=null?rpRingkas(nt):'—'}</div>
+    </div>`;}).join('');
   $$('#top10List [data-kode]').forEach(d=>d.onclick=()=>bukaDetail(d.dataset.kode));
 }
 
 function renderKPI(){
   const e=DATA.emiten||[]; const mp=DATA.ringkasan_pasar||{};
   const skor=e.filter(x=>x.skor!=null);
-  const top=skor.length?Math.max(...skor.map(x=>x.skor)):null;
   const avg=skor.length?skor.reduce((a,b)=>a+b.skor,0)/skor.length:null;
-  const brk=e.filter(x=>x.sinyal==='Breakout').length;
+  // (Review 21 Okt) Definisi "Skor tertinggi" DISAMAKAN dengan Top 10:
+  // hanya dari emiten yang lolos syarat Top 10 (bukan waspada tinggi +
+  // likuid). Dulu angka ini diambil dari seluruh pasar sehingga 92,0 di
+  // KPI tidak cocok dengan 88,5 di Top 10 — dan pemilik 92,0 justru
+  // emiten ber-flag waspada yang tidak boleh masuk daftar.
+  const top10=DATA.top10||[];
+  const topR=top10.length?top10.reduce((a,b)=>(b.skor!=null&&(a.skor==null||b.skor>a.skor))?b:a,top10[0]):null;
+  const top=topR&&topR.skor!=null?topR.skor:null;
+  const adaTop=skor.filter(x=>x.skor!=null&&!x.waspada_diskualifikasi
+    &&x.nilai_transaksi!=null).length;
+  const brk=e.filter(x=>x.sinyal==='Breakout'&&!x.waspada_diskualifikasi).length;
   const wst=e.filter(x=>x.waspada).length;
+  const wr=DATA.waspada_ringkasan||{};
+  const pt=wr.per_tingkat||{};
   const ihsg=mp.ihsg||{};
-  const st=mp.sektor_terkuat;
+  const st=mp.sektor_terkuat, sw=mp.sektor_terlemah;
+  // persen sektor: sebutkan periodenya, jangan telanjang
+  const secTxt=(s)=>{
+    if(!s||!s.sektor) return 'data tidak tersedia';
+    const n=sektorSingkat(s.sektor);
+    const p1=s.chg_pct!=null?`${fx(s.chg_pct,2)}% (1 sesi)`:'';
+    const p5=s.chg_5h_pct!=null?`${fx(s.chg_5h_pct,2)}% (5 sesi)`:'';
+    return [n,p1,p5].filter(Boolean).join(' · ');
+  };
   const k=[
-    {l:'IHSG',v:ihsg.tersedia?nf(ihsg.nilai,2):'–',s:ihsg.tersedia?(ihsg.chg_pct!=null?('Chg '+fx(ihsg.chg_pct,2)+'%'):'Chg –'):'data tidak tersedia'},
-    {l:'Emiten dinilai',v:nf(skor.length,0),s:'dari '+nf(e.length,0)+' di universe'},
-    {l:'Skor tertinggi',v:top!=null?fx(top,1):'–',s:avg!=null?('rata-rata '+fx(avg,1)):'–'},
-    {l:'Breakout',v:nf(brk,0),s:'volume >1,5× rata-rata'},
-    {l:'Waspada',v:nf(wst,0),s:'tidak masuk Top 10'},
-    {l:'Sektor terkuat',v:(st&&st.sektor)?st.sektor:'–',s:(st&&st.chg_pct!=null)?(fx(st.chg_pct,2)+'%'):'–'},
+    {l:'IHSG',v:ihsg.tersedia?nf(ihsg.nilai,2):'–',s:ihsg.tersedia?(ihsg.chg_pct!=null?('Chg '+fx(ihsg.chg_pct,2)+'% (1 sesi)'):'Chg tidak tersedia'):'data tidak tersedia',t:'Indeks Harga Saham Gabungan'},
+    {l:'Emiten dinilai',v:nf(skor.length,0),s:`${nf(adaTop,0)} lolos syarat Top 10`,t:'Jumlah emiten yang punya skor'},
+    {l:'Skor tertinggi',v:top!=null?fx(top,1):'–',
+      s:topR?`${topR.kode} · rata-rata ${avg!=null?fx(avg,1):'–'}`:'Top 10 kosong',
+      t:'Sama definisinya dengan Top 10: bukan waspada tinggi & likuid. Bukan maksimum seluruh pasar.'},
+    {l:'Breakout',v:nf(brk,0),s:'volume >1,5× rata-rata',t:'Sinyal breakout dengan konfirmasi volume'},
+    {l:'Waspada',v:nf(wst,0),s:`tinggi ${nf(pt.tinggi||0,0)} · ringan ${nf(pt.ringan||0,0)}`,
+      t:'Tinggi = tidak masuk Top 10. Ringan = hanya catatan, tetap boleh masuk Top 10.'},
+    {l:'Sektor terkuat',v:st?(sektorSingkat(st.sektor)||'–'):'–',s:secTxt(st),t:st?String(st.sektor):'data tidak tersedia'},
+    {l:'Sektor terlemah',v:sw?(sektorSingkat(sw.sektor)||'–'):'–',s:secTxt(sw),t:sw?String(sw.sektor):'data tidak tersedia'},
   ];
-  $('#kpis').innerHTML = k.map(x=>`<div class="kpi"><div class="l">${esc(x.l)}</div><div class="v">${esc(String(x.v))}</div><div class="s">${esc(String(x.s))}</div></div>`).join('');
+  $('#kpis').innerHTML = k.map(x=>`<div class="kpi" title="${esc(x.t||'')}"><div class="l">${esc(x.l)}</div><div class="v">${esc(String(x.v))}</div><div class="s">${esc(String(x.s))}</div></div>`).join('');
 }
 
 /* ---------- kolom ---------- */
@@ -773,16 +892,18 @@ const COLS=[
   {k:'nama',t:'Nama',always:true,f:r=>`<span class="nm" title="${esc(r.nama)}">${esc(r.nama)}</span>`},
   {k:'skor',t:'Skor',always:true,f:r=>skorCell(r.skor)},
   {k:'sinyal',t:'Sinyal',always:true,f:r=>sinyalPill(r.sinyal)},
-  {k:'harga',t:'Harga',always:true,f:r=>r.harga!=null?nf(r.harga,0):'<span class="na">–</span>'},
-  {k:'chg_pct',t:'Chg%',always:true,f:r=>pct(r.chg_pct)},
-  {k:'per',t:'PER',sec:true,f:r=>ratio(r.per,1)},
-  {k:'pbv',t:'PBV',sec:true,f:r=>ratio(r.pbv,2)},
+  {k:'harga',t:'Harga',always:true,f:r=>r.harga!=null?nf(r.harga,0):naCell('harga')},
+  {k:'chg_pct',t:'Chg%',always:true,f:r=>pct(r.chg_pct,2,'chg_pct')},
+  {k:'per',t:'PER',sec:true,f:r=>ratio(r.per,1,'per')},
+  {k:'pbv',t:'PBV',sec:true,f:r=>ratio(r.pbv,2,'pbv')},
   {k:'roe',t:'ROE',sec:true,f:r=>roePct(r.roe)},
-  {k:'der',t:'DER',sec:true,f:r=>ratio(r.der,2)},
-  {k:'rsi',t:'RSI',sec:true,f:r=>r.rsi!=null?num(r.rsi,1):'<span class="na">–</span>'},
-  {k:'ma20',t:'MA20',sec:true,f:r=>r.ma20!=null?nf(r.ma20,0):'<span class="na">–</span>'},
-  {k:'ma50',t:'MA50',sec:true,f:r=>r.ma50!=null?nf(r.ma50,0):'<span class="na">–</span>'},
-  {k:'volume',t:'Volume',sec:true,f:r=>r.volume!=null?nf(r.volume,0):'<span class="na">–</span>'},
+  {k:'der',t:'DER',sec:true,f:r=>ratio(r.der,2,'der')},
+  {k:'rsi',t:'RSI',sec:true,f:r=>r.rsi!=null?num(r.rsi,1):naCell('rsi')},
+  {k:'ma20',t:'MA20',sec:true,f:r=>r.ma20!=null?nf(r.ma20,0):naCell('ma20')},
+  {k:'ma50',t:'MA50',sec:true,f:r=>r.ma50!=null?nf(r.ma50,0):naCell('ma50')},
+  {k:'volume',t:'Volume',sec:true,f:r=>r.volume!=null?nf(r.volume,0):naCell('volume')},
+  {k:'nilai_transaksi',t:'Nilai (Rp)',sec:true,
+    f:r=>r.nilai_transaksi!=null?nf(r.nilai_transaksi,0):naCell('nilai_transaksi')},
   {k:'sumber_data',t:'Sumber',sec:true,f:r=>`<span class="tag">${esc(r.sumber_data||'–')}</span>`},
 ];
 function colsAktif(){ return COLS.filter(c=>c.always || !HIDDEN_COLS.has(c.k)); }
@@ -844,9 +965,20 @@ function renderScreener(){
   } else {
     $('#tbody').innerHTML=rows.map(r=>{
       const tds=cols.map(c=>{
+        // (Review 21 Okt) Skor parsial harus kelihatan di TABEL, bukan hanya
+        // di panel cakupan skor. Emiten dengan komponen katalis kosong
+        // mendapat tanda + bobot terisi di kolom Skor.
         let v=c.f(r);
+        if(c.k==='skor'&&r.skor_parsial===true){
+          const bt=r.bobot_terisi;
+          const hil=(r.komponen_hilang||[]);
+          v+=` <span class="tag" title="Skor PARSIAL — bobot terisi ${bt!=null?nf(bt*100,0)+'%':'tidak tersedia'}`
+            +(hil.length?`; komponen hilang: ${esc(hil.join(', '))}`:'')+`">parsial</span>`;
+        }
         if(c.k==='sinyal'&&r.waspada){
-          const extra=r.flag_waspada&&r.flag_waspada.length?` <span class="tag" title="${esc(r.flag_waspada.join('; '))}">waspada</span>`:'';
+          const lv=r.waspada_tingkat==='tinggi'?'waspada':'ringan';
+          const extra=r.flag_waspada&&r.flag_waspada.length
+            ?` <span class="tag" title="Waspada ${esc(lv)}: ${esc(r.flag_waspada.join('; '))}">${esc(lv)}</span>`:'';
           v+=extra;
         }
         return `<td class="${c.sticky?'stick':''}" ${c.k==='kode'?`style="cursor:pointer" data-kode="${esc(r.kode)}"`:''}>${v}</td>`;
@@ -858,7 +990,12 @@ function renderScreener(){
 
   const total=(DATA.emiten||[]).length;
   const wst=rows.filter(r=>r.waspada).length;
-  $('#tableInfo').textContent=`Menampilkan ${rows.length} dari ${total} emiten`+(wst?` · ${wst} bertanda waspada`:'')+` · klik kode untuk detail`;
+  const wstT=rows.filter(r=>r.waspada_tingkat==='tinggi').length;
+  const prs=rows.filter(r=>r.skor_parsial===true).length;
+  $('#tableInfo').innerHTML=`Menampilkan ${rows.length} dari ${total} emiten`
+    +(wst?` · <span title="Waspada tinggi = tidak masuk Top 10; ringan = hanya catatan">${wst} waspada (${wstT} tinggi, ${wst-wstT} ringan)</span>`:'')
+    +(prs?` · ${prs} skor parsial`:'')
+    +` · klik kode untuk detail`;
 }
 
 /* ---------- detail ---------- */
@@ -1561,7 +1698,7 @@ function renderAlerts(){
   const A=(DATA&&DATA.alerts)||null;
   if(!A||A.tersedia===false){
     $('#alInfo').textContent='Alert tidak tersedia pada run ini.';
-    $('#alBody').innerHTML='<tr><td colspan="4" class="empty">Tidak ada data alert.</td></tr>';
+    $('#alBody').innerHTML='<tr><td colspan="5" class="empty">Tidak ada data alert.</td></tr>';
     return;
   }
   ALERTS=A.daftar||[];
@@ -1573,11 +1710,20 @@ function renderAlerts(){
       o.value=j; o.textContent=`${j} (${A.per_jenis[j]})`; sel.appendChild(o); });
   }
   const sv=A.per_severity||{};
+  const bp=A.batas_per_tingkat||{};
+  const tp=A.terpotong_per_tingkat||{};
   $('#alCount').textContent=A.total?`(${A.total})`:'';
   drawAlerts();
-  $('#alInfo').textContent=`${A.total} alert · kritis ${sv.kritis||0} · `+
-    `perhatian ${sv.perhatian||0} · info ${sv.info||0}`+
-    (A.dipotong?` · ditampilkan ${ALERTS.length}`:'');
+  // (Review 21 Okt) Alert sebelumnya 695 tanpa batas & tanpa prioritas, jadi
+  // tidak jelas mana yang penting. Sekarang tampilkan batas per tingkat,
+  // berapa yang terpotong, dan bahwa Telegram hanya menerima yang KRITIS.
+  const pot=(A.untuk_telegram||{});
+  const potT=pot.tingkat||[];
+  $('#alInfo').innerHTML=`${A.total} alert · <b>kritis ${sv.kritis||0}</b> · `+
+    `perhatian ${sv.perhatian||0} · info ${sv.info||0}`
+    +(A.dipotong?` · <span class="na">ditampilkan ${ALERTS.length} (batas: kritis ${bp.kritis??'-'}, perhatian ${bp.perhatian??'-'}, info ${bp.info??'-'})</span>`:'')
+    +(Object.keys(tp).length?` · <span class="na">terpotong: ${Object.entries(tp).map(([k,v])=>`${k} ${v}`).join(', ')}</span>`:'')
+    +(potT.length?`<br><span class="na">Telegram hanya menerima alert <b>${potT.join(', ').toUpperCase()}</b> (maks ${pot.maks}, terkirim ${pot.jumlah}) — ${esc(A.catatan||'')}</span>`:'');
 }
 
 function drawAlerts(){
@@ -1589,9 +1735,37 @@ function drawAlerts(){
         <td>${sevBadge(a.severity)}</td>
         <td><span class="kode">${esc(a.kode)}</span></td>
         <td>${esc(a.judul||'')}</td>
+        <td title="Prioritas ${a.prioritas??'-'} (3 = paling penting)"><span class="tag">P${a.prioritas??'-'}</span></td>
         <td class="na" style="text-align:left">${esc(a.detail||'')}</td>
       </tr>`).join('')
-    : '<tr><td colspan="4" class="empty">Tidak ada alert untuk filter ini.</td></tr>';
+    : '<tr><td colspan="5" class="empty">Tidak ada alert untuk filter ini.</td></tr>';
+}
+
+function renderWaspadaRincian(){
+  const w=(DATA&&DATA.waspada_ringkasan)||null;
+  if(!w||!w.per_kriteria){
+    $('#wsInfo').textContent='Rincian kriteria waspada tidak tersedia.';
+    $('#wsBody').innerHTML='<tr><td colspan="4" class="empty">Tidak ada data rincian.</td></tr>';
+    return;
+  }
+  const pt=w.per_tingkat||{};
+  const ps=w.per_tingkat_punya_skor||{};
+  $('#wsInfo').innerHTML=`Total <b>${w.total_waspada}</b> dari ${w.total_emiten} emiten `
+    +`(${w.emiten_punya_skor} punya skor) · `
+    +`<b>tinggi ${pt.tinggi||0}</b> (dari yang punya skor: ${ps.tinggi||0}) · `
+    +`<b>ringan ${pt.ringan||0}</b> (dari yang punya skor: ${ps.ringan||0}) · `
+    +`<span class="na">Jumlah per kriteria boleh melebihi jumlah emiten, karena satu emiten bisa punya beberapa kriteria.</span>`;
+  const rows=Object.entries(w.per_kriteria)
+    .map(([k,v])=>[k,v.tingkat,v.jumlah,v.contoh||[]])
+    .sort((a,b)=> (a[1]===b[1]? b[2]-a[2] : (a[1]==='tinggi'?-1:1)));
+  $('#wsBody').innerHTML=rows.length
+    ? rows.map(([k,t,j,c])=>`<tr>
+        <td style="text-align:left">${esc(k)}</td>
+        <td><span class="tag" title="${t==='tinggi'?'Tidak masuk Top 10':'Catatan saja, tetap boleh masuk Top 10'}">${esc(t)}</span></td>
+        <td>${nf(j,0)}</td>
+        <td style="text-align:left" class="na">${(c||[]).slice(0,5).map(esc).join(', ')||'—'}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="4" class="empty">Tidak ada kriteria waspada.</td></tr>';
 }
 
 function renderSkorParsial(){
@@ -1625,7 +1799,8 @@ function renderMedianSektor(){
 }
 
 function renderAlertTab(){
-  renderRezim(); renderMarket(); renderAlerts(); renderSkorParsial(); renderMedianSektor();
+  renderRezim(); renderMarket(); renderAlerts(); renderWaspadaRincian();
+  renderSkorParsial(); renderMedianSektor();
 }
 
 function init(){

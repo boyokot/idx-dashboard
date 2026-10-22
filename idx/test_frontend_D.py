@@ -314,9 +314,11 @@ def main():
         cek("tab Alert punya lebar wajar", (tab_ok or 0) > 40, tab_ok)
 
         # kolom Detail tidak boleh nol lebar (terdorong keluar)
+        # (Review 21 Okt) Kolom Prio ditambahkan sebelum Detail, jadi
+        # indeks kolom Detail bergeser dari 3 -> 4.
         det_w = eval_js(ws, "(()=>{const tr=document.querySelector('#alBody tr');"
                              "if(!tr) return -1;"
-                             "const c=tr.children[3];"
+                             "const c=tr.children[4];"
                              "return c?Math.round(c.getBoundingClientRect().width):-2;})()")
         cek("kolom Detail kelihatan di mobile", (det_w or 0) > 30, det_w)
 

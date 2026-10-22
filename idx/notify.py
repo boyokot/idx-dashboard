@@ -121,13 +121,20 @@ def bangun_pesan(payload: Dict[str, Any], watchlist: List[str] | None = None) ->
     mp = payload.get("ringkasan_pasar") or {}
     tm = payload.get("top10") or []
 
-    breakout = [r for r in rows if r.get("sinyal") == "Breakout" and not r.get("waspada")]
+    breakout = [r for r in rows if r.get("sinyal") == "Breakout"
+                and not r.get("waspada_diskualifikasi")]
     tembus = [r for r in rows if r.get("sinyal") == "Tembus Support"]
     wl_break = [r for r in breakout if r["kode"] in wl]
     wl_tembus = [r for r in tembus if r["kode"] in wl]
 
+    # (Review 21 Okt) Alert yang dipush HANYA tingkat kritis, dibatasi
+    # MAKS_TELEGRAM. Sebelumnya seluruh 695 alert ikut terkirim.
+    al = payload.get("alerts") or {}
+    tg = al.get("untuk_telegram") or {}
+    kritis = tg.get("daftar") or []
+
     # kalau tidak ada sinyal penting dan watchlist kosong -> diam
-    if not breakout and not tembus and not (wl_break or wl_tembus):
+    if not breakout and not tembus and not (wl_break or wl_tembus) and not kritis:
         return None
 
     L: List[str] = ["<b>📊 IDX Screener</b>"]
@@ -142,8 +149,28 @@ def bangun_pesan(payload: Dict[str, Any], watchlist: List[str] | None = None) ->
 
     sk = [r.get("skor") for r in rows if r.get("skor") is not None]
     if sk:
-        L.append(f"Emiten dinilai: {len(sk)} · tertinggi {max(sk):.1f} · "
+        # (Review 21 Okt) "tertinggi" harus sama definisinya dengan Top 10
+        # (likuid & bukan waspada tinggi), bukan maksimum seluruh pasar —
+        # kalau tidak, angka di pesan tidak cocok dengan daftar di bawahnya.
+        sk_top = [t.get("skor") for t in tm if t.get("skor") is not None]
+        tertinggi = max(sk_top) if sk_top else None
+        ekor = (f" · tertinggi Top 10 {tertinggi:.1f}" if tertinggi is not None
+                else " · Top 10 kosong")
+        L.append(f"Emiten dinilai: {len(sk)}{ekor} · "
                  f"waspada {payload.get('jumlah_waspada', 0)}")
+
+    # (Review 21 Okt) Hanya alert kritis yang masuk pesan; perhatian & info
+    # tidak dipush supaya tidak tenggelam.
+    if kritis:
+        alasan = tg.get("dilewati") or 0
+        judul = f"\n<b>🔴 Kritis</b> ({tg.get('jumlah', len(kritis))}"
+        if alasan:
+            judul += f", +{alasan} lain tidak dipush"
+        judul += ")"
+        L.append(judul)
+        for a in kritis:
+            L.append(f"• <b>{a.get('kode')}</b> — {a.get('judul')}"
+                     + (f": {a.get('detail')}" if a.get("detail") else ""))
 
     if wl_break or wl_tembus:
         L.append("\n<b>⭐ Watchlist</b>")

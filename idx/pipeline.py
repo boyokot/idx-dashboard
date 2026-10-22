@@ -27,6 +27,7 @@ from idx import providers as P  # noqa: E402
 from idx import scoring as S  # noqa: E402
 from idx import rezim as RZ     # noqa: E402
 from idx import alert as AL  # noqa: E402
+from idx import waspada as WAS  # noqa: E402
 
 try:
     from idx import history_store as HIST     # jalan sebagai modul paket
@@ -39,6 +40,31 @@ SNAP_DIR = os.path.join(DATA_DIR, "snapshots")
 LIST_CACHE = os.path.join(DATA_DIR, "universe.json")
 LOCK_FILE = os.path.join(DATA_DIR, ".pipeline.lock")
 UNIVERSE_LIMIT = int(os.environ.get("IDX_UNIVERSE_LIMIT", "0") or 0)  # 0 = semua
+
+# (Review 21 Okt) Syarat likuiditas minimum untuk masuk Top 10.
+# Dasar: nilai transaksi harian = volume x harga sesi terakhir.
+# Rp1 miliar dipilih karena di bawah itu order Rp10-20 juta sudah
+# menggerakkan harga (slippage besar) — bukan angka "enak dilihat".
+# Bisa diubah lewat env supaya bisa diuji tanpa menyunting kode.
+MIN_NILAI_TRANSAKSI = float(os.environ.get("IDX_MIN_NILAI_TRANSAKSI",
+                                           "1000000000") or 0)
+
+
+def _rupiah_ringkas(v: Optional[float]) -> str:
+    """Format rupiah ringkas untuk teks kebijakan (Rp1,0 M / Rp500 jt)."""
+    if v is None:
+        return "data tidak tersedia"
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        return "data tidak tersedia"
+    if f >= 1e12:
+        return f"Rp{f / 1e12:.1f} T".replace(".", ",")
+    if f >= 1e9:
+        return f"Rp{f / 1e9:.1f} M".replace(".", ",")
+    if f >= 1e6:
+        return f"Rp{f / 1e6:.0f} jt"
+    return f"Rp{f:,.0f}".replace(",", ".")
 
 # ─────────────────── kontrak data (versi & satuan baku) ───────────────────
 # Naikkan versi_skema setiap kali nama field / satuan di latest.json berubah.
@@ -390,6 +416,17 @@ def analyze_one(item: Dict[str, Any], dengan_katalis: bool = True) -> Dict[str, 
 
     flags = S.risk_flags(ind, harga, chg, len(news) if news else 0, fund_d)
 
+    # (Review 21 Okt) Nilai transaksi harian dalam rupiah = volume x harga.
+    # Hanya diisi kalau KEDUA angka benar-benar dilaporkan; kalau salah satu
+    # None, hasilnya None (bukan 0) supaya tidak terbaca "transaksi nol".
+    vol_last = ind.get("volume")
+    nilai_trx = (float(vol_last) * float(harga)
+                 if (vol_last is not None and harga is not None) else None)
+
+    # Klasifikasi bertingkat: TINGGI mendiskualifikasi dari Top 10,
+    # RINGAN hanya jadi catatan. Tidak ada flag yang dibuang.
+    wlevel = WAS.klasifikasi(flags)
+
     # sumber data gabungan per kolom
     sumber_harga = hist.get("sumber_label")
     sumber_fund = fund.get("sumber_label")
@@ -406,6 +443,8 @@ def analyze_one(item: Dict[str, Any], dengan_katalis: bool = True) -> Dict[str, 
         "harga": harga,
         "chg_pct": round(chg, 2) if chg is not None else None,
         "volume": ind.get("volume"),
+        # (Review 21 Okt) Nilai transaksi harian dalam rupiah (volume x harga).
+        "nilai_transaksi": nilai_trx,
         "ma20": ind.get("ma20"),
         "ma50": ind.get("ma50"),
         "rsi": ind.get("rsi"),
@@ -425,7 +464,12 @@ def analyze_one(item: Dict[str, Any], dengan_katalis: bool = True) -> Dict[str, 
         "sumber_fundamental": sumber_fund,
         "diperbarui_pada": hist.get("diperbarui_pada"),
         "skor_detail": None,     # diisi setelah median sektor diketahui
+        # Waspada dua tingkat: `waspada` tetap berarti "ada flag risiko apa
+        # pun" (kompatibel dengan konsumen lama); `waspada_tingkat` yang
+        # menentukan hak masuk Top 10.
         "waspada": bool(flags),
+        "waspada_tingkat": wlevel["tingkat"],
+        "waspada_diskualifikasi": wlevel["diskualifikasi"],
         "flag_waspada": flags,
         "sinyal": _sinyal_label(ind, tech, cat),
         "_bars": bars,
@@ -523,13 +567,36 @@ def _market_summary(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
             pass
 
     # sektor: rata-rata chg% + jumlah emiten
+    # (Review 21 Okt) Ditambah periode: `chg_pct` = 1 sesi (hari ini),
+    # `chg_5h_pct` = 5 sesi. Tanpa label periode, angka persen di kartu KPI
+    # tidak bisa ditafsirkan. `_bars` masih ada di sini (di-pop setelah
+    # ringkasan pasar dibuat), jadi tidak perlu request tambahan.
     sec_chg: Dict[str, List[float]] = defaultdict(list)
+    sec_chg5: Dict[str, List[float]] = defaultdict(list)
     for r in rows:
         ch = r.get("chg_pct")
         if isinstance(ch, (int, float)):
             sec_chg[(r.get("sektor") or "LAINNYA").upper()].append(float(ch))
+        b = r.get("_bars") or []
+        if len(b) >= 6:
+            try:
+                c1, c0 = float(b[-1]["close"]), float(b[-6]["close"])
+                if c0:
+                    sec_chg5[(r.get("sektor") or "LAINNYA").upper()].append(
+                        (c1 / c0 - 1) * 100)
+            except (KeyError, TypeError, ValueError):
+                pass
     sec_stats = [
-        {"sektor": s, "chg_pct": round(sum(v) / len(v), 2), "jumlah": len(v)}
+        {
+            "sektor": s,
+            "chg_pct": round(sum(v) / len(v), 2),
+            "periode_chg": "1 sesi (hari ini)",
+            "jumlah": len(v),
+            "chg_5h_pct": (round(sum(sec_chg5[s]) / len(sec_chg5[s]), 2)
+                           if sec_chg5.get(s) else None),
+            "periode_chg_5h": "5 sesi",
+            "jumlah_5h": len(sec_chg5.get(s) or []),
+        }
         for s, v in sec_chg.items() if len(v) >= 1
     ]
     sec_stats.sort(key=lambda x: x["chg_pct"], reverse=True)
@@ -669,18 +736,102 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
         r.pop("_bars", None)
         r.pop("_news", None)
 
+    # (Review 21 Okt) Rincian skor parsial harus TERSIMPAN DI BARIS EMITEN,
+    # bukan cuma di payload terpisah. Tanpa ini, tabel screener tidak bisa
+    # menandai emiten yang skornya dihitung dari data sebagian — dan
+    # "skor 88" terlihat setara dengan "skor 88 dari data 100%".
+    for r in rows:
+        det = r.get("skor_detail") or {}
+        komp = det.get("komponen") or {}
+        hilang = [n for n, c in komp.items()
+                  if isinstance(c, dict) and not c.get("tersedia")]
+        r["bobot_terisi"] = det.get("bobot_terisi")
+        r["komponen_hilang"] = hilang
+        # "Parsial" berarti skornya ADA tapi dihitung dari data sebagian.
+        # Emiten tanpa skor bukan parsial — mereka tidak punya skor sama
+        # sekali, dan menandainya "parsial" akan membuat pembaca salah paham.
+        r["skor_parsial"] = bool(hilang) and r.get("skor") is not None
+
     # urutkan: skor desc, emiten gorengan selalu di bawah
-    rows.sort(key=lambda r: (r.get("waspada", False),
+    # (Review 21 Okt) Yang didorong ke bawah hanya waspada TINGGI. Waspada
+    # RINGAN tetap ikut urutan skor — sebelumnya satu flag ringan seperti
+    # "volume tidak tersedia" membuat emiten 81,0 terlempar di bawah skor 12.
+    rows.sort(key=lambda r: (bool(r.get("waspada_diskualifikasi")),
                              -(r["skor"] if r.get("skor") is not None else -1)))
 
-    # Top 10 Emiten: hanya yang skornya ada & TIDAK bertanda waspada
-    top10 = [{"peringkat": i + 1, "kode": r["kode"], "nama": r.get("nama"),
-              "skor": r.get("skor"), "sinyal": r.get("sinyal"),
-              "harga": r.get("harga"), "chg_pct": r.get("chg_pct"),
-              "sektor": r.get("sektor")}
-             for i, r in enumerate(x for x in rows
-                                   if x.get("skor") is not None
-                                   and not x.get("waspada"))][:10]
+    # Top 10 Emiten: skor ada, bukan waspada TINGGI, dan likuid.
+    # (Review 21 Okt) Tanpa syarat likuiditas, Top 10 bisa diisi emiten
+    # dengan nilai transaksi Rp0,09 M yang tidak bisa dibeli tanpa
+    # menggerakkan harga.
+    def _kandidat(x: Dict[str, Any]) -> bool:
+        if x.get("skor") is None or x.get("waspada_diskualifikasi"):
+            return False
+        n = x.get("nilai_transaksi")
+        return n is not None and n >= MIN_NILAI_TRANSAKSI
+
+    def _top_row(i: int, r: Dict[str, Any]) -> Dict[str, Any]:
+        det = r.get("skor_detail") or {}
+        komp = det.get("komponen") or {}
+        hilang = [n for n, c in komp.items()
+                  if isinstance(c, dict) and not c.get("tersedia")]
+        return {
+            "peringkat": i + 1, "kode": r["kode"], "nama": r.get("nama"),
+            "skor": r.get("skor"), "sinyal": r.get("sinyal"),
+            "harga": r.get("harga"), "chg_pct": r.get("chg_pct"),
+            "sektor": r.get("sektor"),
+            # transparansi kelayakan
+            "nilai_transaksi": r.get("nilai_transaksi"),
+            "bobot_terisi": det.get("bobot_terisi"),
+            "komponen_hilang": hilang,
+            "skor_parsial": bool(hilang),
+            "waspada_tingkat": r.get("waspada_tingkat"),
+            "flag_waspada": r.get("flag_waspada") or [],
+        }
+
+    top10 = [_top_row(i, r) for i, r in
+             enumerate(x for x in rows if _kandidat(x))][:10]
+
+    # Gugur karena likuiditas: kandidat skor-tertinggi yang TIDAK diskualifikasi
+    # waspada tetapi nilai transaksinya di bawah ambang. Dilaporkan eksplisit
+    # supaya angka "gugur" bisa diaudit, bukan angka tersembunyi.
+    _gugur_liq = [{
+        "kode": r["kode"], "skor": r.get("skor"),
+        "nilai_transaksi": r.get("nilai_transaksi"),
+    } for r in rows
+        if r.get("skor") is not None and not r.get("waspada_diskualifikasi")
+        and (r.get("nilai_transaksi") is None
+             or float(r["nilai_transaksi"]) < MIN_NILAI_TRANSAKSI)]
+    _gugur_liq.sort(key=lambda x: -(x["skor"] or 0))
+
+    _gugur_waspada = [{
+        "kode": r["kode"], "skor": r.get("skor"),
+        "flag_waspada": r.get("flag_waspada") or [],
+    } for r in rows
+        if r.get("skor") is not None and r.get("waspada_diskualifikasi")]
+    _gugur_waspada.sort(key=lambda x: -(x["skor"] or 0))
+
+    # Kandidat teratas TANPA syarat likuiditas — pembanding agar terlihat
+    # apa yang berubah karena syarat itu.
+    _tanpa_syarat = [_top_row(i, r) for i, r in enumerate(
+        x for x in rows if x.get("skor") is not None
+        and not x.get("waspada_diskualifikasi"))][:10]
+
+    kriteria_top10 = {
+        "syarat_likuiditas": {
+            "nilai_transaksi_min": MIN_NILAI_TRANSAKSI,
+            "nilai_transaksi_min_teks": _rupiah_ringkas(MIN_NILAI_TRANSAKSI),
+            "dasar": "volume x harga sesi terakhir (nilai transaksi harian)",
+        },
+        "waspada": "hanya waspada TINGGI yang mendiskualifikasi",
+        "jumlah_gugur_likuiditas": len(_gugur_liq),
+        "jumlah_gugur_waspada": len(_gugur_waspada),
+        "gugur_likuiditas": _gugur_liq[:15],
+        "gugur_waspada": _gugur_waspada[:15],
+        "top10_tanpa_syarat_likuiditas": _tanpa_syarat,
+        "yang_gugur_dari_tanpa_syarat": [
+            x["kode"] for x in _tanpa_syarat
+            if x["kode"] not in {t["kode"] for t in top10}],
+    }
 
     payload = {
         "diperbarui_pada": P.stamp_wib(),
@@ -699,6 +850,10 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
         "jumlah_ada_fundamental": sum(1 for r in rows if r.get("per") is not None
                                       or r.get("roe") is not None),
         "jumlah_waspada": sum(1 for r in rows if r.get("waspada")),
+        # (Review 21 Okt) Rincian waspada per kriteria + per tingkat, supaya
+        # angka "507" bisa diaudit dan tidak lagi terlihat seperti satu
+        # gerombolan emiten yang sama buruknya.
+        "waspada_ringkasan": WAS.ringkas(rows),
         # Tanggal SESI BURSA data ini berasal -- BUKAN jam pipeline jalan.
         # Pipeline jalan 16:30 WIB (sesi sudah tutup) atau pagi hari kerja
         # (sesi belum buka), jadi `diperbarui_pada` bisa lebih maju 1 hari
@@ -712,6 +867,7 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
         "skor_parsial": AL.skor_parsial(rows),
         "median_valuasi_sektor": _median_valuasi_sektor(rows, pe_med, pb_med),
         "top10": top10,
+        "kriteria_top10": kriteria_top10,
         "emiten": rows,
         "disclaimer": "Hasil screening otomatis, bukan rekomendasi beli.",
     }
@@ -882,14 +1038,27 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
 
 
 if __name__ == "__main__":
-    lim = int(sys.argv[1]) if len(sys.argv) > 1 else UNIVERSE_LIMIT
-    kat = "--no-katalis" not in sys.argv
-    # --out namafile : tulis ke file lain, untuk run uji tanpa menimpa
-    # data/latest.json yang dipakai dashboard.
+    # (Review 21 Okt) Argumen harus diparse dengan benar: `python3 -m
+    # idx.pipeline --out uji.json` sebelumnya crash karena `int(sys.argv[1])`
+    # mencoba mengubah "--out" jadi integer. Sekarang flag non-numerik dilewati.
+    lim = UNIVERSE_LIMIT
     out = "latest.json"
-    if "--out" in sys.argv:
-        i = sys.argv.index("--out")
-        if i + 1 < len(sys.argv):
+    kat = True
+    i = 1
+    while i < len(sys.argv):
+        a = sys.argv[i]
+        if a == "--out" and i + 1 < len(sys.argv):
             out = sys.argv[i + 1]
+            i += 2
+            continue
+        if a == "--no-katalis":
+            kat = False
+            i += 1
+            continue
+        try:
+            lim = int(a)
+        except ValueError:
+            pass
+        i += 1
     res = run(universe_limit=lim, dengan_katalis=kat, out_name=out)
     print(json.dumps(res, ensure_ascii=False, indent=1))

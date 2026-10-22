@@ -17,6 +17,7 @@ from __future__ import annotations
 import datetime
 import json
 import os
+import subprocess
 import sys
 
 sys.path.insert(0, "/root/scripts")
@@ -107,6 +108,38 @@ def main() -> int:
         notify.kirim_dari_payload(res.get("out"))
     except Exception as e:                   # noqa: BLE001
         print(f"[cron] notifikasi dilewati: {type(e).__name__}: {e}")
+
+    # 4) auto-commit & push ke repo supaya GitHub Pages selalu segar
+    # Hanya push kalau ada perubahan di data/latest.json / data/snapshots/ / index.html
+    # dan kalau validasi prepublish ok (res["ok"] == True).
+    try:
+        repo = "/root/idx-dashboard"
+        # cek apakah ada perubahan
+        diff = subprocess.run(["git", "status", "--porcelain"],
+                               cwd=repo, capture_output=True, text=True, timeout=10)
+        if diff.returncode == 0 and diff.stdout.strip():
+            # konfigurasi author (pakai identitas yang sudah diset global; fallback aman)
+            subprocess.run(["git", "config", "user.name", "cron-idx"],
+                            cwd=repo, check=False, capture_output=True)
+            subprocess.run(["git", "config", "user.email", "cron-idx@local"],
+                            cwd=repo, check=False, capture_output=True)
+            # add data + index.html (dashboard) saja — jangan add file lain
+            subprocess.run(["git", "add", "data/latest.json", "data/snapshots/",
+                            "data/history.json", "data/backtest.json",
+                            "data/external.json", "index.html"],
+                            cwd=repo, check=True, capture_output=True, timeout=10)
+            msg = f"data: update {res.get('tanggal_data', datetime.date.today().isoformat())} — {res.get('jumlah_emiten', '?')} emiten"
+            subprocess.run(["git", "commit", "-m", msg],
+                            cwd=repo, check=True, capture_output=True, timeout=10)
+            subprocess.run(["git", "push", "origin", "master"],
+                            cwd=repo, check=True, capture_output=True, timeout=30)
+            print(f"[cron] pushed: {msg}")
+        else:
+            print("[cron] tidak ada perubahan file data, push dilewati")
+    except subprocess.CalledProcessError as e:
+        print(f"[cron] git push gagal (exit {e.returncode}): {e.stderr[:200] if e.stderr else e}")
+    except Exception as e:                   # noqa: BLE001
+        print(f"[cron] git push dilewati: {type(e).__name__}: {e}")
 
     return 0
 

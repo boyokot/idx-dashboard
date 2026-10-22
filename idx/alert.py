@@ -157,12 +157,32 @@ def dari_baris(r: Dict[str, Any]) -> List[Dict[str, Any]]:
     return out
 
 
+# (Review 21 Okt) Batas & prioritas alert.
+# Sebelum ini 695 alert dikirim rata tanpa batas dan tanpa skala prioritas,
+# sehingga alert kritis tenggelam di antara ratusan "info".
+# Batas dihitung PER TINGKAT, bukan satu angka global: memotong dari daftar
+# gabungan akan menghapus justru alert kritis kalau `info` lebih banyak.
+MAKS_PER_TINGKAT = {"kritis": 80, "perhatian": 120, "info": 60}
+
+# Hanya tingkat ini yang boleh dikirim ke Telegram (push notifikasi).
+# `perhatian` & `info` tetap ada di dashboard — yang dibatasi hanya push.
+TINGKAT_TELEGRAM = ("kritis",)
+
+# Batas keras untuk push Telegram supaya satu run tidak menbanjiri chat.
+MAKS_TELEGRAM = 12
+
+
 def kumpulkan(rows: List[Dict[str, Any]], maks: int = 200) -> Dict[str, Any]:
     """Kumpulkan alert seluruh pasar + hitungan per jenis.
 
     `maks` membatasi jumlah alert yang dikirim ke payload (default 200).
     Hitungan per jenis tetap dihitung dari SELURUH baris, bukan dari
     potongan, supaya angka ringkasan tidak menipu.
+
+    (Review 21 Okt) Daftar dipotong PER TINGKAT dengan batas masing-masing,
+    dan disertai subset `untuk_telegram` yang hanya berisi alert kritis.
+    Semua hitungan (`total`, `per_jenis`, `per_severity`) tetap dari
+    SELURUH alert — pemotongan hanya menyangkut daftar yang ditampilkan.
     """
     semua: List[Dict[str, Any]] = []
     for r in rows:
@@ -180,12 +200,43 @@ def kumpulkan(rows: List[Dict[str, Any]], maks: int = 200) -> Dict[str, Any]:
         per_jenis[a["jenis"]] = per_jenis.get(a["jenis"], 0) + 1
         per_severity[a["severity"]] = per_severity.get(a["severity"], 0) + 1
 
+    # Potong per tingkat sesuai batasnya, lalu gabung dengan urutan prioritas.
+    dipilih: List[Dict[str, Any]] = []
+    terpotong_per_tingkat: Dict[str, int] = {}
+    for sev, batas in MAKS_PER_TINGKAT.items():
+        kelompok = [a for a in semua if a["severity"] == sev]
+        dipilih.extend(kelompok[:batas])
+        if len(kelompok) > batas:
+            terpotong_per_tingkat[sev] = len(kelompok) - batas
+    dipilih.sort(key=lambda a: (-a["prioritas"], a["kode"], a["jenis"]))
+    dipilih = dipilih[:maks]
+
+    # Subset untuk push Telegram: hanya kritis, dibatasi MAKS_TELEGRAM.
+    kritis = [a for a in semua if a["severity"] in TINGKAT_TELEGRAM]
+
     return {
         "total": len(semua),
         "per_jenis": per_jenis,
         "per_severity": per_severity,
-        "dipotong": len(semua) > maks,
-        "daftar": semua[:maks],
+        "dipotong": len(semua) > len(dipilih),
+        "batas_per_tingkat": dict(MAKS_PER_TINGKAT),
+        "terpotong_per_tingkat": terpotong_per_tingkat,
+        "daftar": dipilih,
+        # Prioritas tertinggi yang perlu dilihat manusia lebih dulu.
+        "prioritas_teratas": [a for a in semua
+                              if a["severity"] == "kritis"][:MAKS_TELEGRAM],
+        "untuk_telegram": {
+            "tingkat": list(TINGKAT_TELEGRAM),
+            "maks": MAKS_TELEGRAM,
+            "jumlah": min(len(kritis), MAKS_TELEGRAM),
+            "dilewati": max(0, len(kritis) - MAKS_TELEGRAM),
+            "daftar": kritis[:MAKS_TELEGRAM],
+        },
+        "catatan": (
+            "Dashboard menampilkan alert dengan batas per tingkat. Telegram "
+            "hanya menerima alert KRITIS (maks "
+            f"{MAKS_TELEGRAM} per run); perhatian & info tidak dipush."
+        ),
     }
 
 

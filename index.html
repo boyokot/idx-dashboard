@@ -263,6 +263,7 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
     <button class="tab active" data-tab="screener">Screener</button>
     <button class="tab" data-tab="alert">Alert <span id="alCount"></span></button>
     <button class="tab" data-tab="watchlist">Watchlist <span id="wlCount"></span></button>
+    <button class="tab" data-tab="insight">Insight</button>
     <button class="tab" data-tab="akurasi">Akurasi Sinyal</button>
     <button class="tab" data-tab="risiko">Kalkulator Risiko</button>
   </div>
@@ -303,6 +304,69 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
     </div>
     <div class="tblnote" id="tableInfo"></div>
     <div class="disclaimer">Hasil screening otomatis, bukan rekomendasi beli.</div>
+  </div>
+
+  <!-- INSIGHT -->
+  <div class="panel" id="panel-insight">
+    <div id="insightState" class="card" style="text-align:center">
+      <div class="note">Memuat data insight…</div>
+    </div>
+
+    <div id="insightBody" style="display:none">
+      <!-- 1. Ringkasan hari ini -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px">
+          <h2 style="font-size:15px;margin:0">Ringkasan hari ini</h2>
+          <span class="tag" id="insightTanggal"></span>
+        </div>
+        <div class="note" style="margin-bottom:10px">Setiap poin dihitung langsung dari data — angkanya bisa ditelusuri ke sumber di bawah tiap poin.</div>
+        <div id="insightPoin"></div>
+      </div>
+
+      <!-- 2. Kartu: kesehatan pasar / rotasi sektor / makro -->
+      <div class="grid2">
+        <div class="card">
+          <h2 style="font-size:14px;margin:0 0 10px">Kesehatan pasar <span class="tag">breadth</span></h2>
+          <div id="insBreadth"></div>
+        </div>
+        <div class="card">
+          <h2 style="font-size:14px;margin:0 0 10px">Kondisi makro</h2>
+          <div id="insMakro"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="font-size:14px;margin:0 0 4px">Rotasi sektor <span class="tag">5 &amp; 20 sesi vs IHSG</span></h2>
+        <div class="note" style="margin-bottom:10px">Excess = return median sektor dikurangi return IHSG pada periode yang sama. Positif berarti sektor mengungguli IHSG, bukan berarti harganya naik.</div>
+        <div class="tbl-wrap">
+          <table id="insSektorTbl">
+            <thead><tr>
+              <th style="text-align:left">Sektor</th><th>Emiten</th><th>Ret 5s</th><th>Excess 5s</th><th>Ret 20s</th><th>Excess 20s</th>
+            </tr></thead>
+            <tbody id="insSektorBody"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:8px">
+          <button id="insSektorToggle">Tampilkan semua sektor</button>
+        </div>
+      </div>
+
+      <!-- 3. Kalender -->
+      <div class="card">
+        <h2 style="font-size:14px;margin:0 0 4px">Kalender event mendatang</h2>
+        <div class="note" id="insKalenderNote" style="margin-bottom:10px"></div>
+        <div id="insKalender"></div>
+      </div>
+
+      <!-- 4. Edukasi -->
+      <div class="card">
+        <h2 style="font-size:14px;margin:0 0 4px">Istilah yang sedang relevan</h2>
+        <div class="note" style="margin-bottom:10px">Dipilih otomatis berdasarkan kondisi data hari ini.</div>
+        <div id="insEdukasi"></div>
+      </div>
+
+      <div class="disclaimer" id="insDisclaimer">Semua angka dihitung dari data historis. Ini bukan rekomendasi beli/jual. Tidak ada target harga tunggal dan tidak ada klaim kepastian arah harga.</div>
+    </div>
   </div>
 
   <!-- ALERT -->
@@ -531,6 +595,11 @@ const HISTORY_URL = 'data/history.json';
 /* (Kelompok C) Hasil backtest vs IHSG, dihitung pipeline dari history.json.
    Berisi per_sinyal & per_skor untuk horizon 5/10/20 SESI BURSA. */
 const BACKTEST_URL = 'data/backtest.json';
+/* (Insight I2) Ringkasan naratif + kalender + edukasi, dihasilkan idx/insight_ringkas.py.
+   Ringkasan breadth/rotasi mentah ada di data/insight.json (idx/insight_data.py). */
+const INSIGHT_URL = 'data/insight.json';
+const INSIGHT_RINGKAS_URL = 'data/insight_ringkas.json';
+let INSIGHT = null, INSIGHT_RINGKAS = null;
 let HISTORY = null;           // cache di memori, isi = {emiten:{...}}
 let HISTORY_PROMISE = null;   // supaya 1 fetch saja walau modal dibuka berkali-kali
 let DATA = null;
@@ -998,8 +1067,171 @@ function renderScreener(){
     +` · klik kode untuk detail`;
 }
 
+/* ---------- "Kenapa skor ini?" — penjelasan awam dari komponen skor ---------- */
+/* Semua kalimat dihasilkan dari skor_detail.komponen; tidak ada penilaian
+   yang tidak berasal dari poin/maks/nilai yang tercatat. */
+function kenapaSkor(r){
+  const sd = r.skor_detail||{}; const kp = sd.komponen||{};
+  const out = [];
+  const nm = {'teknikal':'Teknikal','fundamental':'Fundamental','katalis':'Katalis'};
+
+  // 1. Komponen mana yang menyumbang paling besar
+  const aktif = Object.entries(kp).filter(([,c])=>c&&c.tersedia&&c.skor!=null);
+  if(aktif.length){
+    const urut = aktif.slice().sort((a,b)=>(b[1].kontribusi||0)-(a[1].kontribusi||0));
+    const utama = urut[0];
+    const w = Math.round((utama[1].bobot_efektif||0)*100);
+    out.push(`Penyumbang terbesar skor ini adalah komponen <b>${nm[utama[0]]||utama[0]}</b> `+
+      `(skor ${fx(utama[1].skor,0)}/100, bobot ${w}%, kontribusi ${fx(utama[1].kontribusi,1)} poin).`);
+  }
+
+  // 2. Sinyal yang terpenuhi dan yang tidak, dari komponen berbobot terbesar
+  const sumberDetail = aktif.length ? aktif.slice().sort((a,b)=>(b[1].bobot||0)-(a[1].bobot||0))[0] : null;
+  if(sumberDetail && sumberDetail[1].detail){
+    const det = sumberDetail[1].detail;
+    const ya = det.filter(d=>d.aktif);
+    const tidak = det.filter(d=>!d.aktif);
+    if(ya.length){
+      const contoh = ya.slice(0,3).map(d=>`${esc(d.sinyal)}${d.nilai?` (${esc(d.nilai)})`:''}`);
+      out.push(`Sinyal ${nm[sumberDetail[0]]||sumberDetail[0]} yang terpenuhi: ${contoh.join('; ')}`+
+        (ya.length>3?`, dan ${ya.length-3} sinyal lain.`:'.'));
+    }
+    if(tidak.length){
+      const contoh = tidak.slice(0,3).map(d=>esc(d.sinyal));
+      out.push(`Yang <b>belum</b> terpenuhi: ${contoh.join('; ')}`+
+        (tidak.length>3?`, dan ${tidak.length-3} lainnya.`:'.')+
+        ` Setiap sinyal yang tidak terpenuhi berarti poinnya tidak didapat.`);
+    }
+  }
+
+  // 3. Data yang hilang -> skor parsial
+  const hilang = r.komponen_hilang||[];
+  if(hilang.length){
+    out.push(`Data yang tidak tersedia: <b>${hilang.map(esc).join(', ')}</b>. `+
+      `Skor dihitung hanya dari komponen yang ada, lalu diskalakan ke bobot terisi `+
+      `${Math.round((sd.bobot_terisi||0)*100)}% — jadi skor ini tidak sebanding langsung `+
+      `dengan emiten yang datanya lengkap.`);
+  } else if(sd.bobot_terisi!=null && sd.bobot_terisi<0.999){
+    out.push(`Bobot data terisi hanya ${Math.round(sd.bobot_terisi*100)}% — skor dihitung dari `+
+      `data sebagian dan tidak sebanding langsung dengan emiten berdata lengkap.`);
+  }
+
+  // 4. Waspada
+  const fl = r.flag_waspada||[];
+  if(fl.length){
+    const tk = r.waspada_tingkat;
+    out.push(`Penanda waspada (${esc(tk||'tidak diketahui')}): ${fl.map(esc).join(' · ')}. `+
+      (tk==='tinggi'
+        ? 'Waspada tingkat tinggi mendiskualifikasi emiten dari Top 10.'
+        : 'Waspada tingkat ringan tidak mendiskualifikasi, tetapi tetap perlu dibaca.'));
+  }
+
+  // 5. Batas interpretasi
+  out.push(`Skor hanya merangkum sinyal yang <i>sudah terjadi</i> di data — `+
+    `bukan perkiraan harga ke depan. Skor tinggi berarti banyak kondisi positif terpenuhi hari ini.`);
+
+  return out;
+}
+
 /* ---------- detail ---------- */
 function cari(k){ return (DATA.emiten||[]).find(r=>r.kode===k); }
+
+/* (Insight I2) Penjelasan "Kenapa skor ini?" — 3-5 poin dari rincian komponen.
+   Aturan: hanya menyebut sinyal yang benar-benar ada di skor_detail.
+   Tidak mengarang alasan, tidak menambah klaim di luar data. */
+function kenapaSkor(r){
+  const sd = r.skor_detail||{};
+  const kp = sd.komponen||{};
+  const NAMA = {teknikal:'Teknikal', fundamental:'Fundamental', katalis:'Katalis'};
+  const poin = [];
+
+  // 1) Ringkas komponen yang benar-benar menyumbang
+  const aktif = [];
+  for(const n of ['teknikal','fundamental','katalis']){
+    const c = kp[n];
+    if(!c || !c.tersedia || c.skor==null) continue;
+    aktif.push({n, nama:NAMA[n], skor:c.skor, bobot:(c.bobot_efektif||0), kontrib:(c.kontribusi||0)});
+  }
+  if(aktif.length){
+    const utama = aktif.slice().sort((a,b)=>b.kontrib-a.kontrib)[0];
+    const urut = aktif.map(a=>`${a.nama} ${fx(a.skor,0)}`).join(', ');
+    poin.push({
+      teks:`Skor ${fx(sd.total,1)}/100 disusun dari ${urut}. Penyumbang terbesar ${utama.nama} `
+          +`(${Math.round(utama.bobot*100)}% bobot, kontribusi ${fx(utama.kontrib,1)} poin).`,
+      jenis:'struktur'
+    });
+  }
+
+  // 2) Sinyal kuat (poin penuh) — maksimal 3, urut poin terbesar
+  const kuat = [];
+  for(const n of ['teknikal','fundamental','katalis']){
+    const c = kp[n]; if(!c || !c.detail) continue;
+    for(const d of c.detail){
+      if(d.aktif && d.maks && d.poin>=d.maks && d.poin>0){
+        kuat.push({...d, komp:NAMA[n]});
+      }
+    }
+  }
+  kuat.sort((a,b)=>b.poin-a.poin);
+  for(const d of kuat.slice(0,3)){
+    poin.push({
+      teks:`${d.sinyal} (${d.komp}) — poin penuh ${d.poin}/${d.maks}`
+          +`${d.nilai?`: ${d.nilai}`:''}${d.catatan?` (${d.catatan})`:''}.`,
+      jenis:'kuat'
+    });
+  }
+
+  // 3) Sinyal yang TIDAK aktif dan mengurangi skor — jujur soal kelemahan
+  const lemah = [];
+  for(const n of ['teknikal','fundamental','katalis']){
+    const c = kp[n]; if(!c || !c.detail) continue;
+    for(const d of c.detail){
+      if(!d.aktif && d.maks){
+        lemah.push({...d, komp:NAMA[n]});
+      }
+    }
+  }
+  lemah.sort((a,b)=>b.maks-a.maks);
+  if(lemah.length && poin.length<5){
+    const d = lemah[0];
+    poin.push({
+      teks:`Yang belum terpenuhi: ${d.sinyal} (${d.komp}) — 0/${d.maks} poin`
+          +`${d.nilai?` · ${d.nilai}`:''}${d.catatan?` (${d.catatan})`:''}.`,
+      jenis:'lemah'
+    });
+  }
+  if(lemah.length>1 && poin.length<5){
+    poin.push({
+      teks:`Total ${lemah.length} kriteria belum terpenuhi: ${lemah.slice(0,4).map(d=>d.sinyal.toLowerCase()).join(', ')}`
+          +`${lemah.length>4?' dan lainnya':''}.`,
+      jenis:'lemah'
+    });
+  }
+
+  // 4) Data yang bolong / skor parsial
+  if(sd.catatan && /parsial|tidak tersedia|bobot/i.test(sd.catatan)){
+    const hilang = (r.komponen_hilang||[]).join(', ');
+    poin.push({
+      teks:`Skor parsial: bobot terisi ${Math.round((sd.bobot_terisi||0)*100)}%`
+          +`${hilang?` — komponen tanpa data: ${hilang}`:''}. Bagian yang kosong tidak dihitung 0, `
+          +`bobotnya dibagi ke komponen yang tersedia, jadi skor ini tidak sebanding langsung `
+          +`dengan emiten berdata lengkap.`,
+      jenis:'parsial'
+    });
+  }
+
+  // 5) Konteks warning (kalau ada)
+  if(r.flag_waspada && r.flag_waspada.length && poin.length<5){
+    const tk = r.waspada_tingkat||'';
+    poin.push({
+      teks:`Catatan waspada${tk?` (tingkat ${tk})`:''}: ${r.flag_waspada.join(' · ')}`
+          +`${tk==='tinggi'?' — waspada tingkat tinggi mendiskualifikasi emiten dari Top 10.':''}`,
+      jenis:'waspada'
+    });
+  }
+
+  return poin.slice(0,5);
+}
 
 function bukaDetail(kode){
   const r=cari(kode); if(!r) return;
@@ -1057,6 +1289,15 @@ function bukaDetail(kode){
       </div>
     </div>
 
+    ${(()=>{const al=kenapaSkor(r); return al.length?`
+    <div style="margin-top:14px">
+      <div style="font-weight:600;margin-bottom:6px">Kenapa skor ini?</div>
+      <ol style="margin:0;padding-left:20px;font-size:13px;line-height:1.65">
+        ${al.map(x=>`<li style="margin-bottom:5px">${x}</li>`).join('')}
+      </ol>
+      <div class="note" style="margin-top:6px">Semua poin di atas berasal dari rincian komponen skor hari ini (skor_detail.komponen). Tidak ada penilaian di luar itu.</div>
+    </div>`:'';})()}
+
     ${r.flag_waspada&&r.flag_waspada.length?`<div class="disclaimer" style="margin-top:12px">⚠️ Waspada: ${esc(r.flag_waspada.join(' · '))}</div>`:''}
 
     <div style="margin-top:14px">
@@ -1075,6 +1316,21 @@ function bukaDetail(kode){
       <div style="font-weight:600;margin-bottom:6px">Tren Skor Harian</div>
       <canvas id="skorChart" width="820" height="130" style="width:100%;height:auto"></canvas>
       <div class="legend"><span class="na" id="skorTrendInfo">–</span></div>
+    </div>
+
+    <div style="margin-top:14px">
+      <div style="font-weight:600;margin-bottom:6px">Kenapa skor ini?</div>
+      <div class="note" style="margin-bottom:8px">Dihasilkan dari rincian komponen skor — bukan opini. Peringkat poin mengikuti besar kontribusinya.</div>
+      ${(()=>{
+        const kp2 = kenapaSkor(r);
+        if(!kp2.length) return '<div class="note">Rincian komponen tidak tersedia untuk emiten ini.</div>';
+        const WARNA = {struktur:'var(--accent)', kuat:'var(--up)', lemah:'var(--down)', parsial:'var(--warn)', waspada:'var(--warn)'};
+        return kp2.map((p,i)=>`<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+          <div style="flex:0 0 16px;font-weight:700;color:${WARNA[p.jenis]||'var(--muted)'};font-size:12px">${i+1}</div>
+          <div style="flex:1;font-size:13px;line-height:1.55">${esc(p.teks)}</div>
+        </div>`).join('');
+      })()}
+      <div class="note" style="margin-top:8px">Skor = rata-rata berbobot komponen yang datanya tersedia. Emiten dengan data bolong punya bobot terisi &lt;100%, jadi skornya tidak sebanding langsung.</div>
     </div>
 
     <div style="margin-top:14px">
@@ -1653,6 +1909,217 @@ function renderRezim(){
     : '<li>Tidak ada pemicu yang tercatat.</li>';
 }
 
+/* ---------- (Insight I2) tab Insight ---------- */
+let INSIGHT_LOADED = false;
+let INS_SEKTOR_ALL = false;
+
+function insTanggal(iso){
+  if(!iso) return 'data tidak tersedia';
+  const B=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const d=new Date(String(iso).slice(0,10)+'T00:00:00');
+  if(isNaN(d)) return String(iso);
+  return d.getDate()+' '+B[d.getMonth()]+' '+d.getFullYear();
+}
+
+/* badge angka dengan label sumber di bawahnya — dipakai ulang di semua kartu */
+function insSumber(teks){
+  return `<div class="note" style="margin-top:6px;font-size:11px;opacity:.85">Sumber: ${esc(teks||'data tidak tersedia')}</div>`;
+}
+
+function insTone(t){
+  const m={positif:'var(--up)', negatif:'var(--down)', netral:'var(--muted)'};
+  return m[t]||'var(--muted)';
+}
+
+async function loadInsight(){
+  if(INSIGHT_LOADED) return;
+  try{
+    const [raw, ringkas] = await Promise.all([
+      fetchJson(INSIGHT_URL).catch(()=>null),
+      fetchJson(INSIGHT_RINGKAS_URL).catch(()=>null),
+    ]);
+    INSIGHT = raw; INSIGHT_RINGKAS = ringkas;
+  }catch(e){
+    INSIGHT = null; INSIGHT_RINGKAS = null;
+  }
+  renderInsight();
+}
+
+function renderInsight(){
+  if(!INSIGHT_RINGKAS){
+    $('#insightState').style.display='';
+    $('#insightBody').style.display='none';
+    $('#insightState').innerHTML=
+      `<div class="note" style="padding:20px 0">Data insight belum tersedia.<br>`+
+      `Jalankan <code>python3 -m idx.insight_data</code> lalu <code>python3 -m idx.insight_ringkas</code>.</div>`;
+    return;
+  }
+  $('#insightState').style.display='none';
+  $('#insightBody').style.display='';
+
+  const R = INSIGHT_RINGKAS;
+  const b = (INSIGHT||{}).breadth || {};
+
+  $('#insightTanggal').textContent = 'data per ' + insTanggal(b.tanggal || R.kalender.hari_ini);
+  if(R.disclaimer) $('#insDisclaimer').textContent = R.disclaimer;
+
+  renderInsPoin(R);
+  renderInsBreadth(b, INSIGHT||{});
+  renderInsMakro(R);
+  renderInsSektor(INSIGHT||{});
+  renderInsKalender(R);
+  renderInsEdukasi(R);
+}
+
+function renderInsPoin(R){
+  const poin = R.ringkasan||[];
+  if(!poin.length){
+    $('#insightPoin').innerHTML='<div class="note">Tidak ada poin yang bisa dihitung dari data hari ini.</div>';
+    return;
+  }
+  $('#insightPoin').innerHTML = poin.map((p,i)=>{
+    const a = p.angka||{};
+    const chips = Object.entries(a)
+      .filter(([k,v])=>v!=null && typeof v!=='object')
+      .slice(0,5)
+      .map(([k,v])=>{
+        let label = k.replace(/_/g,' ');
+        let val;
+        if(typeof v==='boolean') val = v?'ya':'tidak';
+        else if(typeof v==='number') val = (Math.abs(v)<10 && !Number.isInteger(v)) ? fx(v,2) : fx(v,0);
+        else val = String(v);
+        return `<span class="tag" style="margin-right:4px">${esc(label)}: <b>${esc(val)}</b></span>`;
+      }).join('');
+    return `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="flex:0 0 22px;font-weight:700;color:${insTone(p.tone)}">${i+1}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:13px;margin-bottom:3px">
+          <span style="color:${insTone(p.tone)}">●</span> ${esc(p.judul)}
+        </div>
+        <div style="font-size:13px;line-height:1.6">${mdRingan(p.narasi)}</div>
+        ${chips?`<div style="margin-top:6px">${chips}</div>`:''}
+        ${insSumber(p.sumber)}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* **tebal** -> <b>; sisanya di-escape. Tidak ada HTML liar dari data. */
+function mdRingan(s){
+  const esc_ = esc(s==null?'':s);
+  return esc_.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+}
+
+function renderInsBreadth(b, ins){
+  if(!b || !b.ok){
+    $('#insBreadth').innerHTML='<div class="note">Breadth pasar tidak tersedia pada run ini.</div>';
+    return;
+  }
+  const bar=(label,v,maks,cls)=>{
+    if(v==null) return `<div class="stat"><span>${label}</span><span class="na">data tidak tersedia</span></div>`;
+    const w = maks?Math.max(0,Math.min(100,(v/maks)*100)):0;
+    return `<div class="stat"><span>${label}</span><b>${nf(v,0)}</b></div>
+      <div class="bar"><i style="width:${w}%;background:${cls}"></i></div>`;
+  };
+  const total = (b.naik||0)+(b.turun||0)+(b.tetap||0);
+  const pctBar=(label,v)=>{
+    if(v==null) return `<div class="stat"><span>${label}</span><span class="na">data tidak tersedia</span></div>`;
+    const c = v>=60?'var(--up)':(v<=25?'var(--down)':'var(--accent)');
+    return `<div class="stat"><span>${label}</span><b style="color:${c}">${fx(v,1)}%</b></div>
+      <div class="bar"><i style="width:${Math.max(0,Math.min(100,v))}%;background:${c}"></i></div>`;
+  };
+  $('#insBreadth').innerHTML = `
+    <div class="stat"><span>Total emiten dihitung</span><b>${nf(b.total_emiten,0)}</b></div>
+    ${bar('Naik', b.naik, total, 'var(--up)')}
+    ${bar('Turun', b.turun, total, 'var(--down)')}
+    ${bar('Tidak berubah', b.tetap, total, 'var(--muted)')}
+    <div style="margin-top:10px"></div>
+    ${pctBar('Di atas MA50', b.pct_above_ma50)}
+    ${pctBar('Di atas MA200', b.pct_above_ma200)}
+    <div class="stat"><span>Rasio volume vs rata-rata 20 sesi</span>
+      <b>${b.median_volume_ratio!=null?fx(b.median_volume_ratio,2)+'×':'–'}</b></div>
+    ${insSumber('insight.json → breadth, '+insTanggal(b.tanggal)+' · history 5 tahun yfinance')}
+  `;
+}
+
+function renderInsMakro(R){
+  const p = (R.ringkasan||[]).find(x=>x.id==='makro');
+  if(!p){
+    $('#insMakro').innerHTML='<div class="note">Data makro tidak tersedia pada run ini.</div>';
+    return;
+  }
+  const a = p.angka||{};
+  const baris = (label, nilai, ket)=>{
+    if(nilai==null||nilai==='') return `<div class="stat"><span>${label}</span><span class="na">data tidak tersedia</span></div>`;
+    return `<div class="stat"><span>${label}</span><span><b>${esc(nilai)}</b>${ket?` <span class="na">${esc(ket)}</span>`:''}</span></div>`;
+  };
+  $('#insMakro').innerHTML = `
+    ${baris('BI Rate', a.bi_rate_pct!=null?fx(a.bi_rate_pct,2)+'%':null,
+            a.bi_rate_arah?('— '+a.bi_rate_arah+(a.bi_rate_delta_pp?(' '+fx(a.bi_rate_delta_pp,2)+' pp'):'')):'')}
+    ${baris('USD/IDR', a.usdidr!=null?nf(a.usdidr,0):null,
+            a.usdidr_chg_5h_pct!=null?('5s '+fx(a.usdidr_chg_5h_pct,2)+'% / 20s '+fx(a.usdidr_chg_20h_pct,2)+'%'):'')}
+    ${baris('Inflasi (YoY)', a.inflasi_pct!=null?fx(a.inflasi_pct,2)+'%':null, a.inflasi_periode||'')}
+    ${insSumber(p.sumber)}
+  `;
+}
+
+function renderInsSektor(ins){
+  const rot = (ins.rotasi_sektor||[]).filter(x=>x.excess20!=null);
+  if(!rot.length){
+    $('#insSektorBody').innerHTML='<tr><td colspan="6" class="empty">Rotasi sektor tidak tersedia.</td></tr>';
+    $('#insSektorToggle').style.display='none';
+    return;
+  }
+  const tampil = INS_SEKTOR_ALL ? rot : rot.slice(0,8).concat(rot.slice(-4));
+  $('#insSektorBody').innerHTML = tampil.map(s=>{
+    const e5=s.excess5, e20=s.excess20;
+    const c20 = e20!=null?(e20>0?'up':(e20<0?'down':'')):'';
+    return `<tr>
+      <td style="text-align:left">${esc(s.sektor)}</td>
+      <td>${nf(s.jumlah_emiten,0)}</td>
+      <td>${pct(s.ret5)}</td>
+      <td>${pct(s.excess5)}</td>
+      <td>${pct(s.ret20)}</td>
+      <td class="${c20}" style="font-weight:600">${e20!=null?((e20>0?'+':'')+fx(e20,2)+'%'):'–'}</td>
+    </tr>`;
+  }).join('');
+  $('#insSektorToggle').style.display = rot.length>12?'inline-block':'none';
+  $('#insSektorToggle').textContent = INS_SEKTOR_ALL
+    ? 'Ringkas (12 sektor ekstrem)' : `Tampilkan semua ${rot.length} sektor`;
+}
+
+function renderInsKalender(R){
+  const k = R.kalender||{};
+  const ev = k.events||[];
+  $('#insKalenderNote').textContent = k.catatan||'';
+  if(!ev.length){
+    $('#insKalender').innerHTML='<div class="note">Tidak ada event mendatang yang tanggalnya bisa diverifikasi otomatis.</div>';
+    return;
+  }
+  $('#insKalender').innerHTML = `<div class="tbl-wrap"><table>
+    <thead><tr><th style="text-align:left">Tanggal</th><th style="text-align:left">Event</th><th style="text-align:left">Jenis</th><th style="text-align:left">Sumber</th></tr></thead>
+    <tbody>${ev.map(e=>`<tr>
+      <td style="text-align:left;white-space:nowrap">${insTanggal(e.tanggal)}</td>
+      <td style="text-align:left">${esc(e.judul||'')}${e.catatan?`<div class="note" style="font-size:11px">${esc(e.catatan)}</div>`:''}</td>
+      <td style="text-align:left"><span class="tag">${esc(e.jenis||'')}</span></td>
+      <td style="text-align:left">${e.url?`<a href="${esc(e.url)}" target="_blank" rel="noopener noreferrer">${esc(e.sumber||'tautan')}</a>`:esc(e.sumber||'–')}</td>
+    </tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function renderInsEdukasi(R){
+  const ed = R.edukasi||[];
+  if(!ed.length){
+    $('#insEdukasi').innerHTML='<div class="note">Tidak ada istilah yang perlu dijelaskan hari ini.</div>';
+    return;
+  }
+  $('#insEdukasi').innerHTML = ed.map(e=>`
+    <details style="border-bottom:1px solid var(--border);padding:4px 0">
+      <summary>${esc(e.istilah)} <span class="na" style="font-weight:400">— ${esc(e.singkat)}</span></summary>
+      <div class="note" style="padding:6px 0 2px">${esc(e.detail)}</div>
+    </details>`).join('');
+}
+
 function renderAll(){
   renderTop10();
   renderKPI();
@@ -1815,6 +2282,7 @@ function init(){
   $('#detailModal').onclick=e=>{ if(e.target.id==='detailModal') e.target.classList.remove('show'); };
   $('#btnCols').onclick=()=>{ const p=$('#colsPanel'); p.style.display=p.style.display==='none'?'block':'none'; };
   $('#btnCsv').onclick=unduhCSV;
+  $('#insSektorToggle').onclick=()=>{ INS_SEKTOR_ALL=!INS_SEKTOR_ALL; renderInsSektor(INSIGHT||{}); };
 
   $('#search').oninput=renderScreener;
   $('#fSektor').onchange=renderScreener;
@@ -1831,6 +2299,7 @@ function init(){
     if(t.dataset.tab==='watchlist') renderWL();
     if(t.dataset.tab==='alert') renderAlertTab();
     if(t.dataset.tab==='akurasi') loadBacktest();
+    if(t.dataset.tab==='insight') loadInsight();
     if(t.dataset.tab==='risiko') renderRisiko();
     // Di layar sempit, tab aktif otomatis digeser ke tengah agar tidak terpotong
     if(window.innerWidth<=700 && t.scrollIntoView){

@@ -259,6 +259,51 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px" id="top10List"></div>
   </div>
 
+  <!-- KONDISI MAKRO -->
+  <div class="card" id="makroCard" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+      <b style="font-size:14px">Kondisi Makro</b>
+      <span class="tag" id="makroTanggal"></span>
+    </div>
+    <div class="note" id="makroInfo" style="margin-bottom:10px"></div>
+    <div class="tbl-wrap" style="max-height:350px;overflow:auto">
+      <table id="makroTbl">
+        <thead><tr>
+          <th style="text-align:left">Indikator</th>
+          <th>Nilai</th>
+          <th>Satuan</th>
+          <th>Chg 1s</th>
+          <th>Chg 5s</th>
+          <th>Chg 20s</th>
+          <th style="text-align:left">Tanggal Data</th>
+        </tr></thead>
+        <tbody id="makroBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PETA SENSITIVITAS 56 SEKTOR -->
+  <div class="card" id="sensitivitasCard" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+      <b style="font-size:14px">Peta Sensitivitas Sektor vs IHSG</b>
+      <span class="tag" id="sensitivitasTanggal"></span>
+    </div>
+    <div class="note" id="sensitivitasInfo" style="margin-bottom:10px">Rel = Return sektor − Return IHSG (positif = mengungguli IHSG, bukan artinya naik). Terurutkan: Rel 20s (turun). Min 3 emiten berdata.</div>
+    <div class="tbl-wrap" style="max-height:400px;overflow:auto">
+      <table id="sensitivitasTbl">
+        <thead><tr>
+          <th style="text-align:left">Sektor</th>
+          <th>Emiten</th>
+          <th>Ret 5s (%)</th>
+          <th>Rel 5s (%)</th>
+          <th>Ret 20s (%)</th>
+          <th>Rel 20s (%)</th>
+        </tr></thead>
+        <tbody id="sensitivitasBody"></tbody>
+      </table>
+    </div>
+  </div>
+
   <div class="tabs">
     <button class="tab active" data-tab="screener">Screener</button>
     <button class="tab" data-tab="alert">Alert <span id="alCount"></span></button>
@@ -761,6 +806,7 @@ async function load(){
     return;
   }
   loadBacktest();
+  loadExternal();
 }
 
 /* (E) Metadata skema & sumber. Ditampilkan apa adanya — termasuk saat ada
@@ -882,9 +928,11 @@ function renderTop10(){
   const info=$('#top10Info');
   if(info){
     const gugur=(kr.yang_gugur_dari_tanpa_syarat||[]);
+    const semuaGugur=(kr.gugur_likuiditas||[]);
     info.innerHTML=`Syarat: skor ada · bukan waspada tinggi · nilai transaksi ≥ `
       +`<b>${esc(sy.nilai_transaksi_min_teks||'data tidak tersedia')}</b>`
-      +(gugur.length?` · gugur karena likuiditas: <b>${gugur.map(esc).join(', ')}</b>`:'')
+      +(gugur.length?` · gugur Top 10 karena likuiditas: <b>${gugur.map(esc).join(', ')}</b>`:'')
+      +(semuaGugur.length?`<br><span class="na">Emiten skor tinggi gugur likuiditas: ${semuaGugur.slice(0,20).map(x=>esc(x.kode)+' '+fx(x.skor||0,1)+' val:'+(x.nilai_transaksi!=null?rpRingkas(x.nilai_transaksi):'—')).join(', ')}</span>`:'')
       +`<br><span class="na">Nilai transaksi = volume × harga sesi terakhir.</span>`;
   }
   $('#top10List').innerHTML=t.map(r=>{
@@ -1007,7 +1055,13 @@ function rowsTampil(){
   });
   const {key,dir}=SORT;
   rows.sort((a,b)=>{
-    if(key==='skor'){ if(a.waspada!==b.waspada) return a.waspada?1:-1; }
+    if(key==='skor'){
+      // (Review 23 Okt) Hanya waspada TINGGI yang dipush ke bawah saat sort skor.
+      // Waspada RINGAN tidak mendiskualifikasi dari Top 10, jadi tetap urut skor.
+      const aTinggi = a.waspada && a.waspada_tingkat === 'tinggi';
+      const bTinggi = b.waspada && b.waspada_tingkat === 'tinggi';
+      if(aTinggi !== bTinggi) return aTinggi ? 1 : -1;
+    }
     let x=a[key],y=b[key];
     if(x==null&&y==null) return 0; if(x==null) return 1; if(y==null) return -1;
     if(typeof x==='number'&&typeof y==='number') return (x-y)*dir;
@@ -1044,11 +1098,19 @@ function renderScreener(){
           v+=` <span class="tag" title="Skor PARSIAL — bobot terisi ${bt!=null?nf(bt*100,0)+'%':'tidak tersedia'}`
             +(hil.length?`; komponen hilang: ${esc(hil.join(', '))}`:'')+`">parsial</span>`;
         }
-        if(c.k==='sinyal'&&r.waspada){
-          const lv=r.waspada_tingkat==='tinggi'?'waspada':'ringan';
-          const extra=r.flag_waspada&&r.flag_waspada.length
-            ?` <span class="tag" title="Waspada ${esc(lv)}: ${esc(r.flag_waspada.join('; '))}">${esc(lv)}</span>`:'';
-          v+=extra;
+        if(c.k==='sinyal'){
+          // (Review 23 Okt) Badge "Waspada" untuk waspada TINGGI/RINGAN
+          if(r.waspada){
+            const lv=r.waspada_tingkat==='tinggi'?'waspada':'ringan';
+            const extra=r.flag_waspada&&r.flag_waspada.length
+              ?` <span class="tag" title="Waspada ${esc(lv)}: ${esc(r.flag_waspada.join('; '))}">${esc(lv)}</span>`:'';
+            v+=extra;
+          }
+          // Badge likuiditas tipis untuk emiten tanpa waspada tapi nilai_transaksi < 1M
+          else if(r.nilai_transaksi!=null && r.nilai_transaksi < 1e9){
+            const val = nf(r.nilai_transaksi/1e9, 2);
+            v+=` <span class="tag" title="Likuiditas tipis: nilai transaksi ±Rp${val} miliar (< Rp1 M) — tidak memenuhi syarat Top 10">likuiditas</span>`;
+          }
         }
         return `<td class="${c.sticky?'stick':''}" ${c.k==='kode'?`style="cursor:pointer" data-kode="${esc(r.kode)}"`:''}>${v}</td>`;
       }).join('');
@@ -2268,6 +2330,108 @@ function renderMedianSektor(){
 function renderAlertTab(){
   renderRezim(); renderMarket(); renderAlerts(); renderWaspadaRincian();
   renderSkorParsial(); renderMedianSektor();
+}
+
+/* ---------- External data (makro & sensitivitas sektor) ---------- */
+let EXTERNAL = null;
+
+async function loadExternal(){
+  try{
+    const r = await fetch('data/external.json?_='+Date.now(),{cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    EXTERNAL = await r.json();
+    renderMakro();
+    renderSensitivitas();
+  }catch(e){
+    console.warn('[IDX] external.json gagal dimuat:', e);
+    $('#makroCard').style.display='none';
+    $('#sensitivitasCard').style.display='none';
+  }
+}
+
+function renderMakro(){
+  if(!EXTERNAL || !EXTERNAL.makro){
+    $('#makroCard').style.display='none';
+    return;
+  }
+  const m = EXTERNAL.makro;
+  $('#makroCard').style.display='block';
+  $('#makroTanggal').textContent = m.diambil_pada || '—';
+  $('#makroInfo').textContent = `Sumber: yfinance (via external.json) · Perubahan (1s/5s/20s) vs periode sebelumnya`;
+
+  // Indikator dalam urutan yang diinginkan
+  const urutan = ['ihsg','usdidr','sp500','minyak','emas','cpo','iron_ore','batubara','nikel'];
+  const rows = urutan.map(key=>{
+    const ind = m[key];
+    if(!ind) return '';
+    // Handle proxy data (batubara, nikel)
+    if(ind.jenis === 'proxy'){
+      const p = ind.proxy;
+      const chg5 = p.ret_5h_pct!=null ? (p.ret_5h_pct>0?'+':'')+fx(p.ret_5h_pct,2)+'%' : '—';
+      const chg20 = p.ret_20h_pct!=null ? (p.ret_20h_pct>0?'+':'')+fx(p.ret_20h_pct,2)+'%' : '—';
+      const rel5 = p.rel_5h_pct!=null ? (p.rel_5h_pct>0?'+':'')+fx(p.rel_5h_pct,2)+'%' : '—';
+      const rel20 = p.rel_20h_pct!=null ? (p.rel_20h_pct>0?'+':'')+fx(p.rel_20h_pct,2)+'%' : '—';
+      const val = '— (proxy sektor)';
+      const sat = ind.satuan || '—';
+      return `<tr>
+        <td style="text-align:left"><b>${esc(ind.label)}</b></td>
+        <td>${esc(val)}</td>
+        <td>${esc(sat)}</td>
+        <td class="${p.rel_5h_pct>0?'up':(p.rel_5h_pct<0?'down':'')}">${rel5}</td>
+        <td class="${p.rel_20h_pct>0?'up':(p.rel_20h_pct<0?'down':'')}">${rel20}</td>
+        <td style="text-align:left" class="na">${esc(ind.tanggal_sumber||ind.tanggal_data||'—')}</td>
+      </tr>`;
+    }
+    // Normal indikator
+    const chg1 = ind.chg_1h_pct!=null ? (ind.chg_1h_pct>0?'+':'')+fx(ind.chg_1h_pct,2)+'%' : '—';
+    const chg5 = ind.chg_5h_pct!=null ? (ind.chg_5h_pct>0?'+':'')+fx(ind.chg_5h_pct,2)+'%' : '—';
+    const chg20 = ind.chg_20h_pct!=null ? (ind.chg_20h_pct>0?'+':'')+fx(ind.chg_20h_pct,2)+'%' : '—';
+    const arah = ind.chg_1h_pct>0 ? '↑' : (ind.chg_1h_pct<0 ? '↓' : '→');
+    const val = ind.nilai!=null ? (typeof ind.nilai==='number' ? nf(ind.nilai, ind.satuan==='%'||ind.satuan==='pct'?2:0) : ind.nilai) : '—';
+    const sat = ind.satuan || ind.mata_uang || '—';
+    return `<tr>
+      <td style="text-align:left"><b>${esc(ind.label)}</b></td>
+      <td>${esc(val)}${arah!=='→'?` <span class="${arah==='↑'?'up':'down'}">${arah}</span>`:''}</td>
+      <td>${esc(sat)}</td>
+      <td class="${ind.chg_1h_pct>0?'up':(ind.chg_1h_pct<0?'down':'')}">${chg1}</td>
+      <td class="${ind.chg_5h_pct>0?'up':(ind.chg_5h_pct<0?'down':'')}">${chg5}</td>
+      <td class="${ind.chg_20h_pct>0?'up':(ind.chg_20h_pct<0?'down':'')}">${chg20}</td>
+      <td style="text-align:left" class="na">${esc(ind.tanggal_sumber||ind.tanggal_data||'—')}</td>
+    </tr>`;
+  }).join('');
+
+  $('#makroBody').innerHTML = rows || '<tr><td colspan="7" class="empty">Tidak ada data makro.</td></tr>';
+}
+
+function renderSensitivitas(){
+  if(!EXTERNAL || !EXTERNAL.kekuatan_sektor || !EXTERNAL.kekuatan_sektor.per_sektor){
+    $('#sensitivitasCard').style.display='none';
+    return;
+  }
+  const s = EXTERNAL.kekuatan_sektor;
+  $('#sensitivitasCard').style.display='block';
+  $('#sensitivitasTanggal').textContent = s.tanggal_data || s.sumber || '—';
+  const minEmiten = s.min_emiten || 3;
+  const src = s.sumber || s.sumber_data || '—';
+  $('#sensitivitasInfo').textContent = `Rel = Return sektor − Return IHSG (positif = mengungguli IHSG). Min ${minEmiten} emiten. Terurutkan: Rel 20s (turun). Sumber: ${src}`;
+
+  const rows = (s.per_sektor||[])
+    .filter(x=>x.ret_20h_pct!=null && x.rel_20h_pct!=null)
+    .sort((a,b)=> (a.rel_20h_pct||0)-(b.rel_20h_pct||0))
+    .map(x=>{
+      const c5 = x.rel_5h_pct>0?'up':(x.rel_5h_pct<0?'down':'');
+      const c20 = x.rel_20h_pct>0?'up':(x.rel_20h_pct<0?'down':'');
+      return `<tr>
+        <td style="text-align:left">${esc(x.sektor)}</td>
+        <td>${nf(x.jumlah_emiten,0)}</td>
+        <td class="${x.ret_5h_pct>0?'up':(x.ret_5h_pct<0?'down':'')}">${fx(x.ret_5h_pct,2)}%</td>
+        <td class="${c5}">${fx(x.rel_5h_pct,2)}%</td>
+        <td class="${x.ret_20h_pct>0?'up':(x.ret_20h_pct<0?'down':'')}">${fx(x.ret_20h_pct,2)}%</td>
+        <td class="${c20}"><b>${fx(x.rel_20h_pct,2)}%</b></td>
+      </tr>`;
+    }).join('');
+
+  $('#sensitivitasBody').innerHTML = rows || '<tr><td colspan="6" class="empty">Tidak ada data sensitivitas sektor.</td></tr>';
 }
 
 function init(){

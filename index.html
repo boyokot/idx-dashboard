@@ -339,7 +339,7 @@ body{
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
 }
-.wrap{max-width:1360px;padding:0 22px 38px}
+.wrap{max-width:1480px;padding:0 24px 38px}
 header{
   position:sticky;top:0;z-index:30;align-items:center;
   padding:15px 0 13px;margin-bottom:16px;
@@ -417,20 +417,53 @@ button.primary:hover{background:linear-gradient(135deg,#1e40af,#1d4ed8);color:#f
   overflow-wrap:anywhere;min-height:38px;
 }
 .kpi .s{font-size:11px;line-height:1.45;margin-top:3px;color:var(--muted)}
+.app-shell{
+  display:grid;grid-template-columns:224px minmax(0,1fr);
+  grid-template-areas:"banner banner" "kpi kpi" "sidebar content";
+  gap:14px 20px;align-items:start;
+}
+.app-shell>.banner{grid-area:banner;margin-bottom:0}
+.app-shell>.kpis{grid-area:kpi;margin-bottom:0}
+.content-col{grid-area:content;min-width:0;display:flex;flex-direction:column;gap:0}
+.sidebar{
+  grid-area:sidebar;position:sticky;top:88px;padding:12px;border:1px solid var(--border);
+  border-radius:14px;background:var(--card);box-shadow:var(--shadow);
+}
+.sidebar-title{padding:2px 7px 10px;border-bottom:1px solid var(--border-soft);margin-bottom:8px}
+.sidebar-title-main{font-size:14px;font-weight:750;letter-spacing:-.015em;margin-top:2px}
 .tabs{
-  gap:2px;padding:4px;margin-bottom:16px;border:1px solid var(--border);
-  border-radius:12px;background:var(--card);box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:3px;padding:0;margin:0;border:none;
+  border-radius:0;background:transparent;box-shadow:none;overflow:visible;
   scrollbar-width:none;
 }
 .tabs::-webkit-scrollbar{display:none}
-.tab{
-  padding:9px 14px;border:none;border-radius:8px;font-size:12.5px;font-weight:600;
-  color:var(--muted);letter-spacing:-.005em;
+.nav-group-label{
+  padding:10px 9px 4px;color:var(--muted);font-size:9px;line-height:1.2;
+  font-weight:750;letter-spacing:.11em;text-transform:uppercase;
 }
-.tab:hover{color:var(--text);background:color-mix(in srgb,var(--bg) 70%,var(--card))}
+.tab{
+  display:flex;align-items:center;gap:9px;width:100%;min-width:0;
+  padding:9px 10px;border:none;border-radius:8px;font-size:12.5px;font-weight:600;
+  color:var(--muted);letter-spacing:-.005em;text-align:left;background:transparent;
+  box-shadow:none;
+}
+.tab:hover{color:var(--text);background:color-mix(in srgb,var(--bg) 70%,var(--card));border-color:transparent}
 .tab.active{
   color:var(--accent);background:var(--accent-soft);border:none;font-weight:700;
   box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 14%,transparent);
+}
+.nav-ico{width:17px;height:17px;flex:0 0 17px;opacity:.72;display:block}
+.tab.active .nav-ico{opacity:1}
+.nav-text{flex:1;min-width:0}
+.nav-count{font-size:10.5px;font-weight:650;color:inherit;opacity:.72;white-space:nowrap}
+.sidebar-note{
+  display:grid;gap:3px;margin-top:10px;padding:10px 9px 3px;
+  border-top:1px solid var(--border-soft);color:var(--muted);font-size:10px;line-height:1.45;
+}
+.sidebar-note b{color:var(--text);font-size:10.5px;font-weight:650}
+.live-dot{
+  display:inline-block;width:6px;height:6px;margin-right:5px;border-radius:50%;
+  background:var(--up);box-shadow:0 0 0 3px color-mix(in srgb,var(--up) 13%,transparent);
 }
 .section-kicker{margin-bottom:3px}
 .section-title{
@@ -515,7 +548,46 @@ button.primary:hover{background:linear-gradient(135deg,#1e40af,#1d4ed8);color:#f
 }
 #jpCsv,#jpMethod{height:37px;font-size:12px;padding:7px 10px}
 .tbl-wrap{border-radius:11px;border-color:var(--border);background:var(--card)}
-.jp-table-wrap{max-height:min(68vh,700px);overflow:auto}
+.jp-table-wrap{max-height:none;overflow:auto}
+.table-pager{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  margin-top:10px;padding-top:10px;border-top:1px solid var(--border-soft);
+}
+.pager-info{font-size:11.5px;line-height:1.45;color:var(--muted)}
+.pager-info b{color:var(--text);font-weight:700}
+.pager-controls{display:flex;align-items:center;gap:5px}
+.pager-controls button{height:30px;padding:4px 9px;border-radius:7px;font-size:11.5px}
+.pager-controls select{
+  height:30px;padding:3px 7px;border-radius:7px;font-size:11.5px;background:var(--card);
+}
+#jpPageNum{min-width:54px;text-align:center;color:var(--muted);font-size:11.5px;font-variant-numeric:tabular-nums}
+#jpPrev:disabled,#jpNext:disabled{opacity:.42;cursor:not-allowed;background:var(--card)}
+.jp-row-off{display:none}
+.info-btn{
+  display:inline-grid;place-items:center;width:18px;height:18px;padding:0;
+  border:1px solid color-mix(in srgb,var(--border) 80%,var(--muted));border-radius:50%;
+  background:var(--card);color:var(--muted);font-size:10px;font-weight:800;line-height:1;
+  cursor:pointer;box-shadow:none;
+}
+.info-btn svg{width:11px;height:11px;display:block}
+.info-btn:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+.kpi>.info-btn{position:absolute;top:10px;right:10px;z-index:2}
+.kpi-head{padding-right:20px}
+th .info-btn{
+  position:static;display:inline-flex;width:14px;height:14px;margin-left:4px;
+  vertical-align:middle;font-size:8px;
+}
+th .info-btn svg{width:9px;height:9px}
+.indicator-info-drawer{max-width:520px}
+.info-question{
+  margin:12px 0 8px;padding:10px 12px;border-radius:9px;
+  background:color-mix(in srgb,var(--accent-soft) 58%,var(--card));
+  color:var(--accent);font-size:11.5px;font-weight:650;line-height:1.5;
+}
+.info-foot{
+  margin-top:14px;padding-top:10px;border-top:1px solid var(--border-soft);
+  color:var(--muted);font-size:11px;line-height:1.5;
+}
 thead th{
   padding:10px 10px;background:var(--sticky);font-size:10px;font-weight:750;
   letter-spacing:.055em;border-bottom:1px solid var(--border-strong);
@@ -525,11 +597,13 @@ tbody tr:nth-child(even){background:color-mix(in srgb,var(--bg) 36%,var(--card))
 tbody tr:hover{background:color-mix(in srgb,var(--accent-soft) 52%,var(--card))}
 tbody tr:hover td.stick{background:color-mix(in srgb,var(--accent-soft) 52%,var(--card))}
 tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var(--card))}
-#jpTbl{min-width:1200px}
-#jpTbl th,#jpTbl td{padding:8px 9px}
+#jpTbl{min-width:1040px;scroll-margin-top:100px}
+#jpTbl th,#jpTbl td{padding:7px 6px}
 #jpTbl td{font-size:11.5px}
 .jp-status{font-size:9.5px;padding:3px 6px;border-radius:5px;background:var(--bg)}
 .jp-mini{font-size:11px}
+#jpTbl .jp-nm2{display:block;max-width:150px;margin-top:1px;font-size:9.5px;line-height:1.2}
+#jpTbl .stick{min-width:112px}
 .banner{
   margin-bottom:18px;padding:14px 16px;border-radius:14px;border:1px solid var(--border);
   background:var(--card);box-shadow:var(--shadow);
@@ -556,6 +630,21 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
 }
 .tag{background:color-mix(in srgb,var(--bg) 65%,var(--card));border-color:var(--border);font-weight:600}
 .note{line-height:1.6}
+@media(max-width:1080px){
+  .app-shell{
+    grid-template-columns:minmax(0,1fr);
+    grid-template-areas:"sidebar" "banner" "kpi" "content";
+    gap:10px;
+  }
+  .sidebar{position:static;padding:7px;border-radius:12px}
+  .sidebar-title,.sidebar-note,.nav-group-label{display:none}
+  .tabs{flex-direction:row;overflow-x:auto;overflow-y:hidden;gap:2px;padding:1px}
+  .tab{width:auto;flex:0 0 auto;white-space:nowrap;padding:9px 11px}
+  .nav-ico{width:15px;height:15px;flex-basis:15px}
+}
+@media(min-width:1081px) and (max-width:1240px){
+  .kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
 @media(max-width:1180px){
   .jp-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
@@ -564,6 +653,7 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
   .kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
 @media(max-width:760px){
+  #jpTbl{scroll-margin-top:180px}
   .wrap{padding:0 12px 28px}
   header{padding:11px 0;margin-bottom:12px}
   .brand{gap:10px}
@@ -643,6 +733,7 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
 </div>
 
 <div id="app" style="display:none">
+  <div class="app-shell">
 
   <!-- Banner rezim pasar (Tahap 2): transparan, tampilkan pemicunya.
        (Review 21 Okt) Banner dipindah KE ATAS kartu KPI. Sebelumnya ia
@@ -658,6 +749,51 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
 
   <div class="kpis" id="kpisJP"></div>
 
+    <aside class="sidebar" aria-label="Navigasi halaman">
+      <div class="sidebar-title">
+        <div class="section-kicker">Navigasi</div>
+        <div class="sidebar-title-main">Halaman dashboard</div>
+      </div>
+      <nav class="tabs" aria-label="Menu halaman">
+        <div class="nav-group-label">Portofolio</div>
+        <button class="tab active" data-tab="jp">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19h18"/><path d="M6 16V9M12 16V5M18 16v-4"/></svg>
+          <span class="nav-text">Jangka Panjang</span>
+        </button>
+        <button class="tab" data-tab="screener">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
+          <span class="nav-text">Momentum/Trading</span>
+        </button>
+        <div class="nav-group-label">Pemantauan</div>
+        <button class="tab" data-tab="alert">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+          <span class="nav-text">Alert</span><span class="nav-count" id="alCount"></span>
+        </button>
+        <button class="tab" data-tab="watchlist">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.8 1-6.1-4.4-4.3 6.1-.9L12 3Z"/></svg>
+          <span class="nav-text">Watchlist</span><span class="nav-count" id="wlCount"></span>
+        </button>
+        <button class="tab" data-tab="insight">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M8.5 14.5a6 6 0 1 1 7 0c-.7.6-1 1.5-1 2.5h-5c0-1-.3-1.9-1-2.5Z"/></svg>
+          <span class="nav-text">Insight</span>
+        </button>
+        <div class="nav-group-label">Analisis</div>
+        <button class="tab" data-tab="akurasi">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+          <span class="nav-text">Akurasi Sinyal</span>
+        </button>
+        <button class="tab" data-tab="risiko">
+          <svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"/><path d="M9 12h6M12 9v6"/></svg>
+          <span class="nav-text">Kalkulator Risiko</span>
+        </button>
+      </nav>
+      <div class="sidebar-note">
+        <div><span class="live-dot"></span><b id="sideDataDate">Data terbaru</b></div>
+        <div>Screening otomatis · bukan rekomendasi</div>
+      </div>
+    </aside>
+
+    <div class="content-col">
   <div class="card" id="topJPCard" style="display:none">
     <div class="section-head">
       <div>
@@ -674,16 +810,6 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
     <div class="jp-grid" id="topJPList"></div>
     <div class="jp-disclaimer">Kartu ini adalah ringkasan screening, bukan rekomendasi beli/jual.
       Tidak ada target harga tunggal. Klik kartu untuk melihat rincian pilar, valuasi, timing, dan penanda risiko.</div>
-  </div>
-
-  <div class="tabs">
-    <button class="tab active" data-tab="jp">Jangka Panjang</button>
-    <button class="tab" data-tab="screener">Momentum/Trading</button>
-    <button class="tab" data-tab="alert">Alert <span id="alCount"></span></button>
-    <button class="tab" data-tab="watchlist">Watchlist <span id="wlCount"></span></button>
-    <button class="tab" data-tab="insight">Insight</button>
-    <button class="tab" data-tab="akurasi">Akurasi Sinyal</button>
-    <button class="tab" data-tab="risiko">Kalkulator Risiko</button>
   </div>
 
   <!-- JANGKA PANJANG (J3): tampilan utama -->
@@ -723,6 +849,23 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
           <thead><tr id="jpThead"></tr></thead>
           <tbody id="jpTbody"></tbody>
         </table>
+      </div>
+      <div class="table-pager">
+        <div class="pager-info" id="jpPageInfo">—</div>
+        <div class="pager-controls">
+          <label class="note" for="jpPageSize" style="display:flex;align-items:center;gap:4px;margin:0">
+            Baris
+            <select id="jpPageSize" aria-label="Jumlah baris per halaman">
+              <option value="15" selected>15</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </label>
+          <button id="jpPrev" type="button" aria-label="Halaman sebelumnya">‹</button>
+          <span id="jpPageNum">1 / 1</span>
+          <button id="jpNext" type="button" aria-label="Halaman berikutnya">›</button>
+        </div>
       </div>
       <div class="tblnote" id="jpTableInfo"></div>
       <div class="disclaimer">Screening otomatis, bukan rekomendasi beli/jual. Tidak ada target harga tunggal
@@ -1086,8 +1229,9 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
       </div>
     </div>
   </div>
-
-</div>
+    </div><!-- /content-col -->
+  </div><!-- /app-shell -->
+</div><!-- /app -->
 
 <!-- info modal -->
 <div class="overlay" id="infoModal">
@@ -1162,6 +1306,19 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
   <div class="drawer" id="detailBody"></div>
 </div>
 
+<!-- info indikator modal -->
+<div class="overlay" id="indicatorInfoModal">
+  <div class="drawer indicator-info-drawer">
+    <button class="close" onclick="document.getElementById('indicatorInfoModal').classList.remove('show')">✕</button>
+    <div class="section-kicker">Penjelasan indikator</div>
+    <h2 id="indicatorInfoTitle">Indikator</h2>
+    <div class="info-question">Pertanyaan: apa yang diukur indikator ini, dan bagaimana cara membacanya?</div>
+    <div class="note" id="indicatorInfoBody"></div>
+    <div class="info-foot">Indikator ini adalah alat screening dan pemantauan, bukan rekomendasi beli/jual
+      dan bukan target harga.</div>
+  </div>
+</div>
+
 <script>
 'use strict';
 const DATA_URL = 'data/latest.json';
@@ -1207,6 +1364,32 @@ const $$ = s => Array.from(document.querySelectorAll(s));
 const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function nf(v,d=0){ if(v==null||v===''||Number.isNaN(v)) return null;
   return Number(v).toLocaleString('id-ID',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+
+/* ---------- Info indikator (i) ---------- */
+function infoButton(title,body,extra){
+  return `<button type="button" class="info-btn ${extra||''}" data-info-title="${esc(title)}"
+    data-info-body="${esc(body)}" aria-label="Info ${esc(title)}" title="Penjelasan ${esc(title)}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/>
+      <path d="M12 11v5M12 8h.01"/></svg></button>`;
+}
+function openIndicatorInfo(title,body){
+  const m=$('#indicatorInfoModal'); if(!m) return;
+  $('#indicatorInfoTitle').textContent=title||'Indikator';
+  $('#indicatorInfoBody').textContent=body||'Penjelasan belum tersedia.';
+  m.classList.add('show');
+}
+function bindInfoButtons(root){
+  const scope=root||document;
+  scope.querySelectorAll('.info-btn[data-info-title]').forEach(btn=>{
+    if(btn.dataset.infoBound==='1') return;
+    btn.dataset.infoBound='1';
+    btn.addEventListener('click',e=>{
+      e.preventDefault(); e.stopPropagation();
+      openIndicatorInfo(btn.dataset.infoTitle,btn.dataset.infoBody);
+    });
+  });
+}
 
 /* ---------- (Review 21 Okt) sel kosong yang bisa dijelaskan ----------
    Sebelumnya setiap sel tanpa data hanya menampilkan "–" tanpa keterangan,
@@ -1341,6 +1524,8 @@ async function load(){
   DATA=j;
   const tgl=j.diperbarui_pada_teks || j.diperbarui_pada || '–';
   $('#lastUpdate').textContent = 'Terakhir diperbarui: '+tgl;
+  const sideDate=$('#sideDataDate');
+  if(sideDate) sideDate.textContent='Data '+(j.tanggal_data||tgl);
   renderMetaSkema(j);
   cekKedaluwarsa(j.diperbarui_pada);
   try{
@@ -1550,9 +1735,13 @@ function renderKPI(){
     {l:'Sektor terlemah',v:sw?(sw.sektor||'–'):'–',s:secTxt(sw),t:sw?String(sw.sektor):'data tidak tersedia',icon:'sectorweak',tone:'red',long:true},
   ];
   const box=$('#kpisMomentum');
-  if(box) box.innerHTML = k.map(x=>`<div class="kpi" data-tone="${x.tone||'blue'}" title="${esc(x.t||'')}">
-    <div class="kpi-head"><span class="kpi-icon">${kpiIcon(x.icon)}</span><div class="l">${esc(x.l)}</div></div>
-    <div class="v${x.long?' long':''}">${esc(String(x.v))}</div><div class="s">${esc(String(x.s))}</div></div>`).join('');
+  if(box){
+    box.innerHTML = k.map(x=>`<div class="kpi" data-tone="${x.tone||'blue'}">
+      ${infoButton(x.l,x.t)}
+      <div class="kpi-head"><span class="kpi-icon">${kpiIcon(x.icon)}</span><div class="l">${esc(x.l)}</div></div>
+      <div class="v${x.long?' long':''}">${esc(String(x.v))}</div><div class="s">${esc(String(x.s))}</div></div>`).join('');
+    bindInfoButtons(box);
+  }
 }
 
 /* ---------- J3: Skor JP, tabel, dan Kartu Investasi ---------- */
@@ -1567,6 +1756,9 @@ const JP_PILAR = [
   {k:'risiko_tata_kelola', t:'Risiko & tata kelola', s:'Risiko'},
 ];
 let JP_SORT = {key:'peringkat_jp', dir:1};
+let JP_PAGE = 1;
+let JP_PAGE_SIZE = 15;
+function resetJPPage(){ JP_PAGE = 1; renderJPTable(); }
 
 function jpPilar(r,k){
   if(!r) return null;
@@ -1739,9 +1931,11 @@ function renderKPIJP(){
       s:'tidak masuk peringkat JP',
       t:'Waspada tinggi mendiskualifikasi dari peringkat JP dan Top 20.',icon:'warning',tone:'red'},
   ];
-  box.innerHTML=items.map(x=>`<div class="kpi" data-tone="${x.tone||'blue'}" title="${esc(x.t||'')}">
+  box.innerHTML=items.map(x=>`<div class="kpi" data-tone="${x.tone||'blue'}">
+    ${infoButton(x.l,x.t)}
     <div class="kpi-head"><span class="kpi-icon">${kpiIcon(x.icon)}</span><div class="l">${esc(x.l)}</div></div>
     <div class="v">${esc(String(x.v))}</div><div class="s">${esc(String(x.s))}</div></div>`).join('');
+  bindInfoButtons(box);
 }
 
 /* ---------- Top 20 / Kartu Investasi ringkas ---------- */
@@ -1814,35 +2008,24 @@ function renderTopJP(){
 
 /* ---------- Tabel JP dan filter ---------- */
 const JP_COLS=[
-  {k:'peringkat_jp',t:'#',f:r=>r.peringkat_jp!=null?`<b>${r.peringkat_jp}</b>`:'<span class="na">—</span>'},
-  {k:'kode',t:'Kode',f:r=>`<span class="kode" data-jp="${esc(r.kode)}" title="Buka Kartu Investasi" style="cursor:pointer">${esc(r.kode)}</span>`},
-  {k:'nama',t:'Nama',f:r=>`<span class="nm" title="${esc(r.nama||'')}">${esc(r.nama||'')}</span>`},
-  {k:'skor_jp',t:'Skor JP',f:r=>jpScoreCell(r.skor_jp)},
-  {k:'p_kualitas_profitabilitas',t:'Kualitas',f:r=>jpMini(jpPilar(r,'kualitas_profitabilitas'))},
-  {k:'p_pertumbuhan',t:'Tumbuh',f:r=>jpMini(jpPilar(r,'pertumbuhan'))},
-  {k:'p_kesehatan_keuangan',t:'Kesehatan',f:r=>jpMini(jpPilar(r,'kesehatan_keuangan'))},
-  {k:'p_valuasi',t:'Valuasi',f:r=>jpMini(jpPilar(r,'valuasi'))},
-  {k:'p_dividen',t:'Dividen',f:r=>jpMini(jpPilar(r,'dividen'))},
-  {k:'p_risiko_tata_kelola',t:'Risiko',f:r=>jpMini(jpPilar(r,'risiko_tata_kelola'))},
-  {k:'cakupan_bobot',t:'Cakupan',f:r=>{
+  {k:'peringkat_jp',t:'#',info:'Peringkat 1 = Skor JP tertinggi di antara emiten yang lolos gerbang dan cakupan data ≥70%.',f:r=>r.peringkat_jp!=null?`<b>${r.peringkat_jp}</b>`:'<span class="na">—</span>'},
+  {k:'kode',t:'Emiten',info:'Kode dan nama emiten. Klik kode untuk membuka Kartu Investasi.',f:r=>`<span class="kode" data-jp="${esc(r.kode)}" title="Buka Kartu Investasi" style="cursor:pointer">${esc(r.kode)}</span><span class="nm jp-nm2" title="${esc(r.nama||'')}">${esc(r.nama||'')}</span>`},
+  {k:'skor_jp',t:'Skor JP',info:'Skor 0–100 dari enam pilar. Hanya dihitung bila emiten lolos gerbang dan cakupan data ≥70%; bukan target harga.',f:r=>jpScoreCell(r.skor_jp)},
+  {k:'p_kualitas_profitabilitas',t:'Kualitas',info:'Pilar kualitas profitabilitas: ROE, margin, dan konsistensi laba dibandingkan sektor.',f:r=>jpMini(jpPilar(r,'kualitas_profitabilitas'))},
+  {k:'p_pertumbuhan',t:'Tumbuh',info:'Pilar pertumbuhan: pertumbuhan pendapatan/laba dan konsistensinya.',f:r=>jpMini(jpPilar(r,'pertumbuhan'))},
+  {k:'p_kesehatan_keuangan',t:'Kesehatan',info:'Pilar kesehatan keuangan: DER, interest coverage, dan arus kas operasi. Bank/lembaga keuangan memakai rasio khusus bila tersedia.',f:r=>jpMini(jpPilar(r,'kesehatan_keuangan'))},
+  {k:'p_valuasi',t:'Valuasi',info:'Pilar valuasi: PER/PBV dibandingkan median sektor dan rata-rata historis emiten. PER rendah karena laba sekali-jalan tidak otomatis bagus.',f:r=>jpMini(jpPilar(r,'valuasi'))},
+  {k:'p_dividen',t:'Dividen',info:'Pilar dividen: dividend yield dan keberlanjutan payout. Payout di atas 200% dianggap tidak sehat/one-off.',f:r=>jpMini(jpPilar(r,'dividen'))},
+  {k:'p_risiko_tata_kelola',t:'Risiko',info:'Pilar risiko dan tata kelola: likuiditas, siklikalitas, komoditas, utang USD, dan penanda tata kelola.',f:r=>jpMini(jpPilar(r,'risiko_tata_kelola'))},
+  {k:'cakupan_bobot',t:'Cakupan',info:'Persentase bobot pilar yang punya data. Di bawah 70% = data kurang dan tidak diperingkat.',f:r=>{
       if(r.cakupan_bobot==null) return jpNa();
       const v=Number(r.cakupan_bobot);
       return `<span class="${v>=70?'':'na'}">${fx(v,1)}%</span>`;
     }},
-  {k:'per',t:'PER',f:r=>jpRatio(r.per,1)},
-  {k:'pbv',t:'PBV',f:r=>jpRatio(r.pbv,2)},
-  {k:'roe',t:'ROE',f:r=>jpPct(r.roe,1)},
-  {k:'div_yield',t:'Div yield',f:r=>jpPct(jpDivYield(r),1)},
-  {k:'zona',t:'Zona timing',f:r=>{
-      const z=jpZona(r);
-      if(!z) return jpNa();
-      return `<span class="jp-status" title="${esc(z)} (informasi; tidak dipakai skor)">${esc(z)}</span>`;
-    }},
-  {k:'status',t:'Status',f:r=>{
-      const s=jpStatus(r);
-      const al=jpAlasan(r);
-      return `<span class="jp-status ${jpStatusClass(s)}" title="${esc(al||s)}">${esc(s)}</span>`;
-    }},
+  {k:'per',t:'PER',info:'PER = harga dibagi laba per saham. Dibandingkan dengan median sektor dan rata-rata historis emiten.',f:r=>jpRatio(r.per,1)},
+  {k:'pbv',t:'PBV',info:'PBV = harga dibagi nilai buku per saham. Dipakai bersama ROE dan median sektor.',f:r=>jpRatio(r.pbv,2)},
+  {k:'roe',t:'ROE',info:'ROE = laba bersih dibagi ekuitas. Semakin tinggi umumnya semakin baik, tetapi tetap dibandingkan sektor dan risiko.',f:r=>jpPct(r.roe,1)},
+  {k:'div_yield',t:'Div yield',info:'Dividend yield = dividen tahunan dibagi harga. Yield tinggi bisa berasal dari harga yang turun; cek keberlanjutan.',f:r=>jpPct(jpDivYield(r),1)},
 ];
 
 function jpRowsTampil(){
@@ -1899,27 +2082,38 @@ function renderJPTable(){
   if(head){
     head.innerHTML=cols.map(c=>{
       const srt=JP_SORT.key===c.k;
-      return `<th class="${srt?'sorted':''}" data-jpsort="${c.k}">${esc(c.t)}${srt?`<span class="arw">${JP_SORT.dir<0?'▼':'▲'}</span>`:''}</th>`;
+      return `<th class="${srt?'sorted':''}" data-jpsort="${c.k}">
+        <span>${esc(c.t)}</span>${c.info?infoButton(c.t,c.info,'th-info'):''}
+        ${srt?`<span class="arw">${JP_SORT.dir<0?'▼':'▲'}</span>`:''}</th>`;
     }).join('');
+    bindInfoButtons(head);
     $$('#jpThead th[data-jpsort]').forEach(th=>th.onclick=()=>{
       const k=th.dataset.jpsort;
       if(JP_SORT.key===k){ JP_SORT.dir*=-1; }
       else {
-        const asc=(k==='peringkat_jp'||k==='kode'||k==='nama'||k==='status'||k==='zona'||k==='per'||k==='pbv');
+        const asc=(k==='peringkat_jp'||k==='kode'||k==='per'||k==='pbv');
         JP_SORT={key:k,dir:asc?1:-1};
       }
+      JP_PAGE=1;
       renderJPTable();
     });
   }
+  const totalFiltered=rows.length;
+  const pageCount=Math.max(1,Math.ceil(totalFiltered/JP_PAGE_SIZE));
+  if(JP_PAGE>pageCount) JP_PAGE=pageCount;
+  if(JP_PAGE<1) JP_PAGE=1;
+  const start=(JP_PAGE-1)*JP_PAGE_SIZE;
+  const end=Math.min(start+JP_PAGE_SIZE,totalFiltered);
   if(!rows.length){
     body.innerHTML=`<tr><td colspan="${cols.length}" class="empty">Tidak ada emiten yang cocok dengan filter.</td></tr>`;
   } else {
-    body.innerHTML=rows.map(r=>{
+    body.innerHTML=rows.map((r,i)=>{
       const tds=cols.map(c=>{
         const sticky=c.k==='kode'?'stick':'';
         return `<td class="${sticky}">${c.f(r)}</td>`;
       }).join('');
-      return `<tr>${tds}</tr>`;
+      const off=i<start||i>=end?'jp-row-off':'';
+      return `<tr class="${off}" data-idx="${i}">${tds}</tr>`;
     }).join('');
     $$('#jpTbody [data-jp]').forEach(el=>el.onclick=()=>bukaDetailJP(el.dataset.jp));
   }
@@ -1928,16 +2122,28 @@ function renderJPTable(){
   if(info){
     const ranked=rows.filter(r=>r.diperingkat===true).length;
     const kurang=rows.filter(r=>r.data_kurang&&r.skor_jp!=null).length;
-    info.innerHTML=`Menampilkan <b>${rows.length}</b> dari ${total} emiten`
+    info.innerHTML=`Menampilkan <b>${totalFiltered?start+1:0}–${end}</b> dari <b>${totalFiltered}</b> hasil filter`
       +(ranked?` · ${ranked} lolos gerbang`:'')
       +(kurang?` · ${kurang} data kurang`:'')
-      +` · klik kode untuk Kartu Investasi. Skor JP tidak dihitung untuk emiten tanpa laporan.`;
+      +` · klik kode untuk Kartu Investasi. Zona timing & status lengkap ada di kartu; Skor JP tidak dihitung untuk emiten tanpa laporan.`;
   }
+  const pageInfo=$('#jpPageInfo');
+  if(pageInfo) pageInfo.innerHTML=totalFiltered
+    ? `Halaman <b>${JP_PAGE}</b> dari <b>${pageCount}</b> · <b>${totalFiltered}</b> hasil`
+    : 'Tidak ada hasil pada filter ini.';
+  const pageNum=$('#jpPageNum');
+  if(pageNum) pageNum.textContent=`${JP_PAGE} / ${pageCount}`;
+  const prev=$('#jpPrev'), next=$('#jpNext');
+  if(prev) prev.disabled=JP_PAGE<=1;
+  if(next) next.disabled=JP_PAGE>=pageCount;
 }
 
 function unduhCSVJP(){
   const rows=jpRowsTampil();
-  const cols=JP_COLS;
+  const cols=[...JP_COLS,
+    {k:'nama',t:'Nama'},
+    {k:'zona',t:'Zona timing'},
+    {k:'status',t:'Status'}];
   const head=cols.map(c=>c.t);
   const val=(r,k)=>{
     let v=jpRaw(r,k);
@@ -3847,14 +4053,29 @@ function init(){
   $('#btnInfo').onclick=()=>$('#infoModal').classList.add('show');
   $('#infoModal').onclick=e=>{ if(e.target.id==='infoModal') e.target.classList.remove('show'); };
   $('#detailModal').onclick=e=>{ if(e.target.id==='detailModal') e.target.classList.remove('show'); };
+  $('#indicatorInfoModal').onclick=e=>{
+    if(e.target.id==='indicatorInfoModal') e.target.classList.remove('show');
+  };
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape') $$('.overlay.show').forEach(x=>x.classList.remove('show'));
+  });
   $('#btnCols').onclick=()=>{ const p=$('#colsPanel'); p.style.display=p.style.display==='none'?'block':'none'; };
   $('#btnCsv').onclick=unduhCSV;
   if($('#jpCsv')) $('#jpCsv').onclick=unduhCSVJP;
   if($('#jpMethod')) $('#jpMethod').onclick=()=>$('#infoModal').classList.add('show');
-  if($('#jpSearch')) $('#jpSearch').oninput=renderJPTable;
-  if($('#jpSektor')) $('#jpSektor').onchange=renderJPTable;
-  if($('#jpStatus')) $('#jpStatus').onchange=renderJPTable;
-  if($('#jpSkor')) $('#jpSkor').onchange=renderJPTable;
+  if($('#jpSearch')) $('#jpSearch').oninput=resetJPPage;
+  if($('#jpSektor')) $('#jpSektor').onchange=resetJPPage;
+  if($('#jpStatus')) $('#jpStatus').onchange=resetJPPage;
+  if($('#jpSkor')) $('#jpSkor').onchange=resetJPPage;
+  if($('#jpPageSize')) $('#jpPageSize').onchange=()=>{
+    JP_PAGE_SIZE=Number($('#jpPageSize').value)||15; JP_PAGE=1; renderJPTable();
+  };
+  if($('#jpPrev')) $('#jpPrev').onclick=()=>{ if(JP_PAGE>1){ JP_PAGE--; renderJPTable(); } };
+  if($('#jpNext')) $('#jpNext').onclick=()=>{
+    const n=jpRowsTampil().length;
+    const max=Math.max(1,Math.ceil(n/JP_PAGE_SIZE));
+    if(JP_PAGE<max){ JP_PAGE++; renderJPTable(); }
+  };
   if($('#topJPTableLink')) $('#topJPTableLink').onclick=()=>{
     const tab=document.querySelector('.tab[data-tab="jp"]');
     if(tab && !tab.classList.contains('active')) tab.click();

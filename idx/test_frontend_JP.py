@@ -87,7 +87,7 @@ def main() -> int:
             "Momentum/Trading" in page.locator('.tab[data-tab="screener"]').inner_text())
         cek("panel Jangka Panjang terlihat", page.locator("#panel-jp").is_visible())
 
-        cek("Top 20 tampil di atas tab", page.locator("#topJPCard").is_visible())
+        cek("Top 20 tampil di area utama", page.locator("#topJPCard").is_visible())
         ncard = page.locator("#topJPList .jp-card").count()
         cek("jumlah kartu Top 20 sesuai data", ncard == min(20, data["top20"]),
             f"{ncard} vs {data['top20']}")
@@ -101,6 +101,27 @@ def main() -> int:
             nrow == data["ranked"], f"{nrow} vs {data['ranked']}")
         cek("KPI Jangka Panjang tampil",
             page.locator("#kpisJP .kpi").count() == 7)
+
+        cek("sidebar navigasi tampil", page.locator(".sidebar").is_visible())
+        vis = page.locator("#jpTbody tr:visible").count()
+        cek("tabel memakai pagination (maks 15 baris terlihat)",
+            vis == min(15, data["ranked"]), f"{vis} terlihat")
+        first_visible = page.locator("#jpTbody tr:visible").first.inner_text()
+        page.click("#jpNext")
+        page.wait_for_timeout(120)
+        second_visible = page.locator("#jpTbody tr:visible").first.inner_text()
+        cek("tombol halaman berikutnya mengganti baris",
+            first_visible != second_visible and "2 /" in page.locator("#jpPageNum").inner_text())
+        page.click("#jpPrev")
+        page.wait_for_timeout(120)
+        cek("tombol halaman sebelumnya kembali ke halaman 1",
+            page.locator("#jpPageNum").inner_text().strip().startswith("1 /"))
+        page.locator("#jpThead th .info-btn").first.click()
+        page.wait_for_timeout(120)
+        cek("ikon info indikator membuka penjelasan",
+            page.locator("#indicatorInfoModal").is_visible()
+            and bool(page.locator("#indicatorInfoBody").inner_text().strip()))
+        page.locator("#indicatorInfoModal .close").click()
 
         for status, key in (("scored", "scored"), ("kurang", "kurang"), ("tanpa", "tanpa")):
             page.select_option("#jpStatus", status)
@@ -138,7 +159,7 @@ def main() -> int:
             page.locator("#panel-screener").is_visible())
         cek("Top 10 momentum tampil di tab momentum",
             page.locator("#top10Card").is_visible())
-        cek("Top 20 JP tetap di atas", page.locator("#topJPCard").is_visible())
+        cek("Top 20 JP tetap tampil di area utama", page.locator("#topJPCard").is_visible())
         page.evaluate("bukaDetail('DMAS')")
         page.wait_for_timeout(250)
         mtxt = page.locator("#detailBody").inner_text()

@@ -35,7 +35,7 @@ except Exception:                       # jalan sebagai script langsung
 VERSI_EKSTERNAL = "1.1.0"
 TIDAK_ADA = "data tidak tersedia"
 
-_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 PATH_EXTERNAL = os.path.join(_ROOT, "data", "external.json")
 PATH_HISTORY = os.path.join(_ROOT, "data", "history.json")
 

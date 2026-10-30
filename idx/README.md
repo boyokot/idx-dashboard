@@ -378,15 +378,19 @@ Field baru di `latest.json`: `skor_jp`, `peringkat_jp`, `diperingkat`,
 
 ### Tampilan J3
 
-Tab **Jangka Panjang** adalah tampilan pertama dan default. Tab lama menjadi
-**Momentum/Trading** dan skor momentum tidak diubah. Di atas tab ada **Top 20
-Investasi Jangka Panjang**; tabel JP punya filter status (diperingkat, punya
-skor, data kurang, tanpa laporan), sektor, batas skor, pencarian, sortir, dan
-unduh CSV. Klik kartu/kode membuka **Kartu Investasi** berisi skor pilar,
-rincian metrik dan persentil, valuasi vs median sektor + rata-rata historis,
-zona timing, serta penanda risiko. Data yang tidak tersedia tetap ditulis
-“data tidak tersedia”, tidak diisi 0. Zona timing dan penanda risiko tidak
-mengubah skor. Tidak ada target harga tunggal di UI maupun detail momentum.
+Tab **Jangka Panjang** adalah tampilan pertama dan default. Menu navigasi
+berada di sidebar kiri pada desktop dan menjadi bar horizontal di mobile;
+tab lama menjadi **Momentum/Trading** dan skor momentum tidak diubah.
+**Top 20 Investasi Jangka Panjang** berada di area utama. Tabel JP punya
+filter status (diperingkat, punya skor, data kurang, tanpa laporan), sektor,
+batas skor, pencarian, sortir, unduh CSV, dan pagination 15/25/50/100 baris
+supaya tidak memanjang ke bawah. Ikon info **(i)** pada kartu KPI dan header
+kolom membuka penjelasan indikator. Klik kartu/kode membuka **Kartu
+Investasi** berisi skor pilar, rincian metrik dan persentil, valuasi vs median
+sektor + rata-rata historis, zona timing, serta penanda risiko. Data yang
+tidak tersedia tetap ditulis “data tidak tersedia”, tidak diisi 0. Zona
+timing dan penanda risiko tidak mengubah skor. Tidak ada target harga tunggal
+di UI maupun detail momentum.
 
 ```bash
 python3 -m idx.fundamental_historical   # J1, jaringan
@@ -634,6 +638,9 @@ python3 /root/scripts/idx/run_daily.py
 ```
 
 Aturan penting:
+- Modul J1/J2 memakai `realpath(__file__)` untuk menemukan `config/` dan
+  `data/`, sehingga tetap benar saat dipanggil lewat symlink
+  `/root/scripts/idx`.
 - Ada lock (`data/.pipeline.lock`) — run paralel ditolak.
 - Tulis atomic (file sementara → rename), jadi `latest.json` tidak pernah setengah jadi.
 - **Run parsial tidak boleh menulis `latest.json` production maupun snapshot.**

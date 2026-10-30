@@ -74,6 +74,7 @@ def main() -> int:
             tanpa: e.filter(r => r.skor_jp == null).length,
             top20: (DATA.top20_jp || []).length,
             first: (DATA.top20_jp || [])[0] ? DATA.top20_jp[0].kode : null,
+            vr: e.filter(r => r.valuasi_relatif && r.valuasi_relatif.diskon_pct != null).length,
           };
         })()""")
         cek("DATA termuat", isinstance(data, dict) and data.get("n", 0) > 0, str(data))
@@ -95,10 +96,48 @@ def main() -> int:
         cek("kartu pertama sesuai peringkat", first_card == (data.get("first") or ""), first_card)
         cek("kartu menampilkan cakupan",
             "cakupan" in page.locator("#topJPList .jp-card").first.inner_text())
+        cek("payload punya valuasi relatif", data.get("vr", 0) > 0, str(data.get("vr")))
+        cek("kartu Top 20 menampilkan badge diskon/overprice",
+            page.locator("#topJPList .jp-value-badge").count() == ncard,
+            f"{page.locator('#topJPList .jp-value-badge').count()} vs {ncard}")
+        cek("badge valuasi berisi label/angka",
+            any(x in page.locator("#topJPList .jp-card").first.inner_text()
+                for x in ("Diskon", "Overprice", "Wajar", "Campuran", "Valuasi n/a")))
+
+        mixed = page.evaluate("""(() => {
+          const vr = {diskon_pct: -16.42, label: 'Sinyal campuran',
+            label_komposit: 'Overprice', campuran: true, ekstrem: false,
+            status: 'ok', catatan: [], metode: 'uji',
+            komponen: {
+              per: {tersedia: true, sekarang: 10, sektor: 8, historis: 9,
+                    wajar: 8.4, diskon_pct: 16.0, catatan: []},
+              pbv: {tersedia: true, sekarang: 2, sektor: 1.5, historis: 1.6,
+                    wajar: 1.54, diskon_pct: -30.0, catatan: []}
+            }};
+          return {
+            cell: jpValuasiCell({valuasi_relatif: vr}),
+            badge: jpValuasiBadge({valuasi_relatif: vr}),
+            title: jpValuasiTitle(vr),
+            detail: jpValuasiHtml({harga: 1000, valuasi_relatif: vr}),
+          };
+        })()""")
+        cek("sinyal campuran tetap menampilkan persentase di tabel",
+            "Campuran" in mixed["cell"] and "%" in mixed["cell"], mixed["cell"])
+        cek("sinyal campuran tetap menampilkan persentase di badge",
+            "Campuran" in mixed["badge"] and "%" in mixed["badge"], mixed["badge"])
+        cek("tooltip sinyal campuran menyebut label komposit",
+            "Komposit: Overprice" in mixed["title"], mixed["title"])
+        cek("detail sinyal campuran menyebut label komposit",
+            "Sinyal campuran" in mixed["detail"] and "komposit" in mixed["detail"],
+            mixed["detail"][:240])
 
         nrow = page.locator("#jpTbody tr").count()
         cek("tabel default hanya menampilkan yang diperingkat",
             nrow == data["ranked"], f"{nrow} vs {data['ranked']}")
+        cek("tabel punya kolom diskon/over",
+            "diskon/over" in page.locator("#jpThead").inner_text().lower())
+        cek("sel tabel diskon/over terisi",
+            page.locator("#jpTbody tr").first.locator(".jp-value-badge").count() == 1)
         cek("KPI Jangka Panjang tampil",
             page.locator("#kpisJP .kpi").count() == 7)
 
@@ -148,6 +187,10 @@ def main() -> int:
         cek("Kartu memuat pilar, valuasi, timing, risiko",
             all(x in txt for x in ("Pilar skor", "Valuasi historis",
                                    "Timing (informasi)", "Penanda risiko (informasi)")))
+        cek("Kartu memuat diskon/overprice relatif",
+            "diskon / overprice (relatif)" in txt.lower()
+            and "harga relatif (bukan target)" in txt.lower()
+            and "median historis" in txt.lower())
         cek("Kartu JP tidak memberi target harga tunggal",
             "Saran target" not in txt and "Saran cut loss" not in txt)
         cek("Kartu menyatakan bukan rekomendasi", "bukan rekomendasi" in txt.lower())
@@ -174,6 +217,9 @@ def main() -> int:
             "Skor Investasi Jangka Panjang" in info and "kualitas profitabilitas 25%" in info)
         cek("Penjelasan Skor menyatakan tidak ada target harga",
             "Tidak ada target harga tunggal" in info)
+        cek("Penjelasan Skor memuat rumus diskon/overprice",
+            "Diskon / overprice (informasi)" in info
+            and "60% median sektor + 40% median historis" in info)
 
         page.click('.tab[data-tab="akurasi"]')
         page.wait_for_timeout(500)

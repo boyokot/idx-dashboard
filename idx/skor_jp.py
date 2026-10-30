@@ -56,7 +56,7 @@ PATH_RINGKASAN = os.path.join(_ROOT, "data", "skor_jp_ringkasan.json")
 
 WIB = timezone(timedelta(hours=7))
 VERSI = "1.0.0"
-VERSI_SKEMA_BARU = "1.6.0"
+VERSI_SKEMA_BARU = "1.7.0"
 TIDAK_ADA = "data tidak tersedia"
 PILAR_DATA = [
     "kualitas_profitabilitas", "pertumbuhan", "kesehatan_keuangan",
@@ -386,6 +386,261 @@ def _sejarah_valuasi(fund: Optional[Dict[str, Any]],
         out["pbv_rata2"] = sum(pbv_vals) / len(pbv_vals)
     if out["n_per"] or out["n_pbv"]:
         out["status"] = "ok"
+    return out
+
+
+def _median_historis(hv: Optional[Dict[str, Any]], key: str,
+                     min_n: int = 2, vmin: float = 0.0,
+                     vmax: float = float("inf"),
+                     maks_n: int = 4) -> Tuple[Optional[float], int]:
+    """Median PER/PBV dari tahun historis yang valid.
+
+    Bukan rata-rata: satu tahun dengan laba sekali-jadi tidak boleh
+    mendominasi pembanding valuasi. Nilai di luar rentang wajar dibuang
+    agar ekuitas/EPS yang sangat kecil tidak menghasilkan rasio ekstrem.
+    """
+    items = [x for x in ((hv or {}).get("tahun") or [])
+             if isinstance(x, dict)]
+    items.sort(key=lambda x: _angka(x.get("tahun")) or 0, reverse=True)
+    vals: List[float] = []
+    for item in items[:max(0, maks_n)]:
+        v = _angka(item.get(key))
+        if v is not None and vmin <= v <= vmax:
+            vals.append(v)
+    if len(vals) < min_n:
+        return None, len(vals)
+    return float(statistics.median(vals)), len(vals)
+
+
+def _valuasi_relatif(r: Dict[str, Any],
+                     median_per: Dict[str, float],
+                     median_pbv: Dict[str, float],
+                     n_sektor: Dict[str, int],
+                     config: Dict[str, Any]) -> Dict[str, Any]:
+    """Diskon/overprice relatif terhadap median sektor + riwayat emiten.
+
+    Indikator ini hanya informasi dan tidak mengubah Skor JP. Harga
+    "relatif" bukan target harga; tidak ada klaim kepastian.
+    """
+    cfg = config.get("valuasi_relatif") or {}
+    ws = float(cfg.get("bobot_sektor", 0.60) or 0.0)
+    wh = float(cfg.get("bobot_historis", 0.40) or 0.0)
+    if ws <= 0 and wh <= 0:
+        ws, wh = 0.60, 0.40
+    min_hist = int(cfg.get("min_tahun_historis", 2) or 2)
+    maks_hist = int(cfg.get("maks_tahun_historis", 4) or 4)
+    ambang = float(cfg.get("ambang_diskon", 10.0) or 10.0)
+    ambang_dalam = float(cfg.get("ambang_diskon_dalam", 20.0) or 20.0)
+    ambang_campuran = float(cfg.get("campuran_selisih_pp", 15.0) or 15.0)
+    ambang_ekstrem = float(cfg.get("ambang_ekstrem", 100.0) or 100.0)
+    per_min = float(cfg.get("per_min", 1.0) or 1.0)
+    per_max = float(cfg.get("per_max", 100.0) or 100.0)
+    pbv_min = float(cfg.get("pbv_min", 0.10) or 0.10)
+    pbv_max = float(cfg.get("pbv_max", 20.0) or 20.0)
+    if per_min >= per_max:
+        per_min, per_max = 1.0, 100.0
+    if pbv_min >= pbv_max:
+        pbv_min, pbv_max = 0.10, 20.0
+    per_nk = float(cfg.get("bobot_per_nonkeuangan", 0.55) or 0.55)
+    pbv_nk = float(cfg.get("bobot_pbv_nonkeuangan", 0.45) or 0.45)
+    per_k = float(cfg.get("bobot_per_keuangan", 0.30) or 0.30)
+    pbv_k = float(cfg.get("bobot_pbv_keuangan", 0.70) or 0.70)
+    if r.get("kelompok") == "keuangan":
+        w_per, w_pbv = per_k, pbv_k
+    else:
+        w_per, w_pbv = per_nk, pbv_nk
+    if w_per <= 0 and w_pbv <= 0:
+        w_per, w_pbv = ((per_k, pbv_k) if r.get("kelompok") == "keuangan"
+                        else (per_nk, pbv_nk))
+
+    raw = r.get("_raw") or {}
+    sektor = str(r.get("sektor") or "LAINNYA").upper()
+    harga = _angka((r.get("asli") or {}).get("harga"))
+    hv = raw.get("valuasi_historis") or {}
+    sp = _angka((median_per or {}).get(sektor))
+    sb = _angka((median_pbv or {}).get(sektor))
+    sp = sp if sp is not None and per_min <= sp <= per_max else None
+    sb = sb if sb is not None and pbv_min <= sb <= pbv_max else None
+    hp, n_hp = _median_historis(hv, "per", min_hist, per_min, per_max, maks_hist)
+    hb, n_hb = _median_historis(hv, "pbv", min_hist, pbv_min, pbv_max, maks_hist)
+    n_sec = int((n_sektor or {}).get(sektor, 0) or 0)
+    # _median_sektor memakai median gabungan untuk sektor tipis. Indikator
+    # ini tidak boleh memakainya sebagai "median sektor"; sektor <5 emiten
+    # harus jatuh ke median historis (dengan catatan).
+    if n_sec < 5:
+        sp = None
+        sb = None
+
+    out: Dict[str, Any] = {
+        "status": "tidak tersedia",
+        "dipakai_skor": False,
+        "diskon_pct": None,
+        "label": "Data tidak tersedia",
+        "label_komposit": None,
+        "campuran": False,
+        "ekstrem": False,
+        "harga": _bulat(harga, 2),
+        "harga_relatif": None,
+        "komponen": {
+            "per": {"tersedia": False},
+            "pbv": {"tersedia": False},
+        },
+        "bobot_efektif": {"per": None, "pbv": None},
+        "n_sektor": n_sec,
+        "n_histori": {"per": n_hp, "pbv": n_hb},
+        "sumber": (f"median sektor (min. 5 observasi valid) + "
+                   f"median historis {min_hist}-{maks_hist} tahun terbaru"),
+        "metode": (
+            f"{ws:.0%} median sektor + {wh:.0%} median historis; "
+            f"PER/PBV non-keuangan {per_nk:.0%}/{pbv_nk:.0%}, "
+            f"keuangan {per_k:.0%}/{pbv_k:.0%}; "
+            "komponen yang tidak tersedia tidak diisi 0"
+        ),
+        "catatan": [],
+    }
+
+    if not r.get("fund_ada"):
+        out["catatan"].append("laporan fundamental tidak tersedia")
+        return out
+    if sp is None and sb is None and hp is None and hb is None:
+        out["catatan"].append("median sektor dan riwayat valuasi tidak tersedia")
+        return out
+    if n_sec and n_sec < 5:
+        out["catatan"].append(
+            f"sektor hanya {n_sec} emiten; median sektor tidak dipakai (min. 5)")
+    elif sp is None and sb is None:
+        out["catatan"].append("median sektor tidak tersedia untuk sektor ini")
+
+    def komponen(nama: str, sekarang: Optional[float],
+                 sektor_val: Optional[float], hist_val: Optional[float],
+                 n_hist: int, bobot: float, alasan: Optional[str] = None
+                 ) -> Dict[str, Any]:
+        c: Dict[str, Any] = {
+            "tersedia": False, "sekarang": _bulat(sekarang, 4),
+            "sektor": _bulat(sektor_val, 4), "historis": _bulat(hist_val, 4),
+            "wajar": None, "harga_wajar": None, "diskon_pct": None,
+            "bobot": bobot, "n_histori": n_hist, "catatan": [],
+        }
+        if alasan:
+            c["catatan"].append(alasan)
+        if sekarang is None or sekarang <= 0:
+            if not alasan:
+                c["catatan"].append(f"{nama} sekarang tidak tersedia")
+            return c
+        if sektor_val is None and hist_val is None:
+            c["catatan"].append("median sektor dan median historis tidak tersedia")
+            return c
+        if sektor_val is not None and hist_val is not None and ws + wh > 0:
+            wajar = (ws * sektor_val + wh * hist_val) / (ws + wh)
+        elif sektor_val is not None:
+            wajar = sektor_val
+            c["catatan"].append("hanya memakai median sektor")
+        else:
+            wajar = hist_val
+            c["catatan"].append("hanya memakai median historis")
+        if nama == "PER":
+            wajar = max(per_min, min(wajar, per_max))
+        else:
+            wajar = max(pbv_min, min(wajar, pbv_max))
+        c["wajar"] = _bulat(wajar, 4)
+        c["diskon_pct"] = _bulat((wajar / sekarang - 1.0) * 100.0, 2)
+        if harga is not None and harga > 0:
+            c["harga_wajar"] = _bulat(harga * (wajar / sekarang), 2)
+        c["tersedia"] = True
+        return c
+
+    per_alasan = None
+    per_now = _angka(raw.get("per"))
+    eps = _angka(raw.get("eps_idr"))
+    if eps is not None and eps <= 0:
+        per_now = None
+        per_alasan = "EPS <= 0; PER tidak dipakai"
+    elif (raw.get("laba_once") or {}).get("flag"):
+        per_now = None
+        per_alasan = "laba sekali-jadi; PER tidak dipakai"
+    elif per_now is None:
+        per_alasan = "PER sekarang tidak tersedia"
+    elif not (per_min <= per_now <= per_max):
+        per_alasan = (f"PER {per_now:.2f}× di luar rentang "
+                      f"{per_min:.1f}–{per_max:.1f}×; tidak dipakai")
+        per_now = None
+    pbv_alasan = None
+    pbv_now = _angka(raw.get("pbv"))
+    ekuitas = _angka(raw.get("ekuitas"))
+    if ekuitas is not None and ekuitas <= 0:
+        pbv_now = None
+        pbv_alasan = "ekuitas <= 0; PBV tidak dipakai"
+    elif pbv_now is None:
+        pbv_alasan = "PBV sekarang tidak tersedia"
+    elif not (pbv_min <= pbv_now <= pbv_max):
+        pbv_alasan = (f"PBV {pbv_now:.2f}× di luar rentang "
+                      f"{pbv_min:.2f}–{pbv_max:.1f}×; tidak dipakai")
+        pbv_now = None
+
+    cp = komponen("PER", per_now, sp, hp, n_hp, w_per,
+                  per_alasan)
+    cb = komponen("PBV", pbv_now, sb, hb, n_hb, w_pbv,
+                  pbv_alasan)
+    out["komponen"] = {"per": cp, "pbv": cb}
+
+    bagian: List[Tuple[float, float]] = []
+    harga_bagian: List[Tuple[float, float]] = []
+    for comp, bobot in ((cp, w_per), (cb, w_pbv)):
+        if not comp["tersedia"] or comp["diskon_pct"] is None:
+            continue
+        bagian.append((float(comp["diskon_pct"]), bobot))
+        if comp["harga_wajar"] is not None:
+            harga_bagian.append((float(comp["harga_wajar"]), bobot))
+
+    if not bagian:
+        alasan = [x for x in (per_alasan, pbv_alasan) if x]
+        out["catatan"].extend(alasan or ["PER dan PBV tidak dapat dinilai"])
+        return out
+
+    total_w = sum(w for _, w in bagian)
+    if total_w <= 0:
+        out["catatan"].append("bobot komponen tidak valid")
+        return out
+    diskon = sum(v * w for v, w in bagian) / total_w
+    w_harga = sum(w for _, w in harga_bagian)
+    if harga_bagian and w_harga > 0:
+        out["harga_relatif"] = _bulat(
+            sum(v * w for v, w in harga_bagian) / w_harga, 2)
+    out["bobot_efektif"] = {
+        "per": _bulat(w_per / total_w if cp["tersedia"] else 0.0, 4),
+        "pbv": _bulat(w_pbv / total_w if cb["tersedia"] else 0.0, 4),
+    }
+    out["diskon_pct"] = _bulat(diskon, 2)
+    out["ekstrem"] = abs(diskon) >= ambang_ekstrem
+    if out["ekstrem"]:
+        out["catatan"].append(
+            f"selisih di atas {ambang_ekstrem:.0f}%; cek split, laba sekali-jadi, "
+            "atau data ekuitas/EPS sebelum menyimpulkan")
+    if diskon >= ambang_dalam:
+        label = "Diskon dalam"
+    elif diskon >= ambang:
+        label = "Diskon"
+    elif diskon > -ambang:
+        label = "Wajar"
+    elif diskon > -ambang_dalam:
+        label = "Overprice"
+    else:
+        label = "Overprice berat"
+    out["label_komposit"] = label
+    out["label"] = label
+    if cp["tersedia"] and cb["tersedia"]:
+        dp = _angka(cp["diskon_pct"])
+        db = _angka(cb["diskon_pct"])
+        if dp is not None and db is not None and dp * db < 0 and abs(dp - db) >= ambang_campuran:
+            out["campuran"] = True
+            out["label"] = "Sinyal campuran"
+            out["catatan"].append(
+                f"PER {dp:+.1f}% dan PBV {db:+.1f}% berbeda arah; cek komponen.")
+    if cp["tersedia"] and not cb["tersedia"]:
+        out["catatan"].append("hanya PER yang dapat dinilai")
+    elif cb["tersedia"] and not cp["tersedia"]:
+        out["catatan"].append("hanya PBV yang dapat dinilai")
+    out["status"] = "ok" if (cp["tersedia"] and cb["tersedia"]) else "sebagian"
     return out
 
 
@@ -1058,6 +1313,23 @@ def _median_sektor(rows: List[Dict[str, Any]], field: str
     return out
 
 
+def _median_sektor_strict(rows: List[Dict[str, Any]], field: str,
+                          min_n: int = 5) -> Dict[str, float]:
+    """Median sektor hanya bila ada >=min_n nilai valid.
+
+    Berbeda dari _median_sektor (yang memakai median gabungan untuk sektor
+    tipis), indikator diskon/overprice tidak boleh menyebut median gabungan
+    sebagai median sektor.
+    """
+    by: Dict[str, List[float]] = defaultdict(list)
+    for e in rows:
+        v = _angka(e.get(field))
+        if v is not None and v > 0:
+            by[str(e.get("sektor") or "LAINNYA").upper()].append(v)
+    return {sec: statistics.median(vals) for sec, vals in by.items()
+            if len(vals) >= min_n}
+
+
 def _dist(vals: Iterable[Optional[float]]) -> Dict[str, Any]:
     x = sorted(v for v in vals if v is not None and math.isfinite(v))
     n = len(x)
@@ -1090,6 +1362,7 @@ def _baris_output(r: Dict[str, Any]) -> Dict[str, Any]:
         "zona_timing": r["_raw"].get("timing") or {},
         "penanda_risiko": r["_raw"].get("risiko") or {},
         "valuasi_historis": (r["_raw"].get("valuasi_historis") or {}) if r.get("fund_ada") else None,
+        "valuasi_relatif": (r["_raw"].get("valuasi_relatif") or {}) if r.get("fund_ada") else None,
     }
 
 
@@ -1111,6 +1384,7 @@ def _ringkas_top(r: Dict[str, Any], i: int) -> Dict[str, Any]:
         "nilai_transaksi_median": _bulat((raw.get("likuiditas") or {}).get("nilai"), 2),
         "market_cap": _bulat((raw.get("market_cap") or {}).get("nilai"), 2),
         "zona_timing": (raw.get("timing") or {}).get("zona"),
+        "valuasi_relatif": raw.get("valuasi_relatif") or {},
         "pilar": {p: (r.get("_pilar") or {}).get(p, {}).get("skor")
                   for p in PILAR_SEMUA},
         "penanda_risiko": raw.get("risiko") or {},
@@ -1130,6 +1404,10 @@ def hitung(latest: Dict[str, Any], fundamental: Dict[str, Any],
     info_map = (info or {}).get("emiten") or {}
     mp = _median_sektor(latest_rows, "per")
     mb = _median_sektor(latest_rows, "pbv")
+    # Untuk indikator diskon/overprice, median sektor hanya boleh berasal
+    # dari minimal 5 observasi valid di sektor itu (bukan median gabungan).
+    mp_rel = _median_sektor_strict(latest_rows, "per")
+    mb_rel = _median_sektor_strict(latest_rows, "pbv")
     n_sektor = defaultdict(int)
     for e in latest_rows:
         n_sektor[str(e.get("sektor") or "LAINNYA").upper()] += 1
@@ -1150,6 +1428,10 @@ def hitung(latest: Dict[str, Any], fundamental: Dict[str, Any],
         rows.append(_bangun_baris(lr, fund_map.get(k), info_map.get(k),
                                   history, harga, (harga or {}).get("kurs_usd_idr"),
                                   bars, mp, mb, config, sens))
+    # Indikator informasi: diskon/overprice relatif, terpisah dari skor.
+    for r in rows:
+        r["_raw"]["valuasi_relatif"] = _valuasi_relatif(
+            r, mp_rel, mb_rel, n_sektor, config)
     idx = _indeks_peer(rows)
     arah = _arah_map(config)
     for r in rows:
@@ -1203,6 +1485,13 @@ def hitung(latest: Dict[str, Any], fundamental: Dict[str, Any],
 
     outputs = [_baris_output(r) for r in rows]
     top20 = [_ringkas_top(r, i) for i, r in enumerate(ranked[:20], 1)]
+    vr_status = {"ok": 0, "sebagian": 0, "tidak tersedia": 0}
+    vr_label: Dict[str, int] = defaultdict(int)
+    for r in rows:
+        vr = r["_raw"].get("valuasi_relatif") or {}
+        st = str(vr.get("status") or "tidak tersedia")
+        vr_status[st] = vr_status.get(st, 0) + 1
+        vr_label[str(vr.get("label") or "Data tidak tersedia")] += 1
 
     # ── ringkasan / audit ──────────────────────────────────────────
     n_fund = sum(1 for r in rows if r.get("fund_ada"))
@@ -1288,6 +1577,14 @@ def hitung(latest: Dict[str, Any], fundamental: Dict[str, Any],
         },
         "distribusi_skor": _dist([r.get("_skor") for r in ranked]),
         "distribusi_cakupan": _dist([r.get("_cakupan") for r in rows if r.get("fund_ada")]),
+        "valuasi_relatif": {
+            "dipakai_skor": False,
+            "metode": ("60% median sektor + 40% median historis; "
+                       "PER/PBV non-keuangan 55%/45%, keuangan 30%/70%; "
+                       "bukan target harga dan tidak dipakai Skor JP"),
+            "status": vr_status,
+            "label": dict(sorted(vr_label.items())),
+        },
         "metrik_bolong": bolong,
         "sektor_kecil": sektor_kecil,
         "catatan": [
@@ -1299,6 +1596,7 @@ def hitung(latest: Dict[str, Any], fundamental: Dict[str, Any],
             "Penanda risiko (utang USD, siklikal, free float, komoditas, sensitivitas) tidak mengurangi skor.",
             "NPL/CAR tidak tersedia dari yfinance; bank/lembaga keuangan hanya memakai ROE & PBV.",
             "Zona timing hanya informasi, tidak masuk skor.",
+            "Indikator diskon/overprice memakai median sektor dan median historis; hanya informasi, bukan target harga, dan tidak mengubah Skor JP.",
         ] + catatan_data,
     }
     ringkasan = {

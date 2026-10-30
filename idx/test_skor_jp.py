@@ -125,6 +125,124 @@ def main() -> int:
     once = S._laba_once(fund, CFG["valuasi"])
     cek("laba 3x median -> flag", once["flag"] is True and once["rasio"] == 3.0)
 
+    print("2b. valuasi relatif (diskon/overprice)")
+    def row_vr(harga=800.0, **raw_update):
+        raw = {
+            "per": 8.0, "pbv": 1.6, "eps_idr": 100.0, "ekuitas": 500e9,
+            "laba_once": {"flag": False},
+            "valuasi_historis": {
+                "status": "ok",
+                "tahun": [
+                    {"tahun": 2025, "per": 9.0, "pbv": 1.5},
+                    {"tahun": 2024, "per": 9.0, "pbv": 1.5},
+                ],
+            },
+        }
+        raw.update(raw_update)
+        return {
+            "fund_ada": True, "kelompok": "nonkeuangan",
+            "sektor": "SEKTOR A", "asli": {"harga": harga}, "_raw": raw,
+        }
+    vr = S._valuasi_relatif(row_vr(), {"SEKTOR A": 10.0},
+                            {"SEKTOR A": 1.8}, {"SEKTOR A": 10}, CFG)
+    cek("status penuh", vr["status"] == "ok", str(vr["status"]))
+    cek("PER wajar 9.6", vr["komponen"]["per"]["wajar"] == 9.6,
+        str(vr["komponen"]["per"]))
+    cek("PBV wajar 1.68", vr["komponen"]["pbv"]["wajar"] == 1.68,
+        str(vr["komponen"]["pbv"]))
+    cek("harga relatif 906", vr["harga_relatif"] == 906.0, str(vr["harga_relatif"]))
+    cek("diskon +13.25%", vr["diskon_pct"] == 13.25, str(vr["diskon_pct"]))
+    cek("label diskon", vr["label"] == "Diskon", vr["label"])
+    cek("tidak dipakai skor", CFG["valuasi_relatif"]["dipakai_skor"] is False)
+    cek("output menandai tidak dipakai skor", vr["dipakai_skor"] is False)
+
+    vr_tipis = S._valuasi_relatif(
+        row_vr(), {"SEKTOR A": 10.0}, {"SEKTOR A": 1.8},
+        {"SEKTOR A": 3}, CFG)
+    cek("sektor <5 emiten tidak memakai median sektor",
+        vr_tipis["komponen"]["per"]["sektor"] is None
+        and vr_tipis["komponen"]["pbv"]["sektor"] is None,
+        str(vr_tipis["komponen"]))
+    cek("sektor tipis jatuh ke median historis",
+        vr_tipis["komponen"]["per"]["wajar"] == 9.0
+        and vr_tipis["komponen"]["pbv"]["wajar"] == 1.5,
+        str(vr_tipis["komponen"]))
+    cek("sektor tipis diberi catatan",
+        any("sektor hanya 3" in x for x in vr_tipis["catatan"]),
+        str(vr_tipis["catatan"]))
+    rows_strict = [{"sektor": "A", "per": 10.0 + i} for i in range(5)]
+    cek("median sektor ketat butuh 5 observasi",
+        S._median_sektor_strict(rows_strict, "per") == {"A": 12.0},
+        str(S._median_sektor_strict(rows_strict, "per")))
+    cek("median sektor ketat tidak memakai median gabungan",
+        S._median_sektor_strict(rows_strict[:4], "per") == {},
+        str(S._median_sektor_strict(rows_strict[:4], "per")))
+
+    vr_over = S._valuasi_relatif(row_vr(harga=1200.0, per=12.0, pbv=2.4),
+                                 {"SEKTOR A": 10.0}, {"SEKTOR A": 1.8},
+                                 {"SEKTOR A": 10}, CFG)
+    cek("overprice terdeteksi", vr_over["diskon_pct"] < -20,
+        str(vr_over["diskon_pct"]))
+    cek("label overprice berat", vr_over["label"] == "Overprice berat",
+        vr_over["label"])
+
+    vr_pbv = S._valuasi_relatif(row_vr(per=None, eps_idr=-1.0),
+                                {"SEKTOR A": 10.0}, {"SEKTOR A": 1.8},
+                                {"SEKTOR A": 10}, CFG)
+    cek("EPS negatif -> hanya PBV", vr_pbv["status"] == "sebagian",
+        str(vr_pbv["status"]))
+    cek("bobot PBV menjadi 100%", vr_pbv["bobot_efektif"] == {"per": 0.0, "pbv": 1.0},
+        str(vr_pbv["bobot_efektif"]))
+    cek("PER tidak diisi 0", vr_pbv["komponen"]["per"]["tersedia"] is False)
+
+    vr_campur = S._valuasi_relatif(row_vr(), {"SEKTOR A": 10.4},
+                                   {"SEKTOR A": 1.28}, {"SEKTOR A": 10}, CFG)
+    cek("sinyal campuran", vr_campur["campuran"] is True and
+        vr_campur["label"] == "Sinyal campuran", str(vr_campur))
+    cek("label komposit tetap dicatat", vr_campur["label_komposit"] == "Wajar",
+        str(vr_campur["label_komposit"]))
+
+    hv5 = {"tahun": [{"tahun": 2021, "per": 10.0},
+                     {"tahun": 2025, "per": 50.0},
+                     {"tahun": 2024, "per": 40.0},
+                     {"tahun": 2023, "per": 30.0},
+                     {"tahun": 2022, "per": 20.0}]}
+    median4, n4 = S._median_historis(hv5, "per", 2, 1.0, 100.0, 4)
+    cek("median historis memakai maksimal 4 tahun terbaru",
+        median4 == 35.0 and n4 == 4, f"{median4} / {n4}")
+    median_kurang, n_kurang = S._median_historis(
+        {"tahun": [{"per": 10.0}, {"per": None}]}, "per", 2, 1.0, 100.0, 4)
+    cek("median historis butuh minimal 2 tahun valid",
+        median_kurang is None and n_kurang == 1,
+        f"{median_kurang} / {n_kurang}")
+
+    vr_bank = S._valuasi_relatif(
+        {**row_vr(), "kelompok": "keuangan"}, {"SEKTOR A": 10.0},
+        {"SEKTOR A": 1.8}, {"SEKTOR A": 10}, CFG)
+    cek("bobot bank PBV dominan", vr_bank["bobot_efektif"] == {"per": 0.3, "pbv": 0.7},
+        str(vr_bank["bobot_efektif"]))
+    cek("diskon bank 9.5%", vr_bank["diskon_pct"] == 9.5, str(vr_bank["diskon_pct"]))
+
+    vr_kosong = S._valuasi_relatif(
+        {"fund_ada": True, "kelompok": "nonkeuangan", "sektor": "SEKTOR A",
+         "asli": {"harga": 800.0}, "_raw": {"eps_idr": 100.0,
+                                            "valuasi_historis": {"tahun": []}}},
+        {}, {}, {"SEKTOR A": 2}, CFG)
+    cek("tanpa data -> None", vr_kosong["diskon_pct"] is None and
+        vr_kosong["status"] == "tidak tersedia", str(vr_kosong))
+
+    vr_ekstrem = S._valuasi_relatif(
+        row_vr(per=0.4, pbv=0.05), {"SEKTOR A": 10.0},
+        {"SEKTOR A": 1.8}, {"SEKTOR A": 10}, CFG)
+    cek("PER/PBV ekstrem tidak dipakai", vr_ekstrem["status"] == "tidak tersedia",
+        str(vr_ekstrem))
+    vr_besar = S._valuasi_relatif(row_vr(per=1.2, pbv=0.12),
+                                  {"SEKTOR A": 10.0}, {"SEKTOR A": 1.8},
+                                  {"SEKTOR A": 10}, CFG)
+    cek("selisih >100% diberi flag ekstrem",
+        vr_besar["ekstrem"] is True and
+        any("cek split" in x for x in vr_besar["catatan"]), str(vr_besar))
+
     print("3. cakupan pilar (metrik hilang harus menurunkan cakupan)")
     row = {"kelompok": "nonkeuangan", "_raw": {"ic_relevan": True},
            "_metrik": {"roe_rata2_3th": {"nilai": 0.2, "persentil": 80.0,
@@ -241,11 +359,15 @@ def main() -> int:
     cek("tidak ada NaN/Infinity",
         "NaN" not in json.dumps(res["outputs"]) and
         "Infinity" not in json.dumps(res["outputs"]))
+    cek("valuasi relatif di output",
+        res["outputs"][0].get("valuasi_relatif") is not None)
+    cek("valuasi relatif di top20",
+        res["top20"][0].get("valuasi_relatif") is not None)
 
     print("10. gabung ke latest & versi skema")
     latest2 = {"versi_skema": "1.4.0", "emiten": [{"kode": "AAA0"}]}
     S.gabung_ke_latest(latest2, res)
-    cek("versi 1.6.0", latest2["versi_skema"] == "1.6.0")
+    cek("versi 1.7.0", latest2["versi_skema"] == "1.7.0")
     cek("field skor_jp ada", "skor_jp" in latest2["emiten"][0])
     cek("top20_jp ada", len(latest2.get("top20_jp") or []) == 8)
     cek("meta ada", latest2.get("skor_jp_meta", {}).get("versi") == S.VERSI)
@@ -256,6 +378,9 @@ def main() -> int:
         str(_meta.get("dikonfirmasi_pada")))
     cek("meta: dasar ambang tercatat", bool(_meta.get("dasar_ambang")),
         str(_meta.get("dasar_ambang"))[:80])
+    cek("meta: indikator diskon tidak dipakai skor",
+        _meta.get("valuasi_relatif", {}).get("dipakai_skor") is False,
+        str(_meta.get("valuasi_relatif")))
 
     print(f"\nHASIL: {lulus} lulus, {gagal} gagal")
     return 1 if gagal else 0

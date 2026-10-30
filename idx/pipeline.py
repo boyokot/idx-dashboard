@@ -69,7 +69,7 @@ def _rupiah_ringkas(v: Optional[float]) -> str:
 
 # ─────────────────── kontrak data (versi & satuan baku) ───────────────────
 # Naikkan versi_skema setiap kali nama field / satuan di latest.json berubah.
-VERSI_SKEMA = "1.6.0"
+VERSI_SKEMA = "1.7.0"
 
 # SATUAN BAKU untuk semua field di latest.json. Semua sumber (Sectors v2,
 # yfinance) dinormalisasi ke satuan ini di providers.normalisasi_satuan_fundamental.

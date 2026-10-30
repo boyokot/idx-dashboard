@@ -59,7 +59,7 @@ untuk `volume`: sumber yang tidak melaporkan volume menghasilkan `null`, bukan 0
 
 ### Kontrak skema
 
-`latest.json` memuat `versi_skema` (saat ini `1.6.0`) dan peta `satuan`.
+`latest.json` memuat `versi_skema` (saat ini `1.7.0`) dan peta `satuan`.
 Naikkan `VERSI_SKEMA` di `pipeline.py` setiap kali nama field atau satuan berubah.
 
 ## Riwayat harga (Kelompok B)
@@ -320,7 +320,7 @@ Sebelumnya ketiganya hanya jadi `print()` di log.
   `fundamental`, `gabungan`), plus `emiten_tanpa_data`. `sumber_utama`
   saja menyembunyikan fakta bahwa sebagian emiten tidak punya data sama
   sekali.
-- `versi_skema` — `1.6.0`
+- `versi_skema` — `1.7.0`
 
 Snapshot harian memuat `tanggal_data`, `versi_skema`, `jumlah_emiten`, dan
 `jumlah_ada_harga` — supaya bisa diperiksa tanpa memuat seluruh array.
@@ -337,7 +337,7 @@ tampak lebih sehat daripada datanya.
 
 Skor JP **terpisah** dari skor momentum/trading. Field lama (`skor`,
 `skor_detail`, `top10`, `kriteria_top10`) tidak diubah. `versi_skema`
-naik ke `1.6.0`.
+naik ke `1.7.0`.
 
 Ambang final dikonfirmasi **30 Oktober 2026**: median nilai transaksi
 **60 sesi ≥ Rp1 miliar/hari** dan market cap **≥ Rp200 miliar**.
@@ -373,8 +373,46 @@ keduanya `dipakai_skor: false`. Peta sensitivitas sektor juga tetap
 Field baru di `latest.json`: `skor_jp`, `peringkat_jp`, `diperingkat`,
 `lolos_gerbang`, `alasan_gagal_gerbang`, `gerbang_detail`, `cakupan_bobot`,
 `data_kurang`, `skor_jp_rincian`, `zona_timing`, `penanda_risiko`,
-`valuasi_historis`, `top20_jp`, dan `skor_jp_meta` (termasuk
-`sumber_data`/tanggal pembaruan tiap file).
+`valuasi_historis`, `valuasi_relatif`, `top20_jp`, dan `skor_jp_meta`
+(termasuk `sumber_data`/tanggal pembaruan tiap file).
+
+### Indikator diskon/overprice relatif
+
+`valuasi_relatif` adalah indikator **informasi**, bukan komponen Skor JP
+(`dipakai_skor: false`). Tujuannya menjawab “harga sekarang relatif mahal
+atau murah dibanding sektor dan riwayat emiten”, bukan menentukan target
+harga absolut.
+
+Rumus:
+
+```text
+PER_wajar   = 60% × median PER sektor + 40% × median PER historis
+PBV_wajar   = 60% × median PBV sektor + 40% × median PBV historis
+Harga_PER   = harga sekarang × (PER_wajar / PER_sekarang)
+Harga_PBV   = harga sekarang × (PBV_wajar / PBV_sekarang)
+Harga_rel   = 55% × Harga_PER + 45% × Harga_PBV   (non-keuangan)
+             30% × Harga_PER + 70% × Harga_PBV   (bank/lembaga keuangan)
+Diskon (%)  = (Harga_rel / harga sekarang − 1) × 100
+```
+
+Positif = diskon relatif; negatif = overprice. Jika salah satu komponen
+tidak tersedia, bobotnya dinormalisasi dan status menjadi `sebagian`.
+Median historis memakai 2–4 tahun terbaru dari `valuasi_historis.tahun[]`;
+bukan rata-rata, agar satu tahun ekstrem tidak mendominasi. Sektor dengan
+<5 emiten/observasi valid tidak memakai median sektor (memakai riwayat bila ada).
+
+Perlindungan data: PER di luar 1–100× dan PBV di luar 0,10–20× tidak
+dipakai; EPS ≤0, laba sekali-jadi, atau ekuitas ≤0 juga tidak dipakai.
+Selisih di atas 100% diberi `ekstrem: true` dan catatan untuk memeriksa
+split/data. Label: `Diskon dalam` (≥20%), `Diskon` (≥10%), `Wajar`
+(−10% s/d +10%), `Overprice` (≤−10%), `Overprice berat` (≤−20%);
+`Sinyal campuran` bila arah PER dan PBV berbeda jauh. Tidak ada target
+harga dan tidak ada klaim kepastian.
+
+Field `valuasi_relatif` memuat `status`, `dipakai_skor` (selalu `false`),
+`diskon_pct`, `label`, `label_komposit`, `campuran`, `ekstrem`, `harga`, `harga_relatif`,
+`komponen.per`, `komponen.pbv`, `bobot_efektif`, `n_sektor`, `n_histori`,
+`metode`, dan `catatan`.
 
 ### Tampilan J3
 
@@ -384,20 +422,22 @@ tab lama menjadi **Momentum/Trading** dan skor momentum tidak diubah.
 **Top 20 Investasi Jangka Panjang** berada di area utama. Tabel JP punya
 filter status (diperingkat, punya skor, data kurang, tanpa laporan), sektor,
 batas skor, pencarian, sortir, unduh CSV, dan pagination 15/25/50/100 baris
-supaya tidak memanjang ke bawah. Ikon info **(i)** pada kartu KPI dan header
-kolom membuka penjelasan indikator. Klik kartu/kode membuka **Kartu
-Investasi** berisi skor pilar, rincian metrik dan persentil, valuasi vs median
-sektor + rata-rata historis, zona timing, serta penanda risiko. Data yang
-tidak tersedia tetap ditulis “data tidak tersedia”, tidak diisi 0. Zona
-timing dan penanda risiko tidak mengubah skor. Tidak ada target harga tunggal
-di UI maupun detail momentum.
+supaya tidak memanjang ke bawah. Tabel menampilkan kolom **Diskon/Over**
+(positif = diskon, negatif = overprice); cakupan data tetap tersedia di kartu
+dan CSV. Ikon info **(i)** pada kartu KPI dan header kolom membuka penjelasan
+indikator. Klik kartu/kode membuka **Kartu Investasi** berisi skor pilar,
+rincian metrik dan persentil, valuasi vs median sektor + rata-rata historis,
+rincian diskon/overprice (termasuk komponen PER/PBV), zona timing, serta
+penanda risiko. Data yang tidak tersedia tetap ditulis “data tidak tersedia”,
+tidak diisi 0. Zona timing dan penanda risiko tidak mengubah skor. Tidak ada
+target harga tunggal di UI maupun detail momentum.
 
 ```bash
 python3 -m idx.fundamental_historical   # J1, jaringan
 python3 idx/pasar_jp.py --workers 8     # harga + info, jaringan
 python3 idx/skor_jp.py                  # hitung & tulis latest.json
-python3 idx/test_skor_jp.py             # 40 tes offline
-python3 idx/test_frontend_JP.py         # tes UI J3 (desktop + mobile)
+python3 idx/test_skor_jp.py             # 70 tes offline
+python3 idx/test_frontend_JP.py         # 61 tes UI J3 (desktop + mobile)
 ```
 
 ## Akurasi Skor JP (J4)
@@ -435,10 +475,10 @@ split dapat mendistorsi rasio.
 ```bash
 cd /root/idx-dashboard
 python3 idx/test_validate.py        # 99 tes — validasi, snapshot, notifikasi
-python3 idx/test_skor_jp.py         # 40 tes — skor JP, gerbang, pilar, ranking
+python3 idx/test_skor_jp.py         # 70 tes — skor JP, gerbang, pilar, ranking
 python3 idx/test_akurasi_jp.py      # 21 tes — snapshot bulanan + akurasi J4
 python3 idx/test_waspada.py         # 25 tes — aturan tinggi + penyempitan 15–20%
-python3 idx/test_frontend_JP.py     # tes UI J3/J4 (desktop + mobile)
+python3 idx/test_frontend_JP.py     # 61 tes UI J3/J4 (desktop + mobile)
 python3 idx/test_frontend_E.py      # 27 tes — metadata UI, desktop + mobile
 ```
 

@@ -184,7 +184,9 @@ def main() -> int:
     # banner: ada di DOM, DI ATAS KPI, tidak disembunyikan
     cek("index.html punya elemen banner rezim", 'id="rezimBanner"' in HTML)
     i_ban = HTML.find('id="rezimBanner"')
-    i_kpi = HTML.find('id="kpis"')
+    # J3 mengganti KPI pertama menjadi kpisJP; terima KPI JP maupun momentum.
+    i_kpi = min(x for x in (HTML.find('id="kpisJP"'),
+                            HTML.find('id="kpisMomentum"')) if x >= 0)
     cek("banner rezim berada SEBELUM blok KPI (di atas)", 0 < i_ban < i_kpi,
         f"banner@{i_ban} kpi@{i_kpi}")
     cek("tanpa aturan CSS menyembunyikan banner",

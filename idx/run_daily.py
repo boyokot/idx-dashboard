@@ -125,6 +125,8 @@ def main() -> int:
                             cwd=repo, check=False, capture_output=True)
             # add data + index.html (dashboard) saja — jangan add file lain
             subprocess.run(["git", "add", "data/latest.json", "data/snapshots/",
+                            "data/snapshots_jp/", "data/skor_jp_ringkasan.json",
+                            "data/akurasi_jp.json",
                             "data/history.json", "data/backtest.json",
                             "data/external.json", "index.html"],
                             cwd=repo, check=True, capture_output=True, timeout=10)

@@ -1,0 +1,52 @@
+{
+ "versi": "1.0.0",
+ "dihitung_pada": "2026-10-30T16:01:11+07:00",
+ "status": "belum_cukup_data",
+ "snapshot": {
+  "files": [
+   "2026-10.json"
+  ],
+  "jumlah": 1,
+  "terlama": "2026-10",
+  "terbaru": "2026-10",
+  "diperbarui_pada": "2026-10-30T16:01:11+07:00"
+ },
+ "horizon_bulan": [
+  3,
+  6,
+  12
+ ],
+ "hasil": [],
+ "pending": [
+  {
+   "mulai": "2026-10",
+   "horizon_bulan": 3,
+   "target": "2027-01",
+   "status": "belum_ada",
+   "alasan": "snapshot 2027-01 belum tersedia"
+  },
+  {
+   "mulai": "2026-10",
+   "horizon_bulan": 6,
+   "target": "2027-04",
+   "status": "belum_ada",
+   "alasan": "snapshot 2027-04 belum tersedia"
+  },
+  {
+   "mulai": "2026-10",
+   "horizon_bulan": 12,
+   "target": "2027-10",
+   "status": "belum_ada",
+   "alasan": "snapshot 2027-10 belum tersedia"
+  }
+ ],
+ "ringkasan": [],
+ "catatan": [
+  "Ini bukan backtest: return dihitung dari snapshot bulanan yang benar-benar diterbitkan lebih dulu, bukan dari data masa depan.",
+  "Top 20 = peringkat_jp 1–20 pada snapshot awal; harga awal/akhir adalah close pada tanggal data snapshot.",
+  "Pembanding IHSG memakai level IHSG pada snapshot yang sama. Rata-rata sektor = rata-rata return emiten satu sektor pada snapshot; minimal 3 emiten.",
+  "Tidak ada klaim akurasi sebelum horizon 3/6/12 bulan benar-benar tersedia. Sampel kecil tidak bisa digeneralisasi.",
+  "Harga snapshot bukan harga eksekusi; biaya transaksi, slippage, dan dividen tidak dihitung."
+ ],
+ "metode": "snapshot bulanan -> return Top 20 vs IHSG dan rata-rata sektor; hanya pasangan bulan yang sudah ada"
+}

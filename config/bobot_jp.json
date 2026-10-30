@@ -1,0 +1,269 @@
+{
+ "versi": "1.0.0",
+ "status": "aktif",
+ "status_ambang": "final",
+ "dikonfirmasi_pada": "2026-10-30",
+ "dasar_ambang": "Konfirmasi pengguna 30 Okt 2026: median nilai transaksi 60 sesi >= Rp1 miliar/hari; market cap >= Rp200 miliar.",
+ "dipakai_skor": true,
+ "deskripsi": "Bobot dan aturan Skor Investasi Jangka Panjang (J2). Skor momentum/trading tidak memakai file ini.",
+ "bobot_pilar": {
+  "kualitas_profitabilitas": 0.25,
+  "pertumbuhan": 0.2,
+  "kesehatan_keuangan": 0.2,
+  "valuasi": 0.2,
+  "dividen": 0.1,
+  "risiko_tata_kelola": 0.05
+ },
+ "metrik": {
+  "kualitas_profitabilitas": {
+   "roe_rata2_3th": {
+    "label": "ROE rata-rata 3 tahun",
+    "bobot": 0.4,
+    "arah": "tinggi",
+    "sumber": "fundamental.metrik.profitabilitas.roe_rata2_3th"
+   },
+   "margin_laba_rata2_3th": {
+    "label": "Margin laba bersih rata-rata 3 tahun",
+    "bobot": 0.2,
+    "arah": "tinggi",
+    "sumber": "fundamental.metrik.profitabilitas.margin_laba_rata2_3th"
+   },
+   "ocf_laba_rata2_3th": {
+    "label": "Arus kas operasi / laba bersih rata-rata 3 tahun",
+    "bobot": 0.2,
+    "arah": "tinggi",
+    "sumber": "fundamental.metrik.kesehatan_keuangan.ocf_laba_rata2_3th"
+   },
+   "konsistensi_laba": {
+    "label": "Konsistensi laba positif",
+    "bobot": 0.2,
+    "arah": "tinggi",
+    "sumber": "fundamental.metrik.konsistensi"
+   }
+  },
+  "pertumbuhan": {
+   "cagr_laba_3th": {
+    "label": "CAGR laba bersih 3 tahun",
+    "bobot": 0.5,
+    "arah": "tinggi",
+    "sumber": "fundamental.metrik.pertumbuhan.cagr_laba_3th"
+   },
+   "cagr_pendapatan_3th": {
+    "label": "CAGR pendapatan 3 tahun",
+    "bobot": 0.5,
+    "arah": "tinggi",
+    "sumber": "fundamental.metrik.pertumbuhan.cagr_pendapatan_3th"
+   }
+  },
+  "kesehatan_keuangan": {
+   "non_keuangan": {
+    "der_rata2_3th": {
+     "label": "DER rata-rata 3 tahun",
+     "bobot": 0.5,
+     "arah": "rendah",
+     "sumber": "fundamental.metrik.kesehatan_keuangan.der_rata2_3th"
+    },
+    "interest_coverage_rata2_3th": {
+     "label": "Interest coverage rata-rata 3 tahun",
+     "bobot": 0.5,
+     "arah": "tinggi",
+     "sumber": "fundamental.metrik.kesehatan_keuangan.interest_coverage_rata2_3th"
+    }
+   },
+   "keuangan": {
+    "roe_rata2_3th": {
+     "label": "ROE rata-rata 3 tahun (bank/lembaga keuangan)",
+     "bobot": 0.6,
+     "arah": "tinggi",
+     "sumber": "fundamental.metrik.profitabilitas.roe_rata2_3th"
+    },
+    "pbv": {
+     "label": "PBV (bank/lembaga keuangan)",
+     "bobot": 0.4,
+     "arah": "rendah",
+     "sumber": "latest.pbv"
+    },
+    "npl": {
+     "label": "NPL (jika tersedia)",
+     "bobot": 0.0,
+     "arah": "rendah",
+     "sumber": "data tidak tersedia"
+    },
+    "car": {
+     "label": "CAR (jika tersedia)",
+     "bobot": 0.0,
+     "arah": "tinggi",
+     "sumber": "data tidak tersedia"
+    }
+   }
+  },
+  "valuasi": {
+   "per_vs_median_sektor": {
+    "label": "PER relatif median sektor",
+    "bobot": 0.4,
+    "arah": "rendah",
+    "sumber": "latest.per / median_per_sektor"
+   },
+   "pbv_vs_median_sektor": {
+    "label": "PBV relatif median sektor",
+    "bobot": 0.3,
+    "arah": "rendah",
+    "sumber": "latest.pbv / median_pbv_sektor"
+   },
+   "per_vs_sejarah": {
+    "label": "PER relatif rata-rata 3-5 tahun sendiri",
+    "bobot": 0.15,
+    "arah": "rendah",
+    "sumber": "harga laporan / EPS historis"
+   },
+   "pbv_vs_sejarah": {
+    "label": "PBV relatif rata-rata 3-5 tahun sendiri",
+    "bobot": 0.15,
+    "arah": "rendah",
+    "sumber": "harga laporan / BVPS historis"
+   }
+  },
+  "dividen": {
+   "dividend_yield_ttm": {
+    "label": "Dividend yield 12 bulan terakhir",
+    "bobot": 0.5,
+    "arah": "tinggi",
+    "sumber": "fundamental.metrik.dividen.dividend_yield_ttm"
+   },
+   "payout_ratio_sehat": {
+    "label": "Payout ratio sehat (0-200%)",
+    "bobot": 0.25,
+    "arah": "tinggi",
+    "sumber": "dividen TTM / EPS (mata uang disamakan)"
+   },
+   "konsistensi_dividen": {
+    "label": "Konsistensi dividen 3 tahun",
+    "bobot": 0.25,
+    "arah": "tinggi",
+    "sumber": "fundamental.metrik.dividen.konsistensi_dividen_3th"
+   }
+  },
+  "risiko_tata_kelola": {
+   "cakupan_data": {
+    "label": "Kelengkapan data fundamental",
+    "bobot": 0.5,
+    "arah": "tinggi",
+    "sumber": "cakupan_bobot 5 pilar data"
+   },
+   "waspada": {
+    "label": "Status waspada (tidak tinggi)",
+    "bobot": 0.3,
+    "arah": "tinggi",
+    "sumber": "latest.waspada_tingkat"
+   },
+   "likuiditas": {
+    "label": "Persentil likuiditas",
+    "bobot": 0.2,
+    "arah": "tinggi",
+    "sumber": "median nilai transaksi 60 sesi"
+   }
+  }
+ },
+ "gerbang": {
+  "likuiditas": {
+   "median_sesi": 60,
+   "min_sesi": 20,
+   "nilai_transaksi_min": 1000000000,
+   "satuan": "IDR_per_hari",
+   "dasar": "median close x volume 60 sesi terakhir; minimal 20 sesi"
+  },
+  "kapitalisasi": {
+   "market_cap_min": 200000000000,
+   "satuan": "IDR",
+   "dasar": "marketCap yfinance; fallback harga x saham beredar terakhir"
+  },
+  "laba": {
+   "min_positif_4th": 3,
+   "min_positif_3th": 2,
+   "dasar": "3 dari 4 tahun, atau 2 dari 3 tahun bila hanya 3 tahun"
+  },
+  "ekuitas": {
+   "harus_positif": true
+  },
+  "waspada": {
+   "tingkat_tinggi_diskualifikasi": true
+  },
+  "cakupan_bobot_min": 70.0
+ },
+ "valuasi": {
+  "histori_tahun_min": 2,
+  "histori_tahun_maks": 5,
+  "laba_once_rasio": 2.0,
+  "laba_once_cap_skor_per": 40.0,
+  "payout_min": 0.0,
+  "payout_maks_wajar": 2.0,
+  "payout_ideal_min": 0.2,
+  "payout_ideal_maks": 0.8
+ },
+ "risiko": {
+  "free_float_rendah_pct": 15.0,
+  "utang_usd_der_min": 0.5,
+  "catatan_utang": "yfinance hanya memberi mata uang laporan, bukan rincian mata uang utang. Flag utang USD hanya dipakai bila laporan keuangan dalam USD dan DER memenuhi ambang; selain itu 'data tidak tersedia'."
+ },
+ "sektor_keuangan": [
+  "BANK",
+  "INSURANCE",
+  "FINANCIAL INSTITUTION",
+  "SECURITIES COMPANY",
+  "OTHERS - FINANCE",
+  "INVESTMENT COMPANY"
+ ],
+ "sektor_siklikal": [
+  "PROPERTY AND REAL ESTATE",
+  "BUILDING CONSTRUCTION",
+  "CONSTRUCTION",
+  "NON BUILDING CONSTRUCTION",
+  "AUTOMOTIVE AND COMPONENTS",
+  "COAL MINING",
+  "METAL AND MINERAL MINING",
+  "METAL AND ALLIED PRODUCTS",
+  "PLANTATION",
+  "CRUDE PETROLEUM & NATURAL GAS PROD.",
+  "ENERGY",
+  "CHEMICALS",
+  "OTHER - BASIC INDUSTRY AND CHEMICALS",
+  "PULP & PAPER",
+  "TEXTILE, GARMENT",
+  "MACHINERY AND HEAVY EQUIPMENT",
+  "TRANSPORTATION",
+  "TOLL ROAD, AIRPORT, HARBOR & ALLIED PROD.",
+  "CERAMICS, GLASS, PORCELAIN",
+  "CEMENT",
+  "PLASTICS & PACKAGING",
+  "WOOD INDUSTRIES",
+  "LAND/STONE QUARRYING",
+  "OTHERS - MINING",
+  "FORESTRY",
+  "CROPS",
+  "FISHERY"
+ ],
+ "sektor_komoditas": [
+  "COAL MINING",
+  "METAL AND MINERAL MINING",
+  "PLANTATION",
+  "CRUDE PETROLEUM & NATURAL GAS PROD.",
+  "ENERGY",
+  "OTHERS - MINING",
+  "LAND/STONE QUARRYING",
+  "FORESTRY",
+  "CROPS",
+  "FISHERY",
+  "PULP & PAPER",
+  "CHEMICALS",
+  "OTHER - BASIC INDUSTRY AND CHEMICALS"
+ ],
+ "catatan": [
+  "Skor 0-100; bobot pilar wajib berjumlah 1,0.",
+  "Persentil dihitung dalam sektor. Sektor dengan <5 emiten memakai persentil gabungan dan diberi catatan.",
+  "Bank, asuransi, dan lembaga keuangan tidak memakai DER/interest coverage. Pilar kesehatan memakai ROE dan PBV; NPL/CAR dipakai hanya jika tersedia.",
+  "Penanda risiko tidak mengurangi skor. Pilar risiko/tata kelola hanya memakai kelengkapan data, status waspada, dan likuiditas.",
+  "Payout ratio di atas 200% dianggap tidak wajar (mis. DPS valas / laba sekali-jadi) dan tidak diberi skor tinggi.",
+  "PER sangat rendah akibat laba sekali-jadi dibatasi skornya.",
+  "Zona timing hanya informasi, tidak masuk skor."
+ ]
+}

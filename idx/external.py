@@ -561,15 +561,24 @@ def _parse_tanggal_id(txt: str) -> Optional[str]:
 URL_BI_KALENDER = "https://www.bi.go.id/id/publikasi/kalender/default.aspx"
 
 
-def ambil_kalender_bi(tahun: Optional[int] = None) -> Dict[str, Any]:
+def ambil_kalender_bi(tahun: Optional[int] = None,
+                      tanggal_acuan: Optional[str] = None) -> Dict[str, Any]:
     """Jadwal Rapat Dewan Gubernur (RDG) dari kalender resmi BI.
+
+    `tanggal_acuan` = tanggal data pasar (bukan jam run) supaya
+    `berikutnya` tidak menunjuk rapat yang sudah lewat ketika pipeline
+    dijalankan beberapa hari setelah sesi terakhir.
 
     Tabel jadwal berheader 'No | Bulan | Waktu'. Sel Waktu berisi rentang
     seperti 'Selasa-Rabu, 20-21 Oktober 2026' → diambil tanggal TERAKHIR
     (hari keputusan rate diumumkan).
     """
     tahun = tahun or sekarang_wib().year
-    html, err = _get_html(URL_BI_KALENDER)
+    html, err = None, None
+    for _ in range(2):                 # sumber BI kadang mereset koneksi
+        html, err = _get_html(URL_BI_KALENDER)
+        if html:
+            break
     if not html:
         return {"nilai": TIDAK_ADA, "alasan": f"kalender BI gagal ({err})",
                 "sumber": TIDAK_ADA, "events": []}
@@ -612,14 +621,77 @@ def ambil_kalender_bi(tahun: Optional[int] = None) -> Dict[str, Any]:
     if not events:
         return {"nilai": TIDAK_ADA, "alasan": "tabel jadwal RDG tidak ditemukan",
                 "sumber": TIDAK_ADA, "events": []}
-    hari_ini = sekarang_wib().strftime("%Y-%m-%d")
+    hari_ini, nxt = _acuan_dan_berikutnya(events, tanggal_acuan)
     return {
         "nilai": "tersedia",
         "sumber": "bi.go.id — Kalender Publikasi",
         "url": URL_BI_KALENDER,
         "jumlah_event": len(events),
         "events": events,
-        "berikutnya": next((e for e in events if e["tanggal"] >= hari_ini), None),
+        "dihitung_dari": hari_ini,
+        "berikutnya": nxt,
+        "catatan_berikutnya": (
+            None if nxt is not None else
+            "Tidak ada jadwal RDG berikutnya di kalender yang terbaca; "
+            "jangan mengisi tanggal tebakan."),
+    }
+
+
+def _acuan_dan_berikutnya(events: List[Dict[str, Any]],
+                          tanggal_acuan: Optional[str]) -> Tuple[str, Optional[Dict[str, Any]]]:
+    """Tanggal acuan + event berikutnya. Dipakai juga oleh fallback cache."""
+    hari_ini = str(tanggal_acuan or sekarang_wib().strftime("%Y-%m-%d"))[:10]
+    try:
+        acuan = datetime.strptime(hari_ini, "%Y-%m-%d").date()
+    except ValueError:
+        acuan = sekarang_wib().date()
+        hari_ini = acuan.isoformat()
+    nxt = next((e for e in events if e.get("tanggal", "") >= hari_ini), None)
+    if nxt is not None:
+        nxt = dict(nxt)
+        try:
+            nxt["hari_lagi"] = (datetime.strptime(
+                nxt["tanggal"], "%Y-%m-%d").date() - acuan).days
+        except ValueError:
+            nxt["hari_lagi"] = None
+    return hari_ini, nxt
+
+
+def _kalender_bi_aman(tanggal_acuan: Optional[str]) -> Dict[str, Any]:
+    """Ambil kalender BI dengan retry + fallback cache sukses terakhir.
+
+    (Review 30 Okt, fix 5) Sumber BI kadang mereset koneksi. Jangan langsung
+    menimpa kalender yang sudah terbaca dengan `data tidak tersedia` hanya
+    karena satu percobaan gagal; coba ulang, lalu pakai salinan sukses
+    terakhir — dengan label cadangan yang jujur.
+    """
+    terakhir: Dict[str, Any] = {}
+    for _ in range(2):
+        terakhir = ambil_kalender_bi(tanggal_acuan=tanggal_acuan)
+        if (terakhir.get("events") or []):
+            return terakhir
+    prev = _muat_json(PATH_EXTERNAL) or {}
+    lama = prev.get("kalender_bi") if isinstance(prev, dict) else None
+    if isinstance(lama, dict) and (lama.get("events") or []):
+        salin = dict(lama)
+        salin["events"] = [dict(e) for e in lama["events"]]
+        hari_ini, nxt = _acuan_dan_berikutnya(salin["events"], tanggal_acuan)
+        salin.update({
+            "nilai": "tersedia (cadangan)",
+            "dihitung_dari": hari_ini,
+            "berikutnya": nxt,
+            "alasan_sumber_terkini": terakhir.get("alasan") or "sumber BI gagal",
+            "catatan_cadangan": (
+                "Sumber BI gagal saat run ini; dipakai salinan kalender "
+                "terakhir yang pernah berhasil. Tanggal berikutnya dihitung "
+                "ulang dari tanggal data, bukan dari jam run."),
+        })
+        return salin
+    return terakhir or {
+        "nilai": TIDAK_ADA,
+        "alasan": "kalender BI gagal dan tidak ada cadangan",
+        "sumber": TIDAK_ADA,
+        "events": [],
     }
 
 
@@ -635,7 +707,8 @@ def _ret_seri(close: List[float], n: int) -> Optional[float]:
 
 def hitung_kekuatan_sektor(hist: Dict[str, Any],
                           sektor_map: Dict[str, str],
-                          ihsg_rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+                          ihsg_rows: List[Dict[str, Any]],
+                          tanggal_data: Optional[str] = None) -> Dict[str, Any]:
     """Return sektor 5 & 20 sesi dibanding IHSG.
 
     Return sektor = MEDIAN return emiten di sektor itu (median, bukan mean,
@@ -684,19 +757,27 @@ def hitung_kekuatan_sektor(hist: Dict[str, Any],
             "rel_20h_pct": (round(r20 - r_ihsg[20], 3)
                             if r20 is not None and r_ihsg[20] is not None else None),
         })
-    out.sort(key=lambda x: (x.get("rel_5h_pct") is None,
-                            -(x.get("rel_5h_pct") or 0)))
-    kuat = next((x for x in out if x.get("rel_5h_pct") is not None), None)
-    lemah = next((x for x in reversed(out) if x.get("rel_5h_pct") is not None), None)
+    # (Review 30 Okt, fix 3) Terkuat/terlemah memakai rel 20 sesi vs IHSG,
+    # sama dengan tabel Kekuatan Relatif Sektor dan ringkasan pasar. Jangan
+    # memakai rel 5 sesi untuk label "terkuat" karena bisa berbeda arah.
+    out.sort(key=lambda x: (x.get("rel_20h_pct") is None,
+                            -(x.get("rel_20h_pct") or 0)))
+    valid20 = [x for x in out if x.get("rel_20h_pct") is not None]
+    kuat = valid20[0] if valid20 else None
+    lemah = valid20[-1] if valid20 else None
     return {
         "ihsg_ret_5h_pct": None if r_ihsg[5] is None else round(r_ihsg[5], 3),
         "ihsg_ret_20h_pct": None if r_ihsg[20] is None else round(r_ihsg[20], 3),
         "per_sektor": out,
         "jumlah_sektor": len(out),
+        "min_emiten": 3,
         "sektor_terkuat": kuat,
         "sektor_terlemah": lemah,
+        "tanggal_data": tanggal_data,
+        "periode_terkuat": "20 sesi vs IHSG",
         "catatan": ("Return sektor = median return emiten (min. 3 emiten "
-                    "berdata). rel_* = selisih terhadap IHSG pada jendela sama."),
+                    "berdata). rel_* = selisih terhadap IHSG pada jendela sama; "
+                    "terkuat/terlemah memakai rel_20h_pct."),
         "sumber": "data/history.json + ^JKSE (yfinance)",
     }
 
@@ -737,7 +818,10 @@ def ambil_kalender_emiten(batas: int = 12, maks_emiten: int = 60) -> Dict[str, A
     Hanya emiten yang tanggalnya >= hari ini yang dimasukkan sebagai event
     mendatang; sisanya dicatat sebagai "terakhir" agar tidak menyesatkan.
     """
-    from idx import providers as _P  # lokal: hindari siklus impor
+    try:                                # modul paket
+        from idx import providers as _P  # lokal: hindari siklus impor
+    except ImportError:                 # python3 idx/external.py
+        import providers as _P          # type: ignore
 
     latest = _muat_json(os.path.join(_ROOT, "data", "latest.json")) or {}
     kode_semua = [e.get("kode") for e in (latest.get("emiten") or [])
@@ -863,6 +947,44 @@ EVENT_RISIKO: List[Dict[str, Any]] = [
         "alasan_emiten": ("daftar konstituen MSCI dan data kepemilikan asing "
                           "per emiten tidak tersedia tanpa langganan; TIDAK "
                           "ditebak"),
+        "sumber_berita": [
+            {"nama": "CNBC Indonesia — Market",
+             "url": "https://www.cnbcindonesia.com/market"},
+            {"nama": "Reuters — Asia Markets",
+             "url": "https://www.reuters.com/markets/asia/"},
+            {"nama": "Antara — Ekonomi",
+             "url": "https://www.antaranews.com/berita/ekonomi"},
+        ],
+    },
+    {
+        "id": "trading_halt_16okt2026",
+        "judul": "Trading halt Bursa Efek Indonesia, 16 Oktober 2026",
+        "tanggal_diumumkan": "2026-10-16",
+        "status": "terjadi; tanggal dari review, sumber resmi perlu dibuka",
+        "arah": "negatif jangka pendek / likuiditas",
+        "sumber_nama": "IDX — Pengumuman Bursa; CNBC Indonesia; Reuters",
+        "sumber_url": "https://www.idx.co.id/berita/pengumuman/",
+        "sumber_url_alternatif": [
+            "https://www.cnbcindonesia.com/market",
+            "https://www.reuters.com/markets/asia/",
+        ],
+        "sumber_berita": [
+            {"nama": "IDX — Pengumuman Bursa",
+             "url": "https://www.idx.co.id/berita/pengumuman/"},
+            {"nama": "CNBC Indonesia — Market",
+             "url": "https://www.cnbcindonesia.com/market"},
+            {"nama": "Reuters — Asia Markets",
+             "url": "https://www.reuters.com/markets/asia/"},
+        ],
+        "catatan_verifikasi": (
+            "Peristiwa trading halt 16 Okt 2026 dicatat dari review. URL yang "
+            "tersedia adalah halaman pengumuman/berita, bukan artikel spesifik; "
+            "durasi dan cakupan halt tidak diklaim tanpa membuka sumber resmi."),
+        "dampak": ("gangguan likuiditas dan kepanikan jangka pendek; bukan "
+                   "pengurang skor otomatis"),
+        "emiten_terdampak": TIDAK_ADA,
+        "alasan_emiten": ("tidak ada daftar emiten yang dapat diverifikasi "
+                          "dari sumber otomatis; TIDAK ditebak"),
     },
 ]
 
@@ -891,6 +1013,54 @@ def _umur_hari(tanggal_iso: Optional[str]) -> Optional[int]:
     except ValueError:
         return None
     return (sekarang_wib().date() - d).days
+
+
+def _tandai_kesegaran(makro: Dict[str, Any],
+                      tanggal_data: Optional[str]) -> Dict[str, Any]:
+    """Tandai indikator makro yang lebih lama dari data pasar utama.
+
+    (Review 30 Okt, fix 1 & 7) Tanggal sumber per indikator tidak boleh
+    disamarkan oleh tanggal run. CPO/iron ore yang tertinggal beberapa hari
+    diberi `basi: true`, sehingga UI bisa memberi peringatan eksplisit.
+    """
+    acuan = str(tanggal_data)[:10] if tanggal_data else None
+    item_basi: List[Dict[str, Any]] = []
+    for key in [x["kunci"] for x in MAKRO_YF] + [x["kunci"] for x in PROXY_KOMODITAS]:
+        ind = makro.get(key)
+        if not isinstance(ind, dict):
+            continue
+        tgl = str(ind.get("tanggal_sumber") or "")[:10] or None
+        basi = bool(acuan and tgl and tgl < acuan)
+        ind["basi"] = basi
+        ind["tanggal_data_utama"] = acuan
+        ind["umur_hari_terhadap_data"] = None
+        if acuan and tgl:
+            try:
+                ind["umur_hari_terhadap_data"] = (
+                    datetime.strptime(acuan, "%Y-%m-%d").date()
+                    - datetime.strptime(tgl, "%Y-%m-%d").date()).days
+            except ValueError:
+                pass
+        if basi:
+            item_basi.append({
+                "kunci": key,
+                "label": ind.get("label"),
+                "tanggal_sumber": tgl,
+                "selisih_hari": ind["umur_hari_terhadap_data"],
+            })
+    return {
+        "tanggal_data_utama": acuan,
+        "status": "basi" if item_basi else "segar",
+        "jumlah_basi": len(item_basi),
+        "item_basi": item_basi,
+        "catatan": (
+            "Indikator dengan `basi: true` lebih lama dari tanggal data pasar "
+            "utama. Jangan ditampilkan sebagai kondisi hari ini."
+            if item_basi else
+            "Semua indikator makro yang punya tanggal sumber tidak lebih lama "
+            "dari data pasar utama."
+        ),
+    }
 
 
 # ── 8. ANOMALI PERIODE (untuk backtest) ─────────────────────────────────────
@@ -930,8 +1100,10 @@ def bangun(hist: Optional[Dict[str, Any]] = None,
 
     makro = ambil_makro()
     ihsg_rows = _riwayat("^JKSE")
-    kekuatan = hitung_kekuatan_sektor(hist, sektor_map, ihsg_rows)
+    kekuatan = hitung_kekuatan_sektor(hist, sektor_map, ihsg_rows,
+                                      latest.get("tanggal_data"))
     lengkapi_proxy_komoditas(makro, kekuatan)
+    kesegaran = _tandai_kesegaran(makro, latest.get("tanggal_data"))
     rezim = deteksi_rezim(ihsg_rows, makro)
 
     return {
@@ -939,10 +1111,12 @@ def bangun(hist: Optional[Dict[str, Any]] = None,
         "diperbarui_pada": P.stamp_wib(),
         "diperbarui_pada_teks": P.human_wib(),
         "tanggal_data": latest.get("tanggal_data"),
+        "kesegaran": kesegaran,
         "makro": makro,
         "bi_rate": ambil_bi_rate(),
         "inflasi": ambil_inflasi(),
-        "kalender_bi": ambil_kalender_bi(),
+        "kalender_bi": _kalender_bi_aman(
+            latest.get("tanggal_data")),
         "kekuatan_sektor": kekuatan,
         "aliran_dana": ambil_aliran_dana(),
         "kalender_emiten": ambil_kalender_emiten(),

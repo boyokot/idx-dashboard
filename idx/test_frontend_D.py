@@ -240,10 +240,15 @@ def main():
                          "s.value='kritis';drawAlerts();"
                          "const n=document.querySelectorAll('#alBody tr').length;"
                          "s.value='';drawAlerts();return n;})()")
-        cek("filter 'kritis' == per_severity.kritis",
-            nk == (sv.get("kritis") or 0) or nk == min(sv.get("kritis") or 0,
-                                                       len(a.get("daftar") or [])),
-            (nk, sv.get("kritis"), len(a.get("daftar") or [])))
+        # daftar alert sengaja dipotong per tingkat (mis. kritis maks 80),
+        # jadi jumlah baris = min(per_severity, batas_per_tingkat, daftar).
+        batas_k = (a.get("batas_per_tingkat") or {}).get("kritis")
+        ekspektasi = min(x for x in (sv.get("kritis") or 0,
+                                     len(a.get("daftar") or []),
+                                     batas_k) if x is not None)
+        cek("filter 'kritis' == per_severity.kritis (dibatasi)",
+            nk == ekspektasi,
+            (nk, sv.get("kritis"), len(a.get("daftar") or []), batas_k))
 
         # filter jenis
         njen = eval_js(ws, "(()=>{const s=document.getElementById('alJenis');"

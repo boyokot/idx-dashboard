@@ -59,7 +59,7 @@ untuk `volume`: sumber yang tidak melaporkan volume menghasilkan `null`, bukan 0
 
 ### Kontrak skema
 
-`latest.json` memuat `versi_skema` (saat ini `1.4.0`) dan peta `satuan`.
+`latest.json` memuat `versi_skema` (saat ini `1.6.0`) dan peta `satuan`.
 Naikkan `VERSI_SKEMA` di `pipeline.py` setiap kali nama field atau satuan berubah.
 
 ## Riwayat harga (Kelompok B)
@@ -320,21 +320,121 @@ Sebelumnya ketiganya hanya jadi `print()` di log.
   `fundamental`, `gabungan`), plus `emiten_tanpa_data`. `sumber_utama`
   saja menyembunyikan fakta bahwa sebagian emiten tidak punya data sama
   sekali.
-- `versi_skema` — `1.4.0`
+- `versi_skema` — `1.6.0`
 
 Snapshot harian memuat `tanggal_data`, `versi_skema`, `jumlah_emiten`, dan
 `jumlah_ada_harga` — supaya bisa diperiksa tanpa memuat seluruh array.
+Snapshot juga mencatat `skor_jp`, `cakupan_bobot`, `lolos_gerbang`, dan
+`zona_timing` (label); snapshot JP bulanan J4 disimpan terpisah di
+`data/snapshots_jp/`.
 
 UI menampilkan metadata ini di bawah "Terakhir diperbarui". Warning
 validasi muncul sebagai penanda berwarna dengan isi lengkap di `title` —
 **tidak disembunyikan**, karena dashboard yang menyembunyikan warning
 tampak lebih sehat daripada datanya.
 
+## Skor Investasi Jangka Panjang (J2)
+
+Skor JP **terpisah** dari skor momentum/trading. Field lama (`skor`,
+`skor_detail`, `top10`, `kriteria_top10`) tidak diubah. `versi_skema`
+naik ke `1.6.0`.
+
+Ambang final dikonfirmasi **30 Oktober 2026**: median nilai transaksi
+**60 sesi ≥ Rp1 miliar/hari** dan market cap **≥ Rp200 miliar**.
+
+Alur data:
+
+| File / modul | Isi |
+|---|---|
+| `idx/fundamental_historical.py` (J1) | laporan 3–4 tahun → `data/fundamental.json` |
+| `idx/pasar_jp.py` | harga bulanan 5 tahun + harian 260 sesi, kurs USD/IDR → `data/harga_jp.json`; info yfinance → `data/info_jp.json` |
+| `idx/skor_jp.py` | gerbang, persentil sektor, enam pilar, ranking → field JP di `data/latest.json` + `data/skor_jp_ringkasan.json` |
+| `config/bobot_jp.json` | bobot pilar, bobot metrik, ambang gerbang |
+
+Gerbang: median nilai transaksi **60 sesi ≥ Rp1 miliar** (minimal 20 sesi),
+market cap **≥ Rp200 miliar**, laba positif **3 dari 4 tahun** (atau 2 dari 3
+bila hanya 3 tahun), ekuitas **> 0**, bukan waspada tingkat tinggi, dan
+**cakupan bobot ≥ 70%**. Yang gagal ditandai `data_kurang`/alasan, bukan
+dipaksa masuk peringkat.
+
+Bobot pilar: kualitas profitabilitas 25%, pertumbuhan 20%, kesehatan
+keuangan 20%, valuasi 20%, dividen 10%, risiko/tata kelola 5%. Skor tiap
+metrik adalah **persentil dalam sektor**; sektor dengan <5 emiten memakai
+persentil gabungan dan diberi catatan. Bank/asuransi/lembaga keuangan tidak
+memakai DER/interest coverage — kesehatan memakai ROE dan PBV; NPL/CAR hanya
+dipakai bila tersedia. Valuasi membandingkan PER/PBV dengan median sektor
+**dan** rata-rata 3–5 tahun sendiri. PER rendah akibat laba sekali-jadi
+dibatasi skornya. Payout >200% dianggap tidak wajar.
+
+Timing (`zona_timing`) dan penanda risiko (`penanda_risiko`) hanya informasi;
+keduanya `dipakai_skor: false`. Peta sensitivitas sektor juga tetap
+`dipakai_skor: false`.
+
+Field baru di `latest.json`: `skor_jp`, `peringkat_jp`, `diperingkat`,
+`lolos_gerbang`, `alasan_gagal_gerbang`, `gerbang_detail`, `cakupan_bobot`,
+`data_kurang`, `skor_jp_rincian`, `zona_timing`, `penanda_risiko`,
+`valuasi_historis`, `top20_jp`, dan `skor_jp_meta` (termasuk
+`sumber_data`/tanggal pembaruan tiap file).
+
+### Tampilan J3
+
+Tab **Jangka Panjang** adalah tampilan pertama dan default. Tab lama menjadi
+**Momentum/Trading** dan skor momentum tidak diubah. Di atas tab ada **Top 20
+Investasi Jangka Panjang**; tabel JP punya filter status (diperingkat, punya
+skor, data kurang, tanpa laporan), sektor, batas skor, pencarian, sortir, dan
+unduh CSV. Klik kartu/kode membuka **Kartu Investasi** berisi skor pilar,
+rincian metrik dan persentil, valuasi vs median sektor + rata-rata historis,
+zona timing, serta penanda risiko. Data yang tidak tersedia tetap ditulis
+“data tidak tersedia”, tidak diisi 0. Zona timing dan penanda risiko tidak
+mengubah skor. Tidak ada target harga tunggal di UI maupun detail momentum.
+
+```bash
+python3 -m idx.fundamental_historical   # J1, jaringan
+python3 idx/pasar_jp.py --workers 8     # harga + info, jaringan
+python3 idx/skor_jp.py                  # hitung & tulis latest.json
+python3 idx/test_skor_jp.py             # 40 tes offline
+python3 idx/test_frontend_JP.py         # tes UI J3 (desktop + mobile)
+```
+
+## Akurasi Skor JP (J4)
+
+`idx/akurasi_jp.py` membuat **satu snapshot per bulan data** di
+`data/snapshots_jp/YYYY-MM.json` dan menghitung hasil nyata **3/6/12 bulan**
+di `data/akurasi_jp.json`. Snapshot pertama adalah **2026-10**; snapshot
+bulan yang sama tidak ditimpa agar harga awal tidak bergeser. Run parsial
+tidak membuat snapshot bulanan.
+
+Isi snapshot: kode, sektor, skor/peringkat JP, cakupan, harga close, dan level
+IHSG. Perhitungan memakai **Top 20 peringkat JP pada snapshot awal**,
+dibandingkan dengan IHSG dan rata-rata sektor (minimal 3 emiten per sektor;
+harga yang hilang tidak diisi 0). Horizon hanya muncul setelah snapshot bulan
+target benar-benar ada. Ini **bukan backtest** dan tidak ada klaim akurasi
+sebelum hasilnya terkumpul; biaya transaksi, slippage, dan dividen tidak
+dihitung. UI menampilkan status “belum tersedia” secara eksplisit di tab
+**Akurasi Sinyal** (bagian Akurasi Skor JP).
+
+```bash
+python3 idx/akurasi_jp.py               # snapshot bulan ini + hitung akurasi
+python3 idx/test_akurasi_jp.py          # 21 tes offline
+```
+
+Pipeline harian memanggil `skor_jp.sisipkan()` sebelum validasi. Kalau J2
+gagal, pipeline momentum tetap terbit dan `skor_jp_meta.status` mencatat
+error. `harga_jp.json`/`info_jp.json` perlu diperbarui berkala; umur datanya
+terlihat di `skor_jp_meta.sumber_data`. Keterbatasan yang disengaja: NPL/CAR
+tidak tersedia dari yfinance, rincian mata uang utang tidak tersedia (hanya
+mata uang laporan), dan valuasi historis memakai harga mentah sehingga aksi
+split dapat mendistorsi rasio.
+
 ### Menjalankan tes
 
 ```bash
 cd /root/idx-dashboard
-python3 idx/test_validate.py        # 86 tes — validasi, snapshot, notifikasi
+python3 idx/test_validate.py        # 99 tes — validasi, snapshot, notifikasi
+python3 idx/test_skor_jp.py         # 40 tes — skor JP, gerbang, pilar, ranking
+python3 idx/test_akurasi_jp.py      # 21 tes — snapshot bulanan + akurasi J4
+python3 idx/test_waspada.py         # 25 tes — aturan tinggi + penyempitan 15–20%
+python3 idx/test_frontend_JP.py     # tes UI J3/J4 (desktop + mobile)
 python3 idx/test_frontend_E.py      # 27 tes — metadata UI, desktop + mobile
 ```
 
@@ -351,7 +451,7 @@ apa pun** — pemakaian di skor baru ada di Tahap 4.
 ```bash
 python3 -m idx.external          # tulis data/external.json
 python3 -m idx.external --dry    # cetak tanpa menulis
-python3 idx/test_external.py     # 128 tes
+python3 idx/test_external.py     # 269 tes (termasuk jaringan)
 ```
 
 ### Yang diambil & sumbernya
@@ -380,6 +480,33 @@ Setiap nilai membawa `sumber`, `tanggal_sumber`/`url`, dan `alasan` bila gagal.
   liar tidak menggeser seluruh sektor). Sektor dengan < 3 emiten berdata
   ditandai tidak tersedia, bukan diberi angka dari 1-2 saham.
 - **Tanggal RDG diambil tanggal TERAKHIR rentang** (hari keputusan rate).
+- **`berikutnya` dihitung relatif terhadap `tanggal_data`**, bukan jam run.
+  Kalau sumber BI mereset koneksi, ada retry + fallback salinan sukses
+  terakhir; kegagalan tidak langsung menghapus kalender yang sudah terbaca.
+- **Kesegaran per indikator**: `makro.*.basi` dan
+  `kesegaran.item_basi` menandai CPO/iron ore/S&P yang lebih lama dari data
+  pasar utama. UI memberi tanda ⚠ pada baris tersebut.
+- **Proxy batubara/nikel** menampilkan return relatif sektor vs IHSG sebagai
+  angka utama di kolom 5s/20s; return absolut ada di tooltip, karena tidak
+  ada harga komoditas yang bisa diambil. Bukan tebakan harga.
+
+### Review 30 Okt — perbaikan tampilan
+
+- Guard kesegaran `external.json` dibanding `latest.json` (badge + catatan
+  eksplisit, tidak menyamarkan tanggal run sebagai tanggal data).
+- Kartu “Peta Sensitivitas” yang keliru diganti **“Kekuatan Relatif Sektor
+  vs IHSG”**, memakai tabel rel 20 sesi, median emiten, min. 3 emiten, dan
+  tanggal data. Sektor terkuat/terlemah di `latest.json` memakai definisi
+  yang sama dan angkanya cocok dengan `external.json`.
+- Sumber event risiko: MSCI **dan** trading halt 16 Okt 2026, lengkap dengan
+  tautan sumber/berita. Event tetap penanda, bukan pengurang skor.
+- Pengingat inflasi bulanan dan verifikasi minyak WTI ditampilkan dari
+  payload (bukan hardcode).
+- Rincian 429 waspada tinggi (baseline 29 Okt) + aturan penyempitan
+  15–20% universe: `docs/review_9_waspada_2026-10-29.md`. Aturan **sudah
+  diterapkan 30 Okt 2026**; tinggi hanya ROE/PER negatif atau kombinasi
+  penny/support + volume sangat kecil. Baseline sebelum/sesudah tetap
+  disimpan di payload.
 
 ### Kendala sumber (jujur, bukan asumsi)
 

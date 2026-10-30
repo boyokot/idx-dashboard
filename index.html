@@ -210,6 +210,86 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
 .banner .bm code{font-size:11px}
 .banner ul{margin:6px 0 0;padding-left:18px}
 .banner li{font-size:12px}
+
+/* ---------- J3: Jangka Panjang / Kartu Investasi ---------- */
+#topJPCard{border-color:color-mix(in srgb,var(--accent) 26%,var(--border))}
+.jp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:10px}
+.jp-card{border:1px solid var(--border);border-radius:10px;padding:10px;cursor:pointer;
+  background:var(--card);min-width:0;transition:.15s}
+.jp-card:hover{border-color:var(--accent);box-shadow:var(--shadow);transform:translateY(-1px)}
+.jp-card .jp-top{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.jp-rank{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.03em}
+.jp-score{font-weight:800;font-size:16px;line-height:1;padding:3px 7px;border-radius:7px;
+  background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.jp-score.hi{background:rgba(10,143,74,.13);color:var(--up)}
+.jp-score.lo{background:rgba(107,114,128,.14);color:var(--muted)}
+.jp-name{font-size:11px;color:var(--muted);margin:4px 0 5px;line-height:1.3;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:28px}
+.jp-code{font-weight:800;letter-spacing:.04em}
+.jp-meta{display:flex;justify-content:space-between;gap:6px;font-size:11px;color:var(--muted);
+  min-width:0}
+.jp-zone{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:62%;
+  text-align:right}
+.jp-bars{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin-top:8px}
+.jp-bar{height:5px;background:var(--border);border-radius:4px;overflow:hidden}
+.jp-bar>i{display:block;height:100%;border-radius:4px;background:var(--accent)}
+.jp-bar.hi>i{background:var(--up)}
+.jp-bar.lo>i{background:var(--muted)}
+.jp-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:7px;min-height:16px}
+.jp-tag-risk{font-size:9.5px;padding:1px 5px;border-radius:4px;background:var(--warnbg);
+  color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 30%,transparent)}
+.jp-tag-info{font-size:9.5px;padding:1px 5px;border-radius:4px;background:var(--bg);
+  color:var(--muted);border:1px solid var(--border)}
+.jp-table-title{display:flex;justify-content:space-between;align-items:center;gap:8px;
+  flex-wrap:wrap;margin-bottom:8px}
+.jp-table-title h2{font-size:15px;margin:0}
+#jpTbl{min-width:1180px}
+#jpTbl th,#jpTbl td{padding:7px 8px}
+#jpTbl th:nth-child(1),#jpTbl td:nth-child(1),
+#jpTbl th:nth-child(2),#jpTbl td:nth-child(2){text-align:left}
+#jpTbl td{font-size:12px}
+.jp-mini{font-weight:700;font-size:12px}
+.jp-mini.hi{color:var(--up)}
+.jp-mini.lo{color:var(--muted)}
+.jp-na{color:var(--muted);font-size:11px;white-space:nowrap}
+.jp-status{font-size:10px;padding:1px 6px;border-radius:5px;border:1px solid var(--border);
+  background:var(--bg);color:var(--muted);white-space:nowrap}
+.jp-status.ok{color:var(--up);border-color:color-mix(in srgb,var(--up) 30%,var(--border))}
+.jp-status.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 30%,var(--border))}
+.jp-status.bad{color:var(--down);border-color:color-mix(in srgb,var(--down) 30%,var(--border))}
+.jp-pillar{border:1px solid var(--border);border-radius:9px;padding:9px;margin-bottom:8px}
+.jp-pillar-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline;
+  font-size:13px}
+.jp-pillar-head b{font-size:15px}
+.jp-pillar .note{margin-top:3px}
+.jp-kv{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.jp-kv .stat{display:block;padding:7px 9px;border:1px solid var(--border);border-radius:8px}
+.jp-kv .stat span:first-child{display:block;font-size:10px;text-transform:uppercase;
+  letter-spacing:.03em}
+.jp-kv .stat b{font-size:14px}
+.jp-section-title{font-weight:700;font-size:14px;margin:16px 0 7px}
+.jp-metric-row{display:flex;justify-content:space-between;gap:10px;padding:4px 0;
+  border-bottom:1px solid var(--border);font-size:12px}
+.jp-metric-row .nm2{color:var(--muted);min-width:0}
+.jp-metric-row .ln{font-weight:600;text-align:right;white-space:nowrap}
+.jp-detail-score{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin:6px 0 12px}
+.jp-detail-score .big{font-size:34px;font-weight:800;line-height:1}
+.jp-detail-score .big.hi{color:var(--up)}
+.jp-detail-score .big.lo{color:var(--muted)}
+.jp-disclaimer{font-size:11px;line-height:1.55;margin-top:8px;color:var(--muted)}
+@media(max-width:700px){
+  #topJPList{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px}
+  #topJPList .jp-card{padding:8px!important}
+  #topJPList .jp-score{font-size:14px}
+  #topJPList .jp-name{font-size:10px;min-height:26px}
+  #topJPList .jp-meta{font-size:10px}
+  #topJPList .jp-zone{max-width:58%}
+  #topJPList .jp-bars{gap:2px;margin-top:6px}
+  #topJPList .jp-tag-risk,#topJPList .jp-tag-info{font-size:9px}
+  .jp-kv{grid-template-columns:1fr 1fr;gap:6px}
+  #jpTbl{min-width:1000px}
+  #jpAkurasiTbl{min-width:900px}
+}
 </style>
 </head>
 <body>
@@ -249,11 +329,85 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
     <ul id="rezimPemicu"></ul>
   </div>
 
-  <div class="kpis" id="kpis"></div>
+  <div class="kpis" id="kpisJP"></div>
 
+  <div class="card" id="topJPCard" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px">
+      <div><b style="font-size:15px">Top 20 Investasi Jangka Panjang</b>
+        <span class="tag" style="margin-left:6px">Kartu Investasi</span></div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        <button id="topJPTableLink" style="padding:4px 8px;font-size:12px">Lihat tabel ↓</button>
+        <span class="tag" id="topJPBadge">Skor JP · 0–100</span>
+      </div>
+    </div>
+    <div class="note" id="topJPInfo" style="margin-bottom:10px"></div>
+    <div class="jp-grid" id="topJPList"></div>
+    <div class="jp-disclaimer">Kartu ini adalah ringkasan screening, bukan rekomendasi beli/jual.
+      Tidak ada target harga tunggal. Klik kartu untuk melihat rincian pilar, valuasi, timing, dan penanda risiko.</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="jp">Jangka Panjang</button>
+    <button class="tab" data-tab="screener">Momentum/Trading</button>
+    <button class="tab" data-tab="alert">Alert <span id="alCount"></span></button>
+    <button class="tab" data-tab="watchlist">Watchlist <span id="wlCount"></span></button>
+    <button class="tab" data-tab="insight">Insight</button>
+    <button class="tab" data-tab="akurasi">Akurasi Sinyal</button>
+    <button class="tab" data-tab="risiko">Kalkulator Risiko</button>
+  </div>
+
+  <!-- JANGKA PANJANG (J3): tampilan utama -->
+  <div class="panel active" id="panel-jp">
+    <div class="card">
+      <div class="jp-table-title">
+        <div>
+          <h2>Screening Investasi Jangka Panjang</h2>
+          <div class="note">Skor JP 0–100 dari kualitas profitabilitas, pertumbuhan, kesehatan keuangan,
+            valuasi, dividen, dan risiko/tata kelola. Hanya emiten yang lolos gerbang dan punya cukup data
+            yang diberi peringkat.</div>
+        </div>
+        <span class="tag">J2 · data fundamental</span>
+      </div>
+      <div class="toolbar">
+        <input type="text" id="jpSearch" placeholder="Cari kode / nama emiten…">
+        <select id="jpSektor"><option value="">Semua sektor</option></select>
+        <select id="jpStatus" title="Status gerbang dan ketersediaan data">
+          <option value="ranked">Lolos gerbang &amp; diperingkat</option>
+          <option value="scored">Punya skor JP (termasuk gagal gerbang)</option>
+          <option value="kurang">Data kurang (&lt;70% cakupan)</option>
+          <option value="tanpa">Tanpa laporan (skor tidak tersedia)</option>
+          <option value="all">Semua emiten</option>
+        </select>
+        <select id="jpSkor" title="Batas minimum skor JP">
+          <option value="">Semua skor JP</option>
+          <option value="70">Skor JP ≥ 70</option>
+          <option value="60">Skor JP ≥ 60</option>
+          <option value="50">Skor JP ≥ 50</option>
+        </select>
+        <button id="jpCsv">⬇ CSV JP</button>
+        <button id="jpMethod">ℹ️ Metode</button>
+      </div>
+      <div class="tbl-wrap">
+        <table id="jpTbl">
+          <thead><tr id="jpThead"></tr></thead>
+          <tbody id="jpTbody"></tbody>
+        </table>
+      </div>
+      <div class="tblnote" id="jpTableInfo"></div>
+      <div class="disclaimer">Screening otomatis, bukan rekomendasi beli/jual. Tidak ada target harga tunggal
+        dan tidak ada klaim kepastian. Timing dan penanda risiko hanya informasi, tidak mengurangi Skor JP.
+        Data yang tidak tersedia ditampilkan sebagai “data tidak tersedia”, bukan diisi 0.</div>
+    </div>
+  </div>
+
+  <!-- MOMENTUM / TRADING (tampilan lama, skor terpisah) -->
+  <div class="panel" id="panel-screener">
+    <div class="note" style="margin-bottom:10px">Tampilan momentum/trading. Skor di tab ini
+      <b>terpisah</b> dari Skor Investasi Jangka Panjang; jangan membandingkan angkanya secara langsung.</div>
+    <div class="kpis" id="kpisMomentum"></div>
   <div class="card" id="top10Card" style="display:none">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
-      <b style="font-size:14px">Top 10 Emiten</b>
+      <b style="font-size:14px">Top 10 Momentum/Trading</b>
     </div>
     <div class="note" id="top10Info" style="margin-bottom:10px"></div>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px" id="top10List"></div>
@@ -273,22 +427,24 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
           <th>Nilai</th>
           <th>Satuan</th>
           <th>Chg 1s</th>
-          <th>Chg 5s</th>
-          <th>Chg 20s</th>
+          <th>Chg/Rel 5s</th>
+          <th>Chg/Rel 20s</th>
           <th style="text-align:left">Tanggal Data</th>
         </tr></thead>
         <tbody id="makroBody"></tbody>
       </table>
     </div>
+    <div class="note" id="makroPengingat" style="margin-top:8px"></div>
   </div>
 
-  <!-- PETA SENSITIVITAS 56 SEKTOR -->
+  <!-- KEKUATAN RELATIF SEKTOR 56 SEKTOR (bukan peta sensitivitas skor) -->
   <div class="card" id="sensitivitasCard" style="display:none">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
-      <b style="font-size:14px">Peta Sensitivitas Sektor vs IHSG</b>
+      <b style="font-size:14px">Kekuatan Relatif Sektor vs IHSG</b>
       <span class="tag" id="sensitivitasTanggal"></span>
     </div>
-    <div class="note" id="sensitivitasInfo" style="margin-bottom:10px">Rel = Return sektor − Return IHSG (positif = mengungguli IHSG, bukan artinya naik). Terurutkan: Rel 20s (turun). Min 3 emiten berdata.</div>
+    <div class="note" id="sensitivitasInfo" style="margin-bottom:10px">Rel = Return sektor − Return IHSG (positif = mengungguli IHSG, bukan artinya naik). Terurutkan: Rel 20 sesi vs IHSG, terkuat di atas. Min 3 emiten berdata.</div>
+    <div class="jp-kv" id="sensitivitasRingkas" style="margin-bottom:10px"></div>
     <div class="tbl-wrap" style="max-height:400px;overflow:auto">
       <table id="sensitivitasTbl">
         <thead><tr>
@@ -297,24 +453,14 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
           <th>Ret 5s (%)</th>
           <th>Rel 5s (%)</th>
           <th>Ret 20s (%)</th>
-          <th>Rel 20s (%)</th>
+          <th>Rel 20s vs IHSG (%)</th>
         </tr></thead>
         <tbody id="sensitivitasBody"></tbody>
       </table>
     </div>
   </div>
 
-  <div class="tabs">
-    <button class="tab active" data-tab="screener">Screener</button>
-    <button class="tab" data-tab="alert">Alert <span id="alCount"></span></button>
-    <button class="tab" data-tab="watchlist">Watchlist <span id="wlCount"></span></button>
-    <button class="tab" data-tab="insight">Insight</button>
-    <button class="tab" data-tab="akurasi">Akurasi Sinyal</button>
-    <button class="tab" data-tab="risiko">Kalkulator Risiko</button>
-  </div>
 
-  <!-- SCREENER -->
-  <div class="panel active" id="panel-screener">
     <div class="toolbar">
       <input type="text" id="search" placeholder="Cari kode / nama emiten…">
       <select id="fSektor"><option value="">Semua sektor</option></select>
@@ -348,7 +494,7 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
       </table>
     </div>
     <div class="tblnote" id="tableInfo"></div>
-    <div class="disclaimer">Hasil screening otomatis, bukan rekomendasi beli.</div>
+    <div class="disclaimer">Hasil screening momentum otomatis, bukan rekomendasi beli. Tidak ada target harga tunggal.</div>
   </div>
 
   <!-- INSIGHT -->
@@ -431,7 +577,8 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
       </div>
       <div class="tbl-wrap" style="margin-top:12px">
         <table id="mkTbl"><thead><tr>
-          <th style="text-align:left">Sektor</th><th>Emiten</th><th>Rata-rata Chg%</th>
+          <th style="text-align:left">Sektor</th><th>Emiten</th>
+          <th>Chg 1s</th><th>Chg 5s</th><th>Chg 20s</th><th>Rel 20s vs IHSG</th>
         </tr></thead><tbody id="mkSecBody"></tbody></table>
       </div>
     </div>
@@ -467,7 +614,10 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
           <th style="text-align:left">Contoh</th>
         </tr></thead><tbody id="wsBody"></tbody></table>
       </div>
-      <div class="disclaimer">Waspada tinggi = tidak masuk Top 10. Waspada ringan = catatan saja, tetap boleh masuk Top 10.</div>
+      <div class="note" id="wsHighInfo" style="margin-top:10px"></div>
+      <div class="warnbox" id="wsUsulan" style="display:none"></div>
+      <div class="disclaimer">Waspada tinggi = tidak masuk Top 10. Waspada ringan = catatan saja, tetap boleh masuk Top 10.
+        Sejak 30 Okt 2026, tinggi hanya untuk ROE/PER negatif, penny stock + volume sangat kecil, atau tembus support + volume sangat kecil.</div>
     </div>
 
     <div class="card">
@@ -510,8 +660,36 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
 
   <!-- AKURASI -->
   <div class="panel" id="panel-akurasi">
+    <div class="card" id="jpAkurasiCard">
+      <div class="jp-table-title">
+        <div>
+          <h2>Akurasi Skor JP — 3/6/12 Bulan</h2>
+          <div class="note">Pemantauan hasil nyata dari snapshot bulanan, bukan backtest.
+            Angka baru muncul setelah snapshot bulan target benar-benar tersedia.</div>
+        </div>
+        <span class="tag" id="jpAkurasiTanggal"></span>
+      </div>
+      <div class="note" id="jpAkurasiInfo">Memuat data akurasi JP…</div>
+      <div class="jp-kv" id="jpAkurasiRingkas" style="margin-top:8px"></div>
+      <div class="tbl-wrap" style="margin-top:10px">
+        <table id="jpAkurasiTbl">
+          <thead><tr>
+            <th style="text-align:left">Mulai</th><th>Horizon</th><th>Top 20 berharga</th>
+            <th>Return Top 20</th><th>IHSG</th><th>Rata-rata sektor</th>
+            <th>Excess vs IHSG</th><th>Excess vs sektor</th>
+            <th style="text-align:left">Catatan</th>
+          </tr></thead>
+          <tbody id="jpAkurasiBody"></tbody>
+        </table>
+      </div>
+      <div class="note" id="jpAkurasiCatatan" style="margin-top:8px"></div>
+      <div class="disclaimer">Tidak ada klaim akurasi sebelum horizon benar-benar terlewati.
+        Kinerja masa lalu bukan jaminan hasil masa depan. Ini hanya pemantauan, bukan rekomendasi
+        dan tidak memakai target harga tunggal.</div>
+    </div>
+
     <div class="card">
-      <h2 style="font-size:15px;margin:0 0 8px">Akurasi Sinyal vs IHSG</h2>
+      <h2 style="font-size:15px;margin:0 0 8px">Akurasi Sinyal Momentum vs IHSG</h2>
       <div class="note" id="btInfo">Memuat…</div>
     </div>
     <div class="tbl-wrap">
@@ -570,7 +748,7 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
           <input type="number" id="rkEntry" value="5000" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;margin-bottom:10px">
           <label class="note">Harga cut loss (Rp)</label>
           <input type="number" id="rkCut" value="4700" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;margin-bottom:10px">
-          <label class="note">Target (Rp, opsional)</label>
+          <label class="note">Harga acuan R/R (Rp, opsional)</label>
           <input type="number" id="rkTarget" value="5600" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit">
         </div>
         <div id="rkOut"></div>
@@ -585,33 +763,66 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
   <div class="drawer">
     <button class="close" onclick="document.getElementById('infoModal').classList.remove('show')">✕</button>
     <h2>Penjelasan Skor</h2>
-    <div class="sub" style="margin-bottom:14px">Skor 0–100; makin tinggi makin banyak sinyal positif yang terpenuhi.</div>
+    <div class="sub" style="margin-bottom:14px">Ada dua skor yang terpisah. Tab <b>Jangka Panjang</b> memakai Skor JP;
+      tab <b>Momentum/Trading</b> memakai skor momentum lama. Keduanya bukan rekomendasi beli/jual.</div>
+
     <div class="card" style="box-shadow:none;margin-bottom:10px">
-      <b>Teknikal — 40%</b>
-      <div class="note">Harga &gt; MA20 (15) · Harga &gt; MA50 (15) · MA20 potong ke atas MA50 (10) ·
-      Breakout resistance 20-hari + volume &gt;1,5× rata-rata (20) · RSI(14) 50–70 (20) · MACD golden cross (20)</div>
+      <b>Skor Investasi Jangka Panjang (JP) — 0–100</b>
+      <div class="note" style="margin-top:5px">Fokus pada kualitas bisnis dan valuasi jangka panjang, bukan sinyal trading.
+        Skor hanya dihitung bila emiten lolos gerbang dan data yang tersedia cukup.</div>
+      <div class="note" style="margin-top:8px"><b>Gerbang:</b> median nilai transaksi 60 sesi ≥ Rp1 miliar/hari
+        (minimal 20 sesi), market cap ≥ Rp200 miliar, laba positif 3 dari 4 tahun (atau 2 dari 3 bila hanya 3 tahun),
+        ekuitas positif, tidak berstatus waspada tinggi, dan cakupan bobot data ≥70%.
+        Di bawah 70% ditandai <b>data kurang</b> dan tidak diberi peringkat.</div>
+      <div class="note" style="margin-top:8px"><b>Bobot pilar:</b> kualitas profitabilitas 25% · pertumbuhan 20% ·
+        kesehatan keuangan 20% · valuasi 20% · dividen 10% · risiko/tata kelola 5%.
+        Metrik dinilai dengan persentil sektor. Sektor dengan kurang dari 5 emiten memakai persentil gabungan
+        dan diberi catatan. Bank/asuransi/lembaga keuangan tidak memakai DER dan interest coverage;
+        NPL/CAR hanya dipakai bila datanya tersedia, selain itu “data tidak tersedia”.</div>
+      <div class="note" style="margin-top:8px"><b>Valuasi:</b> PER/PBV dibandingkan dengan median sektor
+        <i>dan</i> rata-rata historis emiten (maksimal 4 tahun, minimal 2 tahun). PER yang sangat rendah karena
+        laba sekali-besar tidak otomatis dianggap murah: persentilnya dibatasi dan payout di atas 200% dianggap
+        tidak wajar. Riwayat valuasi memakai harga mentah, jadi split dapat mendistorsi rasio.</div>
+      <div class="note" style="margin-top:8px"><b>Timing dan penanda risiko adalah informasi, bukan pengurang skor.</b>
+        Zona timing hanya menjelaskan posisi harga terhadap MA200 dan puncak 52 minggu. Penanda risiko
+        (misalnya utang USD, free float rendah, sektor siklikal, ketergantungan komoditas, sensitivitas sektor)
+        tidak mengubah Skor JP. Peta sensitivitas juga tidak dipakai untuk skor.</div>
     </div>
+
     <div class="card" style="box-shadow:none;margin-bottom:10px">
-      <b>Fundamental — 40%</b>
-      <div class="note">Pertumbuhan laba (18) · Pertumbuhan pendapatan (12) · ROE (25) ·
-      DER (15) · PER vs median sektor (15) · PBV vs median sektor (15)</div>
+      <b>Kartu Investasi</b>
+      <div class="note" style="margin-top:5px">Klik kartu Top 20 atau kode emiten di tabel Jangka Panjang untuk membuka
+        Kartu Investasi. Kartu menampilkan skor per pilar, rincian metrik dan persentil, valuasi vs median sektor
+        dan rata-rata historis, zona timing, serta penanda risiko. Data yang tidak tersedia tetap ditulis
+        “data tidak tersedia”; tidak diisi 0 dan tidak ditebak.</div>
     </div>
+
     <div class="card" style="box-shadow:none;margin-bottom:10px">
-      <b>Katalis — 20%</b>
-      <div class="note">Berita ≤14 hari (40) · Aksi korporasi ≤60 hari (30) · Net beli asing/broker (30).
-      Butuh API key Sectors.app — tanpa key, komponen ini tidak dinilai dan bobot dinormalisasi ulang.</div>
+      <b>Skor Momentum/Trading — 0–100 (tampilan lama)</b>
+      <div class="note" style="margin-top:5px">Skor ini tidak diubah oleh J3 dan tetap dipakai untuk tab
+        Momentum/Trading serta Top 10 Momentum/Trading.</div>
+      <div class="note" style="margin-top:6px"><b>Teknikal — 40%</b><br>Harga &gt; MA20 (15) · Harga &gt; MA50 (15) ·
+        MA20 potong ke atas MA50 (10) · Breakout resistance 20-hari + volume &gt;1,5× rata-rata (20) ·
+        RSI(14) 50–70 (20) · MACD golden cross (20)</div>
+      <div class="note" style="margin-top:6px"><b>Fundamental — 40%</b><br>Pertumbuhan laba (18) ·
+        Pertumbuhan pendapatan (12) · ROE (25) · DER (15) · PER vs median sektor (15) · PBV vs median sektor (15)</div>
+      <div class="note" style="margin-top:6px"><b>Katalis — 20%</b><br>Berita ≤14 hari (40) · Aksi korporasi ≤60 hari (30) ·
+        Net beli asing/broker (30). Butuh API key Sectors.app; tanpa key komponen ini tidak dinilai dan bobot
+        dinormalisasi ulang.</div>
+      <div class="note" style="margin-top:8px"><b>Arti label sinyal:</b>
+        <span class="pill p-normal">Normal</span> tidak ada sinyal ekstrem.
+        <span class="pill p-break">Breakout</span> harga menembus resistance 20 hari dengan volume &gt;1,5× rata-rata.
+        <span class="pill p-thin">Breakout (volume tipis)</span> tembus resistance tetapi volume kurang — rawan gagal.
+        <span class="pill p-sup">Tembus Support</span> harga di bawah support 20 hari — sinyal negatif.
+        <span class="pill p-warn">Waspada</span> volume sangat kecil, penny stock, lonjakan tanpa berita,
+        RSI jenuh beli, ROE negatif, atau breakout tanpa volume. Sejak 30 Okt 2026, waspada <b>tinggi</b>
+        hanya untuk ROE/PER negatif, penny stock + volume sangat kecil, atau tembus support + volume sangat kecil;
+        ciri tunggal lainnya menjadi ringan. Waspada tinggi tidak masuk Top 10 Momentum/Trading maupun peringkat JP.</div>
     </div>
-    <div class="card" style="box-shadow:none">
-      <b>Arti label sinyal</b>
-      <div class="note" style="margin-top:6px">
-        <span class="pill p-normal">Normal</span> tidak ada sinyal ekstrem.<br><br>
-        <span class="pill p-break">Breakout</span> harga menembus resistance 20 hari <i>dengan</i> volume &gt;1,5× rata-rata.<br><br>
-        <span class="pill p-thin">Breakout (volume tipis)</span> tembus resistance tapi volume kurang — rawan gagal.<br><br>
-        <span class="pill p-sup">Tembus Support</span> harga di bawah support 20 hari — sinyal negatif.<br><br>
-        <span class="pill p-warn">Waspada</span> volume sangat kecil, penny stock, lonjakan tanpa berita, RSI jenuh beli,
-        ROE negatif, breakout tanpa volume. <b>Emiten waspada tidak pernah masuk Top 10.</b>
-      </div>
-    </div>
+
+    <div class="disclaimer">Tidak ada target harga tunggal dan tidak ada klaim kepastian.
+      Dashboard ini hanya alat screening dan pemantauan; bukan perintah order, bukan rekomendasi beli/jual.
+      Periksa laporan keuangan asli dan risiko Anda sendiri sebelum mengambil keputusan.</div>
   </div>
 </div>
 
@@ -640,6 +851,10 @@ const HISTORY_URL = 'data/history.json';
 /* (Kelompok C) Hasil backtest vs IHSG, dihitung pipeline dari history.json.
    Berisi per_sinyal & per_skor untuk horizon 5/10/20 SESI BURSA. */
 const BACKTEST_URL = 'data/backtest.json';
+/* J4: pemantauan hasil nyata Skor JP dari snapshot bulanan.
+   BUKAN backtest; belum ada hasil sampai 3/6/12 bulan terlewati. */
+const AKURASI_JP_URL = 'data/akurasi_jp.json';
+let AKURASI_JP=null;
 /* (Insight I2) Ringkasan naratif + kalender + edukasi, dihasilkan idx/insight_ringkas.py.
    Ringkasan breadth/rotasi mentah ada di data/insight.json (idx/insight_data.py). */
 const INSIGHT_URL = 'data/insight.json';
@@ -806,6 +1021,7 @@ async function load(){
     return;
   }
   loadBacktest();
+  loadAkurasiJP();
   loadExternal();
 }
 
@@ -984,9 +1200,12 @@ function renderKPI(){
   const secTxt=(s)=>{
     if(!s||!s.sektor) return 'data tidak tersedia';
     const n=sektorSingkat(s.sektor);
-    const p1=s.chg_pct!=null?`${fx(s.chg_pct,2)}% (1 sesi)`:'';
-    const p5=s.chg_5h_pct!=null?`${fx(s.chg_5h_pct,2)}% (5 sesi)`:'';
-    return [n,p1,p5].filter(Boolean).join(' · ');
+    // (Review 30 Okt, fix 3) Angka utama = relatif 20 sesi vs IHSG, sama
+    // dengan definisi sektor terkuat/terlemah di tab Alert.
+    const p20=s.rel_20h_pct!=null?`${s.rel_20h_pct>0?'+':''}${fx(s.rel_20h_pct,2)}% (rel 20s vs IHSG)`:'';
+    const p5=s.chg_5h_pct!=null?`${fx(s.chg_5h_pct,2)}% (chg 5s)`:'';
+    const p1=s.chg_pct!=null?`${fx(s.chg_pct,2)}% (chg 1s)`:'';
+    return [n,p20,p5,p1].filter(Boolean).join(' · ');
   };
   const k=[
     {l:'IHSG',v:ihsg.tersedia?nf(ihsg.nilai,2):'–',s:ihsg.tersedia?(ihsg.chg_pct!=null?('Chg '+fx(ihsg.chg_pct,2)+'% (1 sesi)'):'Chg tidak tersedia'):'data tidak tersedia',t:'Indeks Harga Saham Gabungan'},
@@ -1000,8 +1219,602 @@ function renderKPI(){
     {l:'Sektor terkuat',v:st?(sektorSingkat(st.sektor)||'–'):'–',s:secTxt(st),t:st?String(st.sektor):'data tidak tersedia'},
     {l:'Sektor terlemah',v:sw?(sektorSingkat(sw.sektor)||'–'):'–',s:secTxt(sw),t:sw?String(sw.sektor):'data tidak tersedia'},
   ];
-  $('#kpis').innerHTML = k.map(x=>`<div class="kpi" title="${esc(x.t||'')}"><div class="l">${esc(x.l)}</div><div class="v">${esc(String(x.v))}</div><div class="s">${esc(String(x.s))}</div></div>`).join('');
+  const box=$('#kpisMomentum');
+  if(box) box.innerHTML = k.map(x=>`<div class="kpi" title="${esc(x.t||'')}"><div class="l">${esc(x.l)}</div><div class="v">${esc(String(x.v))}</div><div class="s">${esc(String(x.s))}</div></div>`).join('');
 }
+
+/* ---------- J3: Skor JP, tabel, dan Kartu Investasi ---------- */
+/* Semua nilai di bawah berasal dari field J2 di latest.json. Tidak ada
+   skor atau nilai fundamental yang diisi 0 ketika sumbernya kosong. */
+const JP_PILAR = [
+  {k:'kualitas_profitabilitas', t:'Kualitas'},
+  {k:'pertumbuhan', t:'Pertumbuhan'},
+  {k:'kesehatan_keuangan', t:'Kesehatan'},
+  {k:'valuasi', t:'Valuasi'},
+  {k:'dividen', t:'Dividen'},
+  {k:'risiko_tata_kelola', t:'Risiko'},
+];
+let JP_SORT = {key:'peringkat_jp', dir:1};
+
+function jpPilar(r,k){
+  if(!r) return null;
+  const p = r.skor_jp_rincian && r.skor_jp_rincian[k];
+  if(p && p.skor!=null && !Number.isNaN(Number(p.skor))) return Number(p.skor);
+  if(r.pilar && r.pilar[k]!=null && !Number.isNaN(Number(r.pilar[k]))) return Number(r.pilar[k]);
+  return null;
+}
+function jpCakupanPilar(r,k){
+  if(!r) return null;
+  const p = r.skor_jp_rincian && r.skor_jp_rincian[k];
+  if(p && p.cakupan!=null) return Number(p.cakupan);
+  return null;
+}
+function jpZona(r){
+  if(!r || !r.zona_timing) return null;
+  if(typeof r.zona_timing==='string') return r.zona_timing;
+  return r.zona_timing.zona||null;
+}
+function jpZonaDetail(r){
+  if(!r || !r.zona_timing || typeof r.zona_timing!=='object') return null;
+  return r.zona_timing;
+}
+function jpDivYield(r){
+  if(!r) return null;
+  const p = r.skor_jp_rincian && r.skor_jp_rincian.dividen;
+  const m = p && (p.metrik||[]).find(x=>x.kunci==='dividend_yield_ttm');
+  if(m && m.tersedia!==false && m.nilai!=null) return Number(m.nilai);
+  if(r.dividend_yield!=null) return Number(r.dividend_yield);
+  return null;
+}
+function jpStatus(r){
+  if(!r) return '';
+  if(r.skor_jp==null) return 'Tanpa laporan';
+  if(r.data_kurang) return 'Data kurang';
+  if(r.lolos_gerbang) return 'Diperingkat';
+  return 'Gagal gerbang';
+}
+function jpStatusClass(s){
+  if(s==='Diperingkat') return 'ok';
+  if(s==='Data kurang') return 'warn';
+  if(s==='Gagal gerbang') return 'bad';
+  return '';
+}
+function jpAlasan(r){
+  if(!r) return '';
+  return (r.alasan_gagal_gerbang||[]).join(' · ');
+}
+function jpNa(teks){
+  return '<span class="jp-na" title="data tidak tersedia">'+(teks||'data tidak tersedia')+'</span>';
+}
+function jpScoreCell(v){
+  if(v==null||Number.isNaN(Number(v))) return jpNa();
+  const n=Number(v);
+  const cls = n>=70?'sk-hi':(n>=50?'sk-md':'sk-lo');
+  return `<span class="skor ${cls}">${fx(n,1)}</span>`;
+}
+function jpMini(v){
+  if(v==null||Number.isNaN(Number(v))) return jpNa();
+  const n=Number(v);
+  return `<span class="jp-mini ${n>=70?'hi':(n<50?'lo':'')}">${fx(n,1)}</span>`;
+}
+function jpPct(v,d=1){
+  if(v==null||Number.isNaN(Number(v))) return jpNa();
+  return fx(Number(v)*100,d)+'%';
+}
+function jpPctRaw(v,d=1){
+  if(v==null||Number.isNaN(Number(v))) return jpNa();
+  return fx(Number(v),d)+'%';
+}
+function jpRatio(v,d=2){
+  if(v==null||Number.isNaN(Number(v))) return jpNa();
+  return fx(Number(v),d)+'×';
+}
+function jpSignedPct(v,d=2){
+  if(v==null||Number.isNaN(Number(v))) return jpNa();
+  const n=Number(v);
+  const cls=n>0?'up':(n<0?'down':'');
+  return `<span class="${cls}">${n>0?'+':''}${fx(n,d)}%</span>`;
+}
+function jpRiskTags(r){
+  const risk=(r&&r.penanda_risiko)||{};
+  const out=[];
+  if(risk.free_float_rendah===true) out.push('float rendah');
+  if(risk.sektor_siklikal===true) out.push('siklikal');
+  if(risk.ketergantungan_komoditas===true) out.push('komoditas');
+  if(risk.utang_usd_tinggi===true) out.push('utang USD');
+  return out.slice(0,3);
+}
+function jpRaw(r,k){
+  if(!r) return null;
+  if(k.indexOf('p_')===0) return jpPilar(r,k.slice(2));
+  if(k==='div_yield') return jpDivYield(r);
+  if(k==='zona') return jpZona(r)||'';
+  if(k==='status') return jpStatus(r);
+  return r[k];
+}
+function jpRingkas(r){
+  const pilar={};
+  JP_PILAR.forEach(p=>{ pilar[p.k]=jpPilar(r,p.k); });
+  return {
+    peringkat:r.peringkat_jp,
+    kode:r.kode,
+    nama:r.nama,
+    sektor:r.sektor,
+    skor_jp:r.skor_jp,
+    cakupan_bobot:r.cakupan_bobot,
+    harga:r.harga,
+    per:r.per,
+    pbv:r.pbv,
+    roe:r.roe,
+    dividend_yield:jpDivYield(r),
+    nilai_transaksi_median:(r.gerbang_detail&&r.gerbang_detail.likuiditas)?r.gerbang_detail.likuiditas.nilai:null,
+    market_cap:(r.gerbang_detail&&r.gerbang_detail.kapitalisasi)?r.gerbang_detail.kapitalisasi.nilai:null,
+    zona_timing:jpZona(r),
+    pilar:pilar,
+    penanda_risiko:r.penanda_risiko||null,
+  };
+}
+
+/* ---------- KPI Jangka Panjang ---------- */
+function renderKPIJP(){
+  const box=$('#kpisJP'); if(!box) return;
+  const e=DATA.emiten||[];
+  const meta=DATA.skor_jp_meta||{};
+  const jm=meta.jumlah||{};
+  const scored=e.filter(r=>r.skor_jp!=null);
+  const ranked=e.filter(r=>r.diperingkat===true);
+  const kurang=e.filter(r=>r.data_kurang && r.skor_jp!=null);
+  const nofund=e.filter(r=>r.skor_jp==null);
+  const high=e.filter(r=>r.waspada_tingkat==='tinggi');
+  const top=ranked.length?ranked.reduce((a,b)=>(b.skor_jp!=null&&(a.skor_jp==null||b.skor_jp>a.skor_jp))?b:a,ranked[0]):null;
+  const dist=meta.distribusi_skor||{};
+  const mp=DATA.ringkasan_pasar||{};
+  const ihsg=mp.ihsg||{};
+  const ihsgTxt=ihsg.tersedia?(nf(ihsg.nilai,2)||'data tidak tersedia'):'data tidak tersedia';
+  const ihsgSub=ihsg.tersedia&&ihsg.chg_pct!=null?('Chg '+fx(ihsg.chg_pct,2)+'% (1 sesi)'):'data tidak tersedia';
+  const items=[
+    {l:'IHSG',v:ihsgTxt,s:ihsgSub,t:'Indeks Harga Saham Gabungan; konteks pasar, bukan skor JP.'},
+    {l:'Emiten JP',v:nf(scored.length,0)||'data tidak tersedia',
+      s:(nf(ranked.length,0)||'0')+' diperingkat · '+(nf(nofund.length,0)||'0')+' tanpa laporan',
+      t:'Jumlah emiten dengan Skor JP. Tanpa laporan keuangan tetap "data tidak tersedia", bukan 0.'},
+    {l:'Skor JP tertinggi',v:top?fx(top.skor_jp,1):'data tidak tersedia',
+      s:top?(esc(top.kode)+' · median '+(dist.median!=null?fx(dist.median,1):'data tidak tersedia')):'belum ada peringkat',
+      t:'Skor JP tertinggi di antara emiten yang lolos gerbang dan diperingkat. Bukan rekomendasi.'},
+    {l:'Lolos gerbang',v:nf(ranked.length,0)||'data tidak tersedia',
+      s:'dari '+(nf(scored.length,0)||'0')+' emiten berdata',
+      t:'Lolos likuiditas, market cap, laba, ekuitas, waspada, dan cakupan ≥70%.'},
+    {l:'Data kurang',v:nf(kurang.length,0)||'data tidak tersedia',
+      s:'cakupan <70%; tidak diperingkat',
+      t:'Punya sebagian laporan tetapi cakupan bobot di bawah 70%; tidak dipaksa diberi skor.'},
+    {l:'Tanpa laporan',v:nf(nofund.length,0)||'data tidak tersedia',
+      s:'Skor JP = data tidak tersedia',
+      t:'Tidak ada laporan fundamental yang bisa dipakai; skor tidak diisi 0.'},
+    {l:'Waspada tinggi',v:nf(high.length,0)||'data tidak tersedia',
+      s:'tidak masuk peringkat JP',
+      t:'Waspada tinggi mendiskualifikasi dari peringkat JP dan Top 20.'},
+  ];
+  box.innerHTML=items.map(x=>`<div class="kpi" title="${esc(x.t||'')}"><div class="l">${esc(x.l)}</div><div class="v">${esc(String(x.v))}</div><div class="s">${esc(String(x.s))}</div></div>`).join('');
+}
+
+/* ---------- Top 20 / Kartu Investasi ringkas ---------- */
+function renderTopJP(){
+  const card=$('#topJPCard'); if(!card) return;
+  const e=DATA.emiten||[];
+  let list=(Array.isArray(DATA.top20_jp)&&DATA.top20_jp.length)?DATA.top20_jp.slice(0,20):[];
+  if(!list.length){
+    list=e.filter(r=>r.diperingkat===true)
+      .sort((a,b)=>(a.peringkat_jp==null?1e9:a.peringkat_jp)-(b.peringkat_jp==null?1e9:b.peringkat_jp))
+      .slice(0,20).map(jpRingkas);
+  }
+  card.style.display='block';
+  const ranked=e.filter(r=>r.diperingkat===true).length;
+  const scored=e.filter(r=>r.skor_jp!=null).length;
+  const info=$('#topJPInfo');
+  if(info){
+    info.innerHTML=`Data <b>${esc(DATA.tanggal_data||DATA.diperbarui_pada_teks||'–')}</b> ·
+      <b>${nf(ranked,0)||'0'}</b> diperingkat dari <b>${nf(scored,0)||'0'}</b> emiten berdata ·
+      skor 0–100 · klik kartu untuk Kartu Investasi.`;
+  }
+  const badge=$('#topJPBadge');
+  if(badge) badge.textContent='Skor JP · '+(nf(ranked,0)||'0')+' diperingkat';
+  if(!list.length){
+    $('#topJPList').innerHTML='<div class="note">Skor JP belum tersedia pada data ini. Jalankan pipeline J2 lalu muat ulang.</div>';
+    return;
+  }
+  $('#topJPList').innerHTML=list.map(r=>{
+    const rank=r.peringkat!=null?r.peringkat:r.peringkat_jp;
+    const score=r.skor_jp;
+    const zona=jpZona(r)||'data tidak tersedia';
+    const cov=r.cakupan_bobot;
+    const tags=jpRiskTags(r);
+    const bars=JP_PILAR.map(p=>{
+      const v=jpPilar(r,p.k);
+      const cls=v==null?'':(v>=70?'hi':(v<50?'lo':''));
+      const w=v==null?0:Math.max(0,Math.min(100,v));
+      return `<span class="jp-bar ${cls}" title="${esc(p.t)}: ${v==null?'data tidak tersedia':fx(v,1)}"><i style="width:${w}%"></i></span>`;
+    }).join('');
+    const tagHtml=tags.length
+      ? tags.map(t=>`<span class="jp-tag-risk" title="Penanda risiko; tidak dipakai mengurangi skor">${esc(t)}</span>`).join('')
+      : '<span class="jp-tag-info">risiko: lihat kartu</span>';
+    return `<div class="jp-card" data-jp="${esc(r.kode)}" title="${esc(r.sektor||'')} · ${esc(zona)}">
+      <div class="jp-top">
+        <span class="jp-rank">#${rank!=null?esc(String(rank)):'—'} <span class="jp-code">${esc(r.kode)}</span></span>
+        <span class="jp-score ${score>=70?'hi':(score!=null&&score<50?'lo':'')}">${score!=null?fx(score,1):'n/a'}</span>
+      </div>
+      <div class="jp-name">${esc(r.nama||'')}</div>
+      <div class="jp-meta"><span>${r.harga!=null?'Rp'+nf(r.harga,0):jpNa()}</span>
+        <span class="jp-zone" title="${esc(zona)}">${esc(zona)}</span></div>
+      <div class="jp-bars" title="Enam pilar Skor JP; panjang batang = skor pilar 0–100">${bars}</div>
+      <div class="jp-tags">
+        <span class="jp-tag-info" title="Cakupan bobot data fundamental">cakupan ${cov!=null?fx(cov,1)+'%':'data tidak tersedia'}</span>
+        ${tagHtml}
+      </div>
+    </div>`;
+  }).join('');
+  $$('#topJPList [data-jp]').forEach(d=>d.onclick=()=>bukaDetailJP(d.dataset.jp));
+}
+
+/* ---------- Tabel JP dan filter ---------- */
+const JP_COLS=[
+  {k:'peringkat_jp',t:'#',f:r=>r.peringkat_jp!=null?`<b>${r.peringkat_jp}</b>`:'<span class="na">—</span>'},
+  {k:'kode',t:'Kode',f:r=>`<span class="kode" data-jp="${esc(r.kode)}" title="Buka Kartu Investasi" style="cursor:pointer">${esc(r.kode)}</span>`},
+  {k:'nama',t:'Nama',f:r=>`<span class="nm" title="${esc(r.nama||'')}">${esc(r.nama||'')}</span>`},
+  {k:'skor_jp',t:'Skor JP',f:r=>jpScoreCell(r.skor_jp)},
+  {k:'p_kualitas_profitabilitas',t:'Kualitas',f:r=>jpMini(jpPilar(r,'kualitas_profitabilitas'))},
+  {k:'p_pertumbuhan',t:'Tumbuh',f:r=>jpMini(jpPilar(r,'pertumbuhan'))},
+  {k:'p_kesehatan_keuangan',t:'Kesehatan',f:r=>jpMini(jpPilar(r,'kesehatan_keuangan'))},
+  {k:'p_valuasi',t:'Valuasi',f:r=>jpMini(jpPilar(r,'valuasi'))},
+  {k:'p_dividen',t:'Dividen',f:r=>jpMini(jpPilar(r,'dividen'))},
+  {k:'p_risiko_tata_kelola',t:'Risiko',f:r=>jpMini(jpPilar(r,'risiko_tata_kelola'))},
+  {k:'cakupan_bobot',t:'Cakupan',f:r=>{
+      if(r.cakupan_bobot==null) return jpNa();
+      const v=Number(r.cakupan_bobot);
+      return `<span class="${v>=70?'':'na'}">${fx(v,1)}%</span>`;
+    }},
+  {k:'per',t:'PER',f:r=>jpRatio(r.per,1)},
+  {k:'pbv',t:'PBV',f:r=>jpRatio(r.pbv,2)},
+  {k:'roe',t:'ROE',f:r=>jpPct(r.roe,1)},
+  {k:'div_yield',t:'Div yield',f:r=>jpPct(jpDivYield(r),1)},
+  {k:'zona',t:'Zona timing',f:r=>{
+      const z=jpZona(r);
+      if(!z) return jpNa();
+      return `<span class="jp-status" title="${esc(z)} (informasi; tidak dipakai skor)">${esc(z)}</span>`;
+    }},
+  {k:'status',t:'Status',f:r=>{
+      const s=jpStatus(r);
+      const al=jpAlasan(r);
+      return `<span class="jp-status ${jpStatusClass(s)}" title="${esc(al||s)}">${esc(s)}</span>`;
+    }},
+];
+
+function jpRowsTampil(){
+  const e=DATA.emiten||[];
+  const statusSel=$('#jpStatus'); const sektorSel=$('#jpSektor');
+  const status=statusSel?statusSel.value:'ranked';
+  const sektor=sektorSel?sektorSel.value:'';
+  const q=(($('#jpSearch')&&$('#jpSearch').value)||'').trim().toUpperCase();
+  const minRaw=$('#jpSkor')?$('#jpSkor').value:'';
+  const min=minRaw===''?null:Number(minRaw);
+  let rows=e.filter(r=>{
+    if(status==='ranked' && r.diperingkat!==true) return false;
+    if(status==='scored' && r.skor_jp==null) return false;
+    if(status==='kurang' && !(r.skor_jp!=null && r.data_kurang)) return false;
+    if(status==='tanpa' && r.skor_jp!=null) return false;
+    if(sektor && r.sektor!==sektor) return false;
+    if(min!=null && (r.skor_jp==null || r.skor_jp<min)) return false;
+    if(q && !((r.kode||'').toUpperCase().includes(q) || (r.nama||'').toUpperCase().includes(q))) return false;
+    return true;
+  });
+  const key=JP_SORT.key, dir=JP_SORT.dir;
+  rows.sort((a,b)=>{
+    if(key==='peringkat_jp'){
+      const ra=a.peringkat_jp==null?1e9:a.peringkat_jp;
+      const rb=b.peringkat_jp==null?1e9:b.peringkat_jp;
+      if(ra!==rb) return (ra-rb)*dir;
+    }
+    const av=jpRaw(a,key), bv=jpRaw(b,key);
+    if(av==null&&bv==null){
+      if(key==='peringkat_jp') return ((b.skor_jp==null?-1:b.skor_jp)-(a.skor_jp==null?-1:a.skor_jp));
+      return 0;
+    }
+    if(av==null) return 1;
+    if(bv==null) return -1;
+    if(typeof av==='number'&&typeof bv==='number') return (av-bv)*dir;
+    return String(av).localeCompare(String(bv))*dir;
+  });
+  return rows;
+}
+
+function renderJPFilters(){
+  const sel=$('#jpSektor'); if(!sel) return;
+  const cur=sel.value;
+  const sek=new Set((DATA.emiten||[]).map(r=>r.sektor).filter(Boolean));
+  sel.innerHTML='<option value="">Semua sektor</option>'+
+    [...sek].sort().map(s=>`<option value="${esc(s)}" ${s===cur?'selected':''}>${esc(s)}</option>`).join('');
+}
+
+function renderJPTable(){
+  const body=$('#jpTbody'); if(!body) return;
+  const rows=jpRowsTampil();
+  const cols=JP_COLS;
+  const head=$('#jpThead');
+  if(head){
+    head.innerHTML=cols.map(c=>{
+      const srt=JP_SORT.key===c.k;
+      return `<th class="${srt?'sorted':''}" data-jpsort="${c.k}">${esc(c.t)}${srt?`<span class="arw">${JP_SORT.dir<0?'▼':'▲'}</span>`:''}</th>`;
+    }).join('');
+    $$('#jpThead th[data-jpsort]').forEach(th=>th.onclick=()=>{
+      const k=th.dataset.jpsort;
+      if(JP_SORT.key===k){ JP_SORT.dir*=-1; }
+      else {
+        const asc=(k==='peringkat_jp'||k==='kode'||k==='nama'||k==='status'||k==='zona'||k==='per'||k==='pbv');
+        JP_SORT={key:k,dir:asc?1:-1};
+      }
+      renderJPTable();
+    });
+  }
+  if(!rows.length){
+    body.innerHTML=`<tr><td colspan="${cols.length}" class="empty">Tidak ada emiten yang cocok dengan filter.</td></tr>`;
+  } else {
+    body.innerHTML=rows.map(r=>{
+      const tds=cols.map(c=>{
+        const sticky=c.k==='kode'?'stick':'';
+        return `<td class="${sticky}">${c.f(r)}</td>`;
+      }).join('');
+      return `<tr>${tds}</tr>`;
+    }).join('');
+    $$('#jpTbody [data-jp]').forEach(el=>el.onclick=()=>bukaDetailJP(el.dataset.jp));
+  }
+  const total=(DATA.emiten||[]).length;
+  const info=$('#jpTableInfo');
+  if(info){
+    const ranked=rows.filter(r=>r.diperingkat===true).length;
+    const kurang=rows.filter(r=>r.data_kurang&&r.skor_jp!=null).length;
+    info.innerHTML=`Menampilkan <b>${rows.length}</b> dari ${total} emiten`
+      +(ranked?` · ${ranked} lolos gerbang`:'')
+      +(kurang?` · ${kurang} data kurang`:'')
+      +` · klik kode untuk Kartu Investasi. Skor JP tidak dihitung untuk emiten tanpa laporan.`;
+  }
+}
+
+function unduhCSVJP(){
+  const rows=jpRowsTampil();
+  const cols=JP_COLS;
+  const head=cols.map(c=>c.t);
+  const val=(r,k)=>{
+    let v=jpRaw(r,k);
+    if(v==null) return '';
+    if(typeof v==='number'&&!Number.isNaN(v)) return String(v).replace('.',',');
+    return String(v);
+  };
+  const lines=[head.join(';')];
+  rows.forEach(r=>lines.push(cols.map(c=>val(r,c.k)).join(';')));
+  const blob=new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='skor_jp_'+(DATA.tanggal_data||'terbaru')+'.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+/* ---------- Penjelasan skor JP ---------- */
+function jpMetricValue(m){
+  if(!m || m.tersedia===false || m.nilai==null) return 'data tidak tersedia';
+  const k=String(m.kunci||'');
+  const n=Number(m.nilai);
+  if(Number.isNaN(n)) return 'data tidak tersedia';
+  if(k==='payout_ratio_sehat'||k==='cakupan_data'||k==='waspada'||k==='likuiditas') return fx(n,1)+'%';
+  if(/^(roe|margin|cagr|dividend_yield|konsistensi)/.test(k)) return fx(n*100,2)+'%';
+  if(/(^der|^interest_coverage|_vs_|ocf_laba|^per$|^pbv$)/.test(k)) return fx(n,2)+'×';
+  return fx(n,2);
+}
+function jpMetricDetails(r){
+  const out=[];
+  JP_PILAR.forEach(p=>{
+    const d=r.skor_jp_rincian&&r.skor_jp_rincian[p.k];
+    (d&&d.metrik||[]).forEach(m=>out.push({pilar:p.t,m}));
+  });
+  return out;
+}
+function jpKenapa(r){
+  const out=[];
+  if(r.skor_jp==null){
+    out.push('Skor JP tidak dihitung. '+(jpAlasan(r)||'Data fundamental tidak cukup untuk memberi skor.'));
+    out.push('Skor tidak diisi 0 dan tidak ditebak; nilai yang tidak tersedia tetap “data tidak tersedia”.');
+    return out;
+  }
+  const ranked=JP_PILAR.map(p=>({t:p.t,k:p.k,s:jpPilar(r,p.k),w:(r.skor_jp_rincian&&r.skor_jp_rincian[p.k]&&r.skor_jp_rincian[p.k].bobot)||null}))
+    .filter(x=>x.s!=null);
+  if(ranked.length){
+    const kuat=ranked.slice().sort((a,b)=>b.s-a.s)[0];
+    const lemah=ranked.slice().sort((a,b)=>a.s-b.s)[0];
+    out.push(`Skor JP <b>${fx(r.skor_jp,1)}/100</b> dari ${ranked.length} pilar yang punya data. Pilar terkuat: <b>${esc(kuat.t)}</b> (${fx(kuat.s,1)}); terlemah: <b>${esc(lemah.t)}</b> (${fx(lemah.s,1)}).`);
+  }
+  const met=jpMetricDetails(r).filter(x=>x.m.tersedia!==false&&x.m.persentil!=null);
+  if(met.length){
+    const best=met.slice().sort((a,b)=>b.m.persentil-a.m.persentil)[0];
+    const worst=met.slice().sort((a,b)=>a.m.persentil-b.m.persentil)[0];
+    out.push(`Metrik dengan persentil tertinggi: <b>${esc(best.m.label||best.m.kunci)}</b> (${fx(best.m.persentil,1)}, ${esc(best.pilar)}).`);
+    out.push(`Metrik dengan persentil terendah: <b>${esc(worst.m.label||worst.m.kunci)}</b> (${fx(worst.m.persentil,1)}, ${esc(worst.pilar)}).`);
+  }
+  const bolong=jpMetricDetails(r).filter(x=>x.m.tersedia===false||x.m.nilai==null);
+  if(bolong.length){
+    out.push(`Ada <b>${bolong.length}</b> metrik yang datanya tidak tersedia; metrik itu tidak diberi nilai 0 dan tidak diikutkan dalam perhitungan pilar.`);
+  }
+  const al=jpAlasan(r);
+  if(r.lolos_gerbang){
+    out.push('Emiten lolos semua gerbang: likuiditas, market cap, laba, ekuitas, waspada, dan cakupan data ≥70%.');
+  }else{
+    out.push('Emiten tidak lolos gerbang'+(al?': '+esc(al):'.')+' Karena itu skor tidak diberi peringkat Top 20.');
+  }
+  if(r.data_kurang) out.push('Cakupan bobot data di bawah 70%; skor ini tidak sebanding dengan emiten berdata lengkap.');
+  out.push('Zona timing dan penanda risiko hanya informasi; keduanya tidak dipakai untuk menambah atau mengurangi Skor JP.');
+  return out;
+}
+function jpHistHtml(vh){
+  if(!vh||vh.status!=='ok'||!Array.isArray(vh.tahun)||!vh.tahun.length){
+    return '<div class="note">data tidak tersedia — riwayat valuasi butuh minimal 2 tahun dengan data harga dan laba.</div>';
+  }
+  const rows=vh.tahun.map(t=>`<tr>
+    <td>${t.tahun!=null?esc(String(t.tahun)):'data tidak tersedia'}</td>
+    <td>${t.target_harga?esc(t.target_harga):'data tidak tersedia'}</td>
+    <td>${t.harga!=null?nf(t.harga,0):'<span class="jp-na">data tidak tersedia</span>'}</td>
+    <td>${t.eps_idr!=null?nf(t.eps_idr,2):'<span class="jp-na">data tidak tersedia</span>'}</td>
+    <td>${t.per!=null?fx(t.per,2)+'×':'<span class="jp-na">data tidak tersedia</span>'}</td>
+    <td>${t.pbv!=null?fx(t.pbv,2)+'×':'<span class="jp-na">data tidak tersedia</span>'}</td>
+  </tr>`).join('');
+  const avg=`${vh.per_rata2!=null?'PER rata-rata '+fx(vh.per_rata2,2)+'×':'PER rata-rata data tidak tersedia'}
+    · ${vh.pbv_rata2!=null?'PBV rata-rata '+fx(vh.pbv_rata2,2)+'×':'PBV rata-rata data tidak tersedia'}`;
+  return `<div class="note" style="margin-bottom:6px">${avg} · n=${vh.n_per!=null?vh.n_per:0}/${vh.n_pbv!=null?vh.n_pbv:0} tahun.
+    Harga historis memakai harga mentah; split dapat mendistorsi rasio.</div>
+    <div class="tbl-wrap"><table><thead><tr><th>Tahun</th><th>Tanggal harga</th><th>Harga</th>
+      <th>EPS (Rp)</th><th>PER</th><th>PBV</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function jpRiskHtml(r){
+  const risk=r.penanda_risiko||{};
+  const val=(v)=>{
+    if(v===true) return 'ya';
+    if(v===false) return 'tidak';
+    return 'data tidak tersedia';
+  };
+  const faktor=risk.sensitivitas_sektor&&risk.sensitivitas_sektor.faktor;
+  const label={usd_idr_naik:'USD/IDR naik',bi_rate_naik:'BI rate naik',inflasi_naik:'inflasi naik',
+    minyak_naik:'minyak naik',cpo_naik:'CPO naik',emas_naik:'emas naik',iron_ore_naik:'iron ore naik',
+    risk_off_asing:'risk-off asing',ihsg_beta:'beta IHSG'};
+  const aktif=faktor?Object.entries(faktor).filter(([,v])=>v!==0&&v!=null):[];
+  const sens=aktif.length
+    ? aktif.map(([k,v])=>`${esc(label[k]||k)} ${v>0?'+':''}${esc(String(v))}`).join(' · ')
+    : 'data tidak tersedia';
+  return `<div class="jp-kv">
+    <div class="stat"><span>Utang USD tinggi</span><b>${val(risk.utang_usd_tinggi)}</b></div>
+    <div class="stat"><span>Free float rendah</span><b>${val(risk.free_float_rendah)}</b>${risk.free_float_pct!=null?`<div class="note">${fx(risk.free_float_pct,1)}%</div>`:''}</div>
+    <div class="stat"><span>Sektor siklikal</span><b>${val(risk.sektor_siklikal)}</b></div>
+    <div class="stat"><span>Ketergantungan komoditas</span><b>${val(risk.ketergantungan_komoditas)}</b></div>
+  </div>
+  <div class="note" style="margin-top:7px"><b>${esc(sens)}</b> · ${esc((risk.sensitivitas_sektor&&risk.sensitivitas_sektor.alasan)||'alasan sensitivitas tidak tersedia')}</div>
+  <div class="note">Penanda risiko dan sensitivitas sektor bersifat informasi; <code>dipakai_skor:false</code>. Tidak mengurangi Skor JP.</div>`;
+}
+
+function bukaDetailJP(kode){
+  const r=cari(kode); if(!r) return;
+  const score=r.skor_jp;
+  const rank=r.peringkat_jp;
+  const cov=r.cakupan_bobot;
+  const z=jpZonaDetail(r);
+  const vh=r.valuasi_historis||{};
+  const status=jpStatus(r);
+  const al=jpAlasan(r);
+  const pilarHtml=JP_PILAR.map(p=>{
+    const d=(r.skor_jp_rincian&&r.skor_jp_rincian[p.k])||{};
+    const s=d.skor!=null?Number(d.skor):jpPilar(r,p.k);
+    const w=d.bobot!=null?Number(d.bobot):((DATA.skor_jp_meta&&DATA.skor_jp_meta.bobot_pilar&&DATA.skor_jp_meta.bobot_pilar[p.k])||null);
+    const covP=d.cakupan;
+    const metric=(d.metrik||[]).map(m=>{
+      const val=jpMetricValue(m);
+      const pers=m.persentil!=null?`persentil ${fx(m.persentil,1)}`:'persentil data tidak tersedia';
+      const basis=m.persentil_gabungan?' · gabungan sektor kecil':'';
+      const note=m.tersedia===false&&m.alasan?` · ${esc(m.alasan)}`:(m.catatan?` · ${esc(m.catatan)}`:'');
+      return `<div class="jp-metric-row">
+        <span class="nm2">${esc(m.label||m.kunci||'')}<br><span class="note">${esc(pers)}${esc(basis)} · bobot ${m.bobot!=null?fx(m.bobot*100,0)+'%':'data tidak tersedia'}${note}</span></span>
+        <span class="ln">${esc(val)}</span></div>`;
+    }).join('');
+    return `<div class="jp-pillar">
+      <div class="jp-pillar-head"><span>${esc(p.t)} <span class="tag">bobot ${w!=null?fx(w*100,0)+'%':'data tidak tersedia'}</span></span>
+        <b>${s!=null?fx(s,1):'data tidak tersedia'}</b></div>
+      ${s!=null?`<div class="bar"><i style="width:${Math.max(0,Math.min(100,s))}%;background:${s>=70?'var(--up)':(s>=50?'var(--accent)':'var(--muted)')}"></i></div>`:''}
+      <div class="note">cakupan ${covP!=null?fx(covP,1)+'%':'data tidak tersedia'}</div>
+      ${metric?`<details><summary>Rincian metrik</summary>${metric}</details>`:'<div class="note">Rincian metrik data tidak tersedia.</div>'}
+    </div>`;
+  }).join('');
+
+  const medPer=(DATA.median_per_sektor&&DATA.median_per_sektor[r.sektor]!=null)?DATA.median_per_sektor[r.sektor]:null;
+  const medPbv=(DATA.median_pbv_sektor&&DATA.median_pbv_sektor[r.sektor]!=null)?DATA.median_pbv_sektor[r.sektor]:null;
+  const zHtml=z?`<div class="jp-kv">
+      <div class="stat"><span>Zona</span><b>${esc(z.zona||'data tidak tersedia')}</b></div>
+      <div class="stat"><span>Harga vs MA200</span><b>${jpSignedPct(z.harga_vs_ma200_pct)}</b></div>
+      <div class="stat"><span>MA200</span><b>${z.ma200!=null?'Rp'+nf(z.ma200,0):'data tidak tersedia'}</b></div>
+      <div class="stat"><span>Jarak dari puncak 52m</span><b>${jpSignedPct(z.jarak_puncak_pct)}</b></div>
+    </div>
+    <div class="note">${esc((z.catatan||[]).join(' · ')||'Tidak ada catatan timing tambahan.')} · n=${z.n_sesi!=null?z.n_sesi:'data tidak tersedia'} sesi. Informasi, bukan sinyal beli/jual.</div>`
+    :`<div class="note">data tidak tersedia — riwayat harga belum cukup untuk menghitung MA200 dan puncak 52 minggu.</div>`;
+
+  const alasanHtml=al?`<div class="note" style="margin-top:5px">Alasan: ${esc(al)}</div>`:'';
+  const why=jpKenapa(r);
+  const body=`
+    <button class="close" onclick="document.getElementById('detailModal').classList.remove('show')">✕</button>
+    <div class="lbl">Kartu Investasi Jangka Panjang</div>
+    <h2>${esc(r.kode)} <span style="font-weight:400;font-size:14px;color:var(--muted)">${esc(r.nama||'')}</span></h2>
+    <div class="sub" style="margin-bottom:10px">${esc(r.sektor||'data tidak tersedia')} · ${esc(r.industri||'')}</div>
+    <div class="jp-detail-score">
+      <span class="big ${score>=70?'hi':(score!=null&&score<50?'lo':'')}">${score!=null?fx(score,1):'data tidak tersedia'}</span>
+      <span class="note">Skor JP /100</span>
+      <span class="tag">${rank!=null?'Peringkat #'+rank:'Tidak diperingkat'}</span>
+      <span class="tag">cakupan ${cov!=null?fx(cov,1)+'%':'data tidak tersedia'}</span>
+      <span class="jp-status ${jpStatusClass(status)}">${esc(status)}</span>
+    </div>
+
+    <div class="grid2">
+      <div>
+        <div class="jp-section-title" style="margin-top:0">Ringkasan</div>
+        <div class="stat"><span>Harga</span><b>${r.harga!=null?'Rp'+nf(r.harga,0):'data tidak tersedia'}</b></div>
+        <div class="stat"><span>PER / PBV</span><span>${jpRatio(r.per,1)} / ${jpRatio(r.pbv,2)}</span></div>
+        <div class="stat"><span>ROE</span><span>${jpPct(r.roe,1)}</span></div>
+        <div class="stat"><span>Dividend yield</span><span>${jpDivYield(r)!=null?jpPct(jpDivYield(r),1):'data tidak tersedia'}</span></div>
+        <div class="stat"><span>Median nilai transaksi</span><span>${(r.gerbang_detail&&r.gerbang_detail.likuiditas&&r.gerbang_detail.likuiditas.nilai!=null)?rpRingkas(r.gerbang_detail.likuiditas.nilai):'data tidak tersedia'}</span></div>
+        <div class="stat"><span>Market cap</span><span>${(r.gerbang_detail&&r.gerbang_detail.kapitalisasi&&r.gerbang_detail.kapitalisasi.nilai!=null)?rpRingkas(r.gerbang_detail.kapitalisasi.nilai):'data tidak tersedia'}</span></div>
+        ${alasanHtml}
+      </div>
+      <div>
+        <div class="jp-section-title" style="margin-top:0">Valuasi vs pembanding</div>
+        <div class="jp-kv">
+          <div class="stat"><span>PER sekarang</span><b>${jpRatio(r.per,1)}</b></div>
+          <div class="stat"><span>Median PER sektor</span><b>${medPer!=null?fx(medPer,1)+'×':'data tidak tersedia'}</b></div>
+          <div class="stat"><span>PBV sekarang</span><b>${jpRatio(r.pbv,2)}</b></div>
+          <div class="stat"><span>Median PBV sektor</span><b>${medPbv!=null?fx(medPbv,2)+'×':'data tidak tersedia'}</b></div>
+        </div>
+        <div class="note" style="margin-top:6px">PER/PBV juga dibandingkan dengan rata-rata historis emiten di bawah.
+          PER sangat rendah karena laba sekali-besar tidak otomatis dianggap murah.</div>
+      </div>
+    </div>
+
+    <div class="jp-section-title">Pilar skor</div>
+    ${score!=null?pilarHtml:'<div class="note">Skor JP data tidak tersedia; pilar tidak dihitung. Lihat alasan gerbang di atas.</div>'}
+
+    <div class="jp-section-title">Valuasi historis</div>
+    ${jpHistHtml(vh)}
+
+    <div class="jp-section-title">Kenapa skor ini?</div>
+    <ol style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.6">
+      ${why.map(x=>`<li style="margin-bottom:5px">${x}</li>`).join('')}
+    </ol>
+
+    <div class="jp-section-title">Timing (informasi)</div>
+    ${zHtml}
+
+    <div class="jp-section-title">Penanda risiko (informasi)</div>
+    ${jpRiskHtml(r)}
+
+    <div class="jp-section-title">Harga + MA20/MA50 + Volume</div>
+    <canvas id="chart" width="820" height="280" style="width:100%;height:auto"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--accent)"></i>Harga (close)</span>
+      <span><i style="background:#e0a020"></i>MA20</span>
+      <span><i style="background:#8b5cf6"></i>MA50</span>
+      <span><i style="background:var(--muted)"></i>Volume</span>
+      <span class="na" id="chartInfo">–</span>
+    </div>
+
+    <div class="note" style="margin-top:14px">Diperbarui: ${esc(r.diperbarui_pada||'–')} ·
+      Sumber harga: ${esc(r.sumber_harga||'–')} · Sumber fundamental: ${esc(r.sumber_fundamental||'–')}</div>
+    <div class="disclaimer">Kartu Investasi adalah alat screening dan pemantauan, bukan rekomendasi beli/jual.
+      Tidak ada target harga tunggal dan tidak ada klaim kepastian. Timing dan penanda risiko tidak dipakai
+      untuk menambah atau mengurangi Skor JP. Periksa laporan keuangan asli sebelum mengambil keputusan.</div>
+  `;
+  $('#detailBody').innerHTML=body;
+  $('#detailModal').classList.add('show');
+  gambarChart(r.kode);
+}
+
 
 /* ---------- kolom ---------- */
 const COLS=[
@@ -1315,10 +2128,6 @@ function bukaDetail(kode){
     ).join('')+`</details>`;
   };
 
-  const tgt  = r.resistance!=null && r.harga!=null ? Math.max(r.resistance, r.harga*1.03) : (r.harga!=null?r.harga*1.08:null);
-  const cut  = r.support!=null && r.harga!=null ? Math.min(r.support, r.harga*0.97) : (r.harga!=null?r.harga*0.93:null);
-  const rr   = (tgt&&cut&&r.harga)?((tgt-r.harga)/(r.harga-cut)):null;
-
   $('#detailBody').innerHTML=`
     <button class="close" onclick="document.getElementById('detailModal').classList.remove('show')">✕</button>
     <h2>${esc(r.kode)} <span style="font-weight:400;font-size:14px;color:var(--muted)">${esc(r.nama||'')}</span></h2>
@@ -1342,12 +2151,9 @@ function bukaDetail(kode){
         ${comp('fundamental','Fundamental')}
         ${comp('katalis','Katalis')}
         ${sd.catatan?`<div class="note" style="margin-top:8px">⚠️ ${esc(sd.catatan)}</div>`:''}
-        <div style="margin-top:12px">
-          <div class="stat"><span>Saran target</span><b>${tgt!=null?nf(tgt,0):'–'}</b></div>
-          <div class="stat"><span>Saran cut loss</span><b>${cut!=null?nf(cut,0):'–'}</b></div>
-          <div class="stat"><span>Risk/Reward</span><b>${rr!=null?fx(rr,2)+'×':'–'}</b></div>
-        </div>
-        <div class="note" style="margin-top:6px">Target = nilai terbesar antara resistance 20 hari dan harga +3%. Cut loss = nilai terkecil antara support 20 hari dan harga -3% (minimal 3% di bawah harga).</div>
+        <div class="note" style="margin-top:12px">Tidak ada target harga tunggal. Level support/resistance di atas
+          adalah level teknikal, bukan target. Untuk analisis jangka panjang, buka Kartu Investasi JP.</div>
+        ${r.skor_jp!=null?`<div style="margin-top:8px"><button class="primary" onclick="bukaDetailJP('${esc(r.kode)}')">Buka Kartu Investasi JP</button></div>`:''}
       </div>
     </div>
 
@@ -1402,7 +2208,8 @@ function bukaDetail(kode){
     <div style="margin-top:14px" class="note">
       Diperbarui: ${esc(r.diperbarui_pada||'–')} · Sumber harga: ${esc(r.sumber_harga||'–')} · Sumber fundamental: ${esc(r.sumber_fundamental||'–')}
     </div>
-    <div class="disclaimer">Hasil screening otomatis, bukan rekomendasi beli.</div>
+    <div class="disclaimer">Screening momentum otomatis, bukan rekomendasi beli/jual.
+      Tidak ada target harga tunggal dan tidak ada klaim kepastian.</div>
   `;
   $('#detailModal').classList.add('show');
   gambarChart(r.kode);
@@ -1643,6 +2450,88 @@ function renderWL(){
     WATCHLIST=WATCHLIST.filter(x=>x!==b.dataset.del); saveWL(); renderWL();
   });
   $('#wlInfo').textContent=`${WATCHLIST.length} emiten dipantau · disimpan lokal di perangkat ini`;
+}
+
+/* ---------- J4: akurasi nyata Skor JP ---------- */
+function jpRetCell(v){
+  if(v==null||Number.isNaN(Number(v))) return jpNa();
+  const n=Number(v);
+  const cls=n>0?'up':(n<0?'down':'');
+  return `<span class="${cls}">${n>0?'+':''}${fx(n,2)}%</span>`;
+}
+function renderAkurasiJP(j){
+  j=j||{};
+  const snap=j.snapshot||{};
+  const hs=j.horizon_bulan||[3,6,12];
+  const rk=j.ringkasan||[];
+  const pend=j.pending||[];
+  const tgl=$('#jpAkurasiTanggal');
+  if(tgl) tgl.textContent=snap.terbaru?('snapshot s.d. '+snap.terbaru):'snapshot belum ada';
+  const info=$('#jpAkurasiInfo');
+  if(info){
+    if(j.status==='belum_ada'){
+      info.innerHTML='Belum ada snapshot bulanan Skor JP. Pipeline akan membuatnya pada run penuh berikutnya; akurasi tidak bisa diklaim sebelum itu.';
+    }else if(j.status==='belum_cukup_data'){
+      const target={};
+      pend.forEach(p=>{ if(p && p.horizon_bulan!=null && !target[p.horizon_bulan]) target[p.horizon_bulan]=p.target; });
+      const butuh=hs.map(h=>`${h} bulan${target[h]?` (snapshot ${esc(target[h])})`:''}`).join(' · ');
+      info.innerHTML=`Snapshot bulanan tersedia: <b>${nf(snap.jumlah,0)||'0'}</b>`
+        +` (${esc(snap.terlama||'–')} s.d. ${esc(snap.terbaru||'–')}). `
+        +`Horizon <b>${butuh}</b> belum bisa dihitung karena snapshot target belum ada. `
+        +`Angka akan muncul otomatis setelah bulan tersebut tersimpan; ini bukan backtest dan tidak ada klaim akurasi sebelum hasilnya ada.`;
+    }else{
+      info.innerHTML=`Pemantauan hasil nyata dari <b>${nf((j.hasil||[]).filter(x=>x.status==='ok').length,0)||'0'}</b>`
+        +` pasangan snapshot bulanan. Return dihitung dari harga snapshot awal ke snapshot target. `
+        +`Ini bukan backtest; sampel kecil tidak bisa digeneralisasi.`;
+    }
+  }
+  const box=$('#jpAkurasiRingkas');
+  if(box){
+    box.innerHTML=hs.map(h=>{
+      const x=rk.find(y=>y.horizon_bulan===h);
+      const val=x?jpRetCell(x.top20_return_pct):'belum tersedia';
+      const sub=x
+        ?`${nf(x.jumlah_periode,0)} periode · excess IHSG ${jpRetCell(x.excess_ihsg_pct)}`
+        :'belum ada pasangan snapshot';
+      return `<div class="stat"><span>${h} bulan</span><b>${val}</b><div class="note">${sub}</div></div>`;
+    }).join('');
+  }
+  const rows=(j.hasil||[]).filter(x=>x.status==='ok');
+  const body=$('#jpAkurasiBody');
+  if(body){
+    body.innerHTML=rows.length?rows.map(x=>`<tr>
+      <td style="text-align:left">${esc(x.mulai||'–')} → ${esc(x.selesai||'–')}</td>
+      <td>${nf(x.horizon_bulan,0)} bln</td>
+      <td>${nf(x.n_top20_berharga,0)||'0'}/${nf(x.n_top20,0)||'0'}</td>
+      <td>${jpRetCell(x.top20_return_pct)}</td>
+      <td>${jpRetCell(x.ihsg_return_pct)}</td>
+      <td>${jpRetCell(x.sektor_return_pct)}</td>
+      <td>${jpRetCell(x.excess_ihsg_pct)}</td>
+      <td>${jpRetCell(x.excess_sektor_pct)}</td>
+      <td style="text-align:left" class="na">${esc((x.catatan||[]).join(' · ')||'—')}</td>
+    </tr>`).join(''):'<tr><td colspan="9" class="empty">Belum ada pasangan snapshot 3/6/12 bulan. Ini bukan hasil nol atau kegagalan; datanya memang belum terlewati.</td></tr>';
+  }
+  const cat=$('#jpAkurasiCatatan');
+  if(cat){
+    cat.innerHTML=(j.catatan||[]).map(x=>'• '+esc(x)).join('<br>');
+  }
+}
+async function loadAkurasiJP(){
+  const info=$('#jpAkurasiInfo');
+  try{
+    const j=await fetchJson(AKURASI_JP_URL);
+    AKURASI_JP=j;
+    renderAkurasiJP(j);
+  }catch(e){
+    if(info) info.innerHTML='Data akurasi JP belum tersedia (<code>data/akurasi_jp.json</code>). '
+      +'Pipeline perlu menjalankan tahap J4; akurasi tidak diisi dengan angka palsu.';
+    const body=$('#jpAkurasiBody');
+    if(body) body.innerHTML='<tr><td colspan="9" class="empty">Belum ada data akurasi JP.</td></tr>';
+    const cat=$('#jpAkurasiCatatan');
+    if(cat) cat.textContent='';
+    const box=$('#jpAkurasiRingkas');
+    if(box) box.innerHTML='';
+  }
 }
 
 /* ---------- backtest ---------- */
@@ -1892,8 +2781,8 @@ function renderRisiko(){
     <div class="stat"><span>% dari modal</span><b>${fx(dipakai,1)}%</b></div>
     ${maksLot>lot?`<div class="note" style="margin-top:6px">Maksimal mampu ${nf(maksLot,0)} lot dengan modal ini — posisi di atas dibatasi oleh aturan risiko, bukan modal.</div>`:''}
     ${lot===0?`<div class="disclaimer" style="margin-top:8px">Dengan risiko ${risk}%, modal ini belum cukup untuk 1 lot pada harga tersebut. Naikkan modal, turunkan entry, atau perlebar toleransi risiko.</div>`:''}
-    ${rr!=null?`<div class="stat" style="margin-top:8px"><span>Risk/Reward ke target</span><b>${fx(rr,2)}×</b></div>
-      <div class="note">${rr<1.5?'⚠️ R/R di bawah 1,5× — target terlalu dekat dibanding risiko.':(rr<2?'R/R cukup.':'R/R baik.')}</div>`:''}
+    ${rr!=null?`<div class="stat" style="margin-top:8px"><span>Risk/Reward ke harga acuan</span><b>${fx(rr,2)}×</b></div>
+      <div class="note">${rr<1.5?'⚠️ R/R di bawah 1,5× — harga acuan terlalu dekat dibanding risiko.':(rr<2?'R/R cukup.':'R/R baik.')}</div>`:''}
   `;
 }
 
@@ -2183,6 +3072,12 @@ function renderInsEdukasi(R){
 }
 
 function renderAll(){
+  /* J3: Jangka Panjang adalah tampilan utama; fungsi lama tetap dipanggil
+     agar tab Momentum/Trading dan test lama tidak kehilangan perilakunya. */
+  renderKPIJP();
+  renderTopJP();
+  renderJPFilters();
+  renderJPTable();
   renderTop10();
   renderKPI();
   const sek=new Set((DATA.emiten||[]).map(r=>r.sektor).filter(Boolean));
@@ -2207,20 +3102,35 @@ function renderMarket(){
   const m=(DATA&&DATA.ringkasan_pasar)||null;
   if(!m){ $('#mkInfo').textContent='Ringkasan pasar tidak tersedia.'; return; }
   const ih=m.ihsg||{};
+  const tgl=m.tanggal_data || (DATA&&DATA.tanggal_data) || '—';
   if(ih.tersedia){
     $('#mkInfo').innerHTML=`IHSG <b>${nf(ih.nilai,2)}</b> ${pct(ih.chg_pct)} `+
-      `<span class="na">· ${esc(ih.sumber_data||'')}</span>`;
+      `<span class="na">· ${esc(ih.sumber_data||'')} · data ${esc(tgl)}</span>`+
+      `<br><span class="na">Sektor terkuat/terlemah = median return emiten 20 sesi dikurangi IHSG 20 sesi, minimal 3 emiten. Bukan 1 sesi.</span>`;
   } else {
     $('#mkInfo').textContent='IHSG tidak tersedia pada run ini.';
   }
-  const w=(s)=>s?`${esc(s.sektor)} ${pct(s.chg_pct)} <span class="na">(${s.jumlah} emiten)</span>`:'—';
+  // (Review 30 Okt, fix 3) Satu definisi: rel 20 sesi vs IHSG.
+  const w=(s)=>{
+    if(!s) return '—';
+    const rel=s.rel_20h_pct;
+    const label=rel!=null?`${rel>0?'+':''}${fx(rel,2)}% rel 20s vs IHSG`:'rel 20s tidak tersedia';
+    return `${esc(s.sektor)} <span class="${rel>0?'up':(rel<0?'down':'')}">${label}</span>`
+      +` <span class="na">(${nf(s.jumlah_20h||s.jumlah||0,0)} emiten)</span>`;
+  };
   $('#mkStrong').innerHTML=w(m.sektor_terkuat);
   $('#mkWeak').innerHTML=w(m.sektor_terlemah);
   const sec=m.sektor||[];
+  const f=(v)=>v!=null?`${v>0?'+':''}${fx(v,2)}%`:'—';
   $('#mkSecBody').innerHTML=sec.length
-    ? sec.map(s=>`<tr><td>${esc(s.sektor)}</td><td>${s.jumlah}</td>
-        <td>${pct(s.chg_pct)}</td></tr>`).join('')
-    : '<tr><td colspan="3" class="empty">Belum ada sektor dengan perubahan harga.</td></tr>';
+    ? sec.map(s=>`<tr title="Chg 1/5/20 sesi = median emiten; Rel 20s = chg 20s dikurangi IHSG 20 sesi; minimal 3 emiten untuk rel 20s">
+        <td>${esc(s.sektor)}</td><td>${nf(s.jumlah,0)}</td>
+        <td class="${s.chg_pct>0?'up':(s.chg_pct<0?'down':'')}">${f(s.chg_pct)}</td>
+        <td class="${s.chg_5h_pct>0?'up':(s.chg_5h_pct<0?'down':'')}">${f(s.chg_5h_pct)}</td>
+        <td class="${s.chg_20h_pct>0?'up':(s.chg_20h_pct<0?'down':'')}">${f(s.chg_20h_pct)}</td>
+        <td class="${s.rel_20h_pct>0?'up':(s.rel_20h_pct<0?'down':'')}"><b>${f(s.rel_20h_pct)}</b></td>
+      </tr>`).join('')
+    : '<tr><td colspan="6" class="empty">Belum ada sektor dengan perubahan harga.</td></tr>';
 }
 
 function renderAlerts(){
@@ -2283,18 +3193,57 @@ function renderWaspadaRincian(){
     +`(${w.emiten_punya_skor} punya skor) · `
     +`<b>tinggi ${pt.tinggi||0}</b> (dari yang punya skor: ${ps.tinggi||0}) · `
     +`<b>ringan ${pt.ringan||0}</b> (dari yang punya skor: ${ps.ringan||0}) · `
-    +`<span class="na">Jumlah per kriteria boleh melebihi jumlah emiten, karena satu emiten bisa punya beberapa kriteria.</span>`;
+    +`<span class="na">Jumlah per kriteria boleh melebihi jumlah emiten, karena satu emiten bisa punya beberapa kriteria. *Ciri tunggal = ringan; bisa menjadi bagian waspada tinggi bila berpasangan dengan volume sangat kecil atau penny stock.</span>`;
   const rows=Object.entries(w.per_kriteria)
-    .map(([k,v])=>[k,v.tingkat,v.jumlah,v.contoh||[]])
+    .map(([k,v])=>[k,v.tingkat,v.jumlah,v.contoh||[],v.bisa_tinggi_dalam_kombinasi===true])
     .sort((a,b)=> (a[1]===b[1]? b[2]-a[2] : (a[1]==='tinggi'?-1:1)));
   $('#wsBody').innerHTML=rows.length
-    ? rows.map(([k,t,j,c])=>`<tr>
+    ? rows.map(([k,t,j,c,b])=>`<tr>
         <td style="text-align:left">${esc(k)}</td>
-        <td><span class="tag" title="${t==='tinggi'?'Tidak masuk Top 10':'Catatan saja, tetap boleh masuk Top 10'}">${esc(t)}</span></td>
+        <td><span class="tag" title="${b?'Ciri tunggal = ringan; bisa menjadi bagian tinggi jika berpasangan dengan volume sangat kecil atau penny stock':(t==='tinggi'?'Tidak masuk Top 10':'Catatan saja, tetap boleh masuk Top 10')}">${esc(t)}${b?'*':''}</span></td>
         <td>${nf(j,0)}</td>
         <td style="text-align:left" class="na">${(c||[]).slice(0,5).map(esc).join(', ')||'—'}</td>
       </tr>`).join('')
     : '<tr><td colspan="4" class="empty">Tidak ada kriteria waspada.</td></tr>';
+
+  // (Review 30 Okt, fix 9) Rincian waspada tinggi + aturan penyempitan
+  // yang sudah diterapkan. Baseline aturan lama tetap ditampilkan.
+  const hi=w.tinggi_ringkasan;
+  const boxHi=$('#wsHighInfo');
+  if(boxHi){
+    if(!hi){
+      boxHi.textContent='Rincian waspada tinggi belum tersedia pada payload ini.';
+    } else {
+      const utama=Object.entries(hi.per_kriteria_utama||{})
+        .map(([k,v])=>`${esc(k)} <b>${nf(v,0)}</b>`).join(' · ') || '—';
+      const komb=(hi.kombinasi||[]).slice(0,6)
+        .map(x=>`${(x.kriteria||[]).map(esc).join(' + ')} <b>${nf(x.jumlah,0)}</b>`).join(' · ') || '—';
+      const dist=hi.jumlah_kriteria_per_emiten||{};
+      const distTxt=Object.entries(dist).map(([k,v])=>`${k} kriteria: ${nf(v,0)}`).join(' · ');
+      const lama=hi.sebelum_penyempitan;
+      const lamaTxt=lama?` Aturan lama: ${nf(lama.jumlah,0)} (${nf(lama.persen_universe,1)}% universe).`:'';
+      boxHi.innerHTML=`<b>Waspada tinggi: ${nf(hi.jumlah,0)}</b> dari ${nf(w.total_emiten,0)} emiten `
+        +`(${nf(hi.persen_universe,1)}% universe; ${nf(hi.persen_punya_skor,1)}% dari yang punya skor).${lamaTxt} `
+        +`<br><span class="na">Kriteria utama (bisa tumpang tindih): ${utama}.</span>`
+        +`<br><span class="na">Kombinasi terbanyak: ${komb}.</span>`
+        +`<br><span class="na">${distTxt}. ${esc(hi.catatan||'')}</span>`;
+    }
+  }
+  const u=w.usulan_penyempitan;
+  const boxU=$('#wsUsulan');
+  if(boxU){
+    if(!u){
+      boxU.style.display='none';
+    } else {
+      boxU.style.display='block';
+      boxU.innerHTML=`<b>Aturan penyempitan (${esc(u.status||'diterapkan')})</b> — target `
+        +`${(u.target_persen_universe||[15,20]).join('–')}% universe. `
+        +`Hasil aturan ini: <b>${nf(u.jumlah_sesudah??u.perkiraan_jumlah,0)}</b> emiten `
+        +`(${nf(u.perkiraan_persen_universe,1)}% universe). `
+        +`<br><span style="font-weight:400">${esc(u.aturan||'')}</span>`
+        +`<br><span style="font-weight:400">${esc(u.dampak||'')}</span>`;
+    }
+  }
 }
 
 function renderSkorParsial(){
@@ -2340,6 +3289,13 @@ async function loadExternal(){
     const r = await fetch('data/external.json?_='+Date.now(),{cache:'no-store'});
     if(!r.ok) throw new Error('HTTP '+r.status);
     EXTERNAL = await r.json();
+    // (Review 30 Okt, fix 1) Guard kesegaran: external.json yang lebih lama
+    // dari data pasar utama tidak boleh tampil seolah kondisi hari ini.
+    const tglExt = EXTERNAL.tanggal_data || null;
+    const tglData = DATA && DATA.tanggal_data || null;
+    EXTERNAL.__basi = !!(tglExt && tglData && tglExt < tglData);
+    EXTERNAL.__tanggal_data = tglExt;
+    EXTERNAL.__tanggal_utama = tglData;
     renderMakro();
     renderSensitivitas();
   }catch(e){
@@ -2355,31 +3311,56 @@ function renderMakro(){
     return;
   }
   const m = EXTERNAL.makro;
+  const tglExt = EXTERNAL.tanggal_data || EXTERNAL.__tanggal_data || null;
+  const tglUtama = EXTERNAL.__tanggal_utama || (DATA&&DATA.tanggal_data) || null;
+  const basi = !!EXTERNAL.__basi;
   $('#makroCard').style.display='block';
-  $('#makroTanggal').textContent = m.diambil_pada || '—';
-  $('#makroInfo').textContent = `Sumber: yfinance (via external.json) · Perubahan (1s/5s/20s) vs periode sebelumnya`;
+  // (Review 30 Okt, fix 1) Jangan menampilkan tanggal run sebagai tanggal
+  // data; badge memakai tanggal data external dan diberi peringatan basi.
+  const badge = $('#makroTanggal');
+  badge.textContent = tglExt ? `Data ${tglExt}` : 'Tanggal data tidak tersedia';
+  badge.classList.toggle('meta-warn', basi);
+  badge.title = basi
+    ? `external.json (${tglExt}) lebih lama dari data pasar utama (${tglUtama}); angka makro bukan kondisi hari ini.`
+    : 'Tanggal data external.json';
+
+  const staleTxt = basi
+    ? `<br><span class="meta-warn"><b>⚠ Data eksternal basi:</b> ${esc(tglExt||'—')} lebih lama dari data utama ${esc(tglUtama||'—')}. Angka di bawah bukan kondisi hari ini; jangan dipakai sebagai sinyal timing.</span>`
+    : '';
+  $('#makroInfo').innerHTML = `Sumber: yfinance (via external.json) · Perubahan 1/5/20 sesi vs periode sebelumnya.`
+    + `<br><span class="na">Untuk baris proxy batubara/nikel, kolom 5s/20s adalah <b>return relatif sektor vs IHSG</b>, bukan harga komoditas.</span>`
+    + staleTxt;
 
   // Indikator dalam urutan yang diinginkan
   const urutan = ['ihsg','usdidr','sp500','minyak','emas','cpo','iron_ore','batubara','nikel'];
   const rows = urutan.map(key=>{
     const ind = m[key];
     if(!ind) return '';
-    // Handle proxy data (batubara, nikel)
+    const tglInd = ind.tanggal_sumber || ind.tanggal_data || tglExt || '—';
+    // (Review 30 Okt, fix 7) CPO/iron ore yang lebih lama dari DATA PASAR
+    // UTAMA ditandai, bukan disamarkan. Jangan membandingkan dengan tanggal
+    // external.json saja karena external bisa tertinggal beberapa hari.
+    const tglAcuan = tglUtama || tglExt;
+    const barisBasi = !!(ind.basi || (ind.tanggal_sumber && tglAcuan && ind.tanggal_sumber < tglAcuan));
+    const tglCell = `<td style="text-align:left" class="na" title="${barisBasi?'Tanggal sumber lebih lama dari tanggal data external':''}">`
+      + `${barisBasi?'<span class="meta-warn">⚠ </span>':''}${esc(tglInd)}</td>`;
+    // Handle proxy data (batubara, nikel): return relatif adalah angka utama.
     if(ind.jenis === 'proxy'){
-      const p = ind.proxy;
-      const chg5 = p.ret_5h_pct!=null ? (p.ret_5h_pct>0?'+':'')+fx(p.ret_5h_pct,2)+'%' : '—';
-      const chg20 = p.ret_20h_pct!=null ? (p.ret_20h_pct>0?'+':'')+fx(p.ret_20h_pct,2)+'%' : '—';
-      const rel5 = p.rel_5h_pct!=null ? (p.rel_5h_pct>0?'+':'')+fx(p.rel_5h_pct,2)+'%' : '—';
-      const rel20 = p.rel_20h_pct!=null ? (p.rel_20h_pct>0?'+':'')+fx(p.rel_20h_pct,2)+'%' : '—';
+      const p = ind.proxy || {};
+      const f=(v)=>v!=null?(v>0?'+':'')+fx(v,2)+'%':'—';
+      const rel5 = f(p.rel_5h_pct);
+      const rel20 = f(p.rel_20h_pct);
+      const ret5 = f(p.ret_5h_pct);
+      const ret20 = f(p.ret_20h_pct);
       const val = '— (proxy sektor)';
       const sat = ind.satuan || '—';
-      return `<tr>
+      return `<tr title="Return relatif sektor vs IHSG: 5s ${rel5}, 20s ${rel20}. Return absolut sektor: 5s ${ret5}, 20s ${ret20}.">
         <td style="text-align:left"><b>${esc(ind.label)}</b></td>
         <td>${esc(val)}</td>
         <td>${esc(sat)}</td>
-        <td class="${p.rel_5h_pct>0?'up':(p.rel_5h_pct<0?'down':'')}">${rel5}</td>
-        <td class="${p.rel_20h_pct>0?'up':(p.rel_20h_pct<0?'down':'')}">${rel20}</td>
-        <td style="text-align:left" class="na">${esc(ind.tanggal_sumber||ind.tanggal_data||'—')}</td>
+        <td class="${p.rel_5h_pct>0?'up':(p.rel_5h_pct<0?'down':'')}">${rel5} <span class="na">rel</span></td>
+        <td class="${p.rel_20h_pct>0?'up':(p.rel_20h_pct<0?'down':'')}"><b>${rel20}</b> <span class="na">rel</span></td>
+        ${tglCell}
       </tr>`;
     }
     // Normal indikator
@@ -2396,11 +3377,48 @@ function renderMakro(){
       <td class="${ind.chg_1h_pct>0?'up':(ind.chg_1h_pct<0?'down':'')}">${chg1}</td>
       <td class="${ind.chg_5h_pct>0?'up':(ind.chg_5h_pct<0?'down':'')}">${chg5}</td>
       <td class="${ind.chg_20h_pct>0?'up':(ind.chg_20h_pct<0?'down':'')}">${chg20}</td>
-      <td style="text-align:left" class="na">${esc(ind.tanggal_sumber||ind.tanggal_data||'—')}</td>
+      ${tglCell}
     </tr>`;
   }).join('');
 
   $('#makroBody').innerHTML = rows || '<tr><td colspan="7" class="empty">Tidak ada data makro.</td></tr>';
+
+  // (Review 30 Okt, fix 8) Pengingat inflasi bulanan: jangan menunggu
+  // pengguna sadar bahwa inflasi adalah rilis bulanan.
+  const inf = EXTERNAL.inflasi || {};
+  let sisa = '';
+  if(inf.periode){
+    sisa += `Inflasi terakhir: <b>${esc(inf.periode)}</b>`
+      + (inf.tanggal_rilis?` (rilis ${esc(inf.tanggal_rilis)})`:'')
+      + `. BPS biasanya merilis periode baru awal bulan — cek rilis terbaru sebelum memakai angka ini.`;
+  } else {
+    sisa += 'Inflasi bulanan belum tersedia; jangan mengisi angka tebakan.';
+  }
+  if(m.minyak && m.minyak.chg_20h_pct!=null){
+    sisa += `<br>Verifikasi minyak WTI: 20 sesi <b>${fx(m.minyak.chg_20h_pct,2)}%</b>`
+      + ` per ${esc(m.minyak.tanggal_sumber||tglExt||'—')} (angka dari external.json, bukan hardcode).`;
+  }
+  // (Review 30 Okt, fix 5) Tampilkan RDG BI berikutnya yang dihitung dari
+  // tanggal data, bukan dari jam browser.
+  const kal = EXTERNAL.kalender_bi || {};
+  if(kal.berikutnya && kal.berikutnya.tanggal){
+    sisa += `<br>RDG BI berikutnya: <b>${esc(kal.berikutnya.tanggal)}</b>`
+      + (kal.berikutnya.hari_lagi!=null?` (${nf(kal.berikutnya.hari_lagi,0)} hari dari data ${esc(kal.dihitung_dari||tglExt||'—')})`:'')
+      + ` — ${esc(kal.berikutnya.judul||'')}`;
+  } else if(kal.nilai && kal.nilai !== 'tersedia'){
+    sisa += `<br><span class="meta-warn">Kalender BI: ${esc(kal.nilai)} — ${esc(kal.alasan||'tidak ada jadwal terbaca')}</span>`;
+  }
+  // (Review 30 Okt, fix 6) Event risiko tetap terlihat; sumber berita ikut.
+  const ev = EXTERNAL.event_risiko || {};
+  if((ev.events||[]).length){
+    const ringkasEv = (ev.events||[]).slice(0,3)
+      .map(e=>`${esc(e.judul||'')} (${esc(e.tanggal_diumumkan||'—')})`).join('; ');
+    const url = ev.events[0].sumber_url || '';
+    sisa += `<br>Event risiko: ${ringkasEv}`
+      + (url?` — <a href="${esc(url)}" target="_blank" rel="noopener">sumber</a>`:'')
+      + ` <span class="na">(penanda, bukan pengurang skor)</span>`;
+  }
+  $('#makroPengingat').innerHTML = sisa;
 }
 
 function renderSensitivitas(){
@@ -2409,29 +3427,56 @@ function renderSensitivitas(){
     return;
   }
   const s = EXTERNAL.kekuatan_sektor;
+  const tgl = s.tanggal_data || EXTERNAL.tanggal_data || EXTERNAL.__tanggal_data || null;
+  const tglUtama = EXTERNAL.__tanggal_utama || (DATA&&DATA.tanggal_data) || null;
+  const basi = !!EXTERNAL.__basi;
   $('#sensitivitasCard').style.display='block';
-  $('#sensitivitasTanggal').textContent = s.tanggal_data || s.sumber || '—';
+  const badge = $('#sensitivitasTanggal');
+  badge.textContent = tgl ? `Data ${tgl}` : 'Tanggal data tidak tersedia';
+  badge.classList.toggle('meta-warn', basi);
+  badge.title = basi
+    ? `Data sektor (${tgl}) lebih lama dari data pasar utama (${tglUtama}).`
+    : 'Tanggal data sektor';
   const minEmiten = s.min_emiten || 3;
   const src = s.sumber || s.sumber_data || '—';
-  $('#sensitivitasInfo').textContent = `Rel = Return sektor − Return IHSG (positif = mengungguli IHSG). Min ${minEmiten} emiten. Terurutkan: Rel 20s (turun). Sumber: ${src}`;
+  const staleTxt = basi
+    ? `<br><span class="meta-warn"><b>⚠ Data sektor basi:</b> ${esc(tgl||'—')} lebih lama dari data utama ${esc(tglUtama||'—')}; bukan kondisi hari ini.</span>`
+    : '';
+  $('#sensitivitasInfo').innerHTML = `Rel = Return sektor − Return IHSG (positif = mengungguli IHSG, bukan artinya naik). `
+    + `Terurutkan: Rel 20 sesi vs IHSG, terkuat di atas. Min ${minEmiten} emiten. Sumber: ${esc(src)}`
+    + staleTxt;
 
-  const rows = (s.per_sektor||[])
-    .filter(x=>x.ret_20h_pct!=null && x.rel_20h_pct!=null)
-    .sort((a,b)=> (a.rel_20h_pct||0)-(b.rel_20h_pct||0))
-    .map(x=>{
-      const c5 = x.rel_5h_pct>0?'up':(x.rel_5h_pct<0?'down':'');
-      const c20 = x.rel_20h_pct>0?'up':(x.rel_20h_pct<0?'down':'');
-      return `<tr>
-        <td style="text-align:left">${esc(x.sektor)}</td>
-        <td>${nf(x.jumlah_emiten,0)}</td>
-        <td class="${x.ret_5h_pct>0?'up':(x.ret_5h_pct<0?'down':'')}">${fx(x.ret_5h_pct,2)}%</td>
-        <td class="${c5}">${fx(x.rel_5h_pct,2)}%</td>
-        <td class="${x.ret_20h_pct>0?'up':(x.ret_20h_pct<0?'down':'')}">${fx(x.ret_20h_pct,2)}%</td>
-        <td class="${c20}"><b>${fx(x.rel_20h_pct,2)}%</b></td>
-      </tr>`;
-    }).join('');
+  // (Review 30 Okt, fix 2 & 3) Tabel dan ringkasan memakai definisi yang
+  // sama: rel_20h_pct vs IHSG, tanggal data ikut ditampilkan.
+  const daftar = (s.per_sektor||[])
+    .filter(x=>x.rel_20h_pct!=null)
+    .sort((a,b)=> (b.rel_20h_pct||0)-(a.rel_20h_pct||0));
+  const kuat = s.sektor_terkuat || daftar[0] || null;
+  const lemah = s.sektor_terlemah || daftar[daftar.length-1] || null;
+  const kartu = (label, x, cls)=>{
+    if(!x) return `<div class="stat"><span>${label}</span><b>data tidak tersedia</b></div>`;
+    const rel = x.rel_20h_pct!=null ? `${x.rel_20h_pct>0?'+':''}${fx(x.rel_20h_pct,2)}%` : '—';
+    return `<div class="stat"><span>${label}</span><b class="${cls}">${esc(sektorSingkat(x.sektor)||x.sektor||'—')}</b>`
+      + `<span class="na">Rel 20s vs IHSG ${rel} · ${nf(x.jumlah_emiten||x.jumlah||0,0)} emiten</span></div>`;
+  };
+  $('#sensitivitasRingkas').innerHTML = kartu('Sektor terkuat', kuat, 'up')
+    + kartu('Sektor terlemah', lemah, 'down');
 
-  $('#sensitivitasBody').innerHTML = rows || '<tr><td colspan="6" class="empty">Tidak ada data sensitivitas sektor.</td></tr>';
+  const rows = daftar.map(x=>{
+    const c5 = x.rel_5h_pct>0?'up':(x.rel_5h_pct<0?'down':'');
+    const c20 = x.rel_20h_pct>0?'up':(x.rel_20h_pct<0?'down':'');
+    const f=(v)=>v!=null?`${v>0?'+':''}${fx(v,2)}%`:'—';
+    return `<tr>
+      <td style="text-align:left">${esc(x.sektor)}</td>
+      <td>${nf(x.jumlah_emiten,0)}</td>
+      <td class="${x.ret_5h_pct>0?'up':(x.ret_5h_pct<0?'down':'')}">${f(x.ret_5h_pct)}</td>
+      <td class="${c5}">${f(x.rel_5h_pct)}</td>
+      <td class="${x.ret_20h_pct>0?'up':(x.ret_20h_pct<0?'down':'')}">${f(x.ret_20h_pct)}</td>
+      <td class="${c20}"><b>${f(x.rel_20h_pct)}</b></td>
+    </tr>`;
+  }).join('');
+
+  $('#sensitivitasBody').innerHTML = rows || '<tr><td colspan="6" class="empty">Tidak ada data kekuatan relatif sektor.</td></tr>';
 }
 
 function init(){
@@ -2446,6 +3491,17 @@ function init(){
   $('#detailModal').onclick=e=>{ if(e.target.id==='detailModal') e.target.classList.remove('show'); };
   $('#btnCols').onclick=()=>{ const p=$('#colsPanel'); p.style.display=p.style.display==='none'?'block':'none'; };
   $('#btnCsv').onclick=unduhCSV;
+  if($('#jpCsv')) $('#jpCsv').onclick=unduhCSVJP;
+  if($('#jpMethod')) $('#jpMethod').onclick=()=>$('#infoModal').classList.add('show');
+  if($('#jpSearch')) $('#jpSearch').oninput=renderJPTable;
+  if($('#jpSektor')) $('#jpSektor').onchange=renderJPTable;
+  if($('#jpStatus')) $('#jpStatus').onchange=renderJPTable;
+  if($('#jpSkor')) $('#jpSkor').onchange=renderJPTable;
+  if($('#topJPTableLink')) $('#topJPTableLink').onclick=()=>{
+    const tab=document.querySelector('.tab[data-tab="jp"]');
+    if(tab && !tab.classList.contains('active')) tab.click();
+    const t=$('#jpTbl'); if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+  };
   $('#insSektorToggle').onclick=()=>{ INS_SEKTOR_ALL=!INS_SEKTOR_ALL; renderInsSektor(INSIGHT||{}); };
 
   $('#search').oninput=renderScreener;
@@ -2460,9 +3516,10 @@ function init(){
     $$('.panel').forEach(x=>x.classList.remove('active'));
     t.classList.add('active');
     $('#panel-'+t.dataset.tab).classList.add('active');
+    if(t.dataset.tab==='jp') renderJPTable();
     if(t.dataset.tab==='watchlist') renderWL();
     if(t.dataset.tab==='alert') renderAlertTab();
-    if(t.dataset.tab==='akurasi') loadBacktest();
+    if(t.dataset.tab==='akurasi'){ loadBacktest(); loadAkurasiJP(); }
     if(t.dataset.tab==='insight') loadInsight();
     if(t.dataset.tab==='risiko') renderRisiko();
     // Di layar sempit, tab aktif otomatis digeser ke tengah agar tidak terpotong

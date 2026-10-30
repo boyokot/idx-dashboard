@@ -174,9 +174,10 @@ def main():
         n = eval_js(ws, "document.querySelectorAll('#btBody tr').length")
         cek("tabel sinyal terisi", (n or 0) >= 5, n)
 
-        hdr = eval_js(ws, "[...document.querySelectorAll('#panel-akurasi "
-                          "table')[0].querySelectorAll('th')]"
-                          ".map(t=>t.innerText.trim())")
+        # J4 menambahkan tabel Akurasi JP di atas; pilih tabel momentum
+        # lewat body-nya, bukan tabel pertama di panel.
+        hdr = eval_js(ws, "[...document.getElementById('btBody').closest('table')"
+                          ".querySelectorAll('th')].map(t=>t.innerText.trim())")
         hdr_up = [h.upper() for h in (hdr or [])]
         cek("kolom IHSG ada di header", "IHSG" in hdr_up, hdr)
         cek("kolom Selisih ada di header",

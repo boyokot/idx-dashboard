@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 import os
+import statistics
 import sys
 import time
 from typing import Any, Dict, List, Optional
@@ -68,7 +69,7 @@ def _rupiah_ringkas(v: Optional[float]) -> str:
 
 # ─────────────────── kontrak data (versi & satuan baku) ───────────────────
 # Naikkan versi_skema setiap kali nama field / satuan di latest.json berubah.
-VERSI_SKEMA = "1.4.0"
+VERSI_SKEMA = "1.6.0"
 
 # SATUAN BAKU untuk semua field di latest.json. Semua sumber (Sectors v2,
 # yfinance) dinormalisasi ke satuan ini di providers.normalisasi_satuan_fundamental.
@@ -91,6 +92,9 @@ SATUAN_DATA = {
     "earnings_growth": "fraksi_0_1",
     "revenue_growth": "fraksi_0_1",
     "skor": "poin_0_100",
+    "skor_jp": "poin_0_100",
+    "cakupan_bobot": "persen_0_100",
+    "peringkat_jp": "peringkat",
 }
 
 # Fallback daftar emiten: sheet publik "Emiten" (sudah berisi 900+ kode).
@@ -169,16 +173,23 @@ def _baca_json(path: str) -> Optional[Any]:
         return None
 
 
-def _tulis_atomic(path: str, payload: Any) -> None:
+def _tulis_atomic(path: str, payload: Any, rapat: bool = False) -> None:
     """
     Tulis JSON lewat file sementara lalu rename. Dashboard tidak pernah membaca
     file setengah tertulis (iblit). rename() di filesystem yang sama bersifat
     atomik.
+
+    `rapat=True` dipakai untuk latest.json: field J2 per emiten membuat file
+    membengkak; format satu baris menghemat ~30% ukuran. Snapshot tetap
+    indent=1 agar mudah diperiksa.
     """
     tmp = f"{path}.tmp.{os.getpid()}"
     try:
         with open(tmp, "w", encoding="utf-8") as f:
-            json.dump(payload, f, ensure_ascii=False, indent=1)
+            if rapat:
+                json.dump(payload, f, ensure_ascii=False, separators=(",", ":"))
+            else:
+                json.dump(payload, f, ensure_ascii=False, indent=1)
             f.flush()
             os.fsync(f.fileno())
         os.replace(tmp, path)
@@ -543,8 +554,8 @@ def _median_valuasi_sektor(rows: List[Dict[str, Any]],
 
 def _market_summary(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
     """
-    Ringkasan pasar: IHSG, sektor terkuat/terlemah (dari rata-rata Chg% emiten
-    yang datanya ada), dan net asing total kalau tersedia.
+    Ringkasan pasar: IHSG, sektor terkuat/terlemah (median return 20 sesi
+    relatif IHSG, min. 3 emiten berdata), dan net asing total kalau tersedia.
     Sektor dihitung dari data yang benar-benar ada — bukan tebakan.
     """
     from collections import defaultdict
@@ -566,40 +577,84 @@ def _market_summary(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
         except (KeyError, TypeError, ValueError, IndexError):
             pass
 
-    # sektor: rata-rata chg% + jumlah emiten
+    # sektor: median chg% + jumlah emiten
     # (Review 21 Okt) Ditambah periode: `chg_pct` = 1 sesi (hari ini),
     # `chg_5h_pct` = 5 sesi. Tanpa label periode, angka persen di kartu KPI
     # tidak bisa ditafsirkan. `_bars` masih ada di sini (di-pop setelah
     # ringkasan pasar dibuat), jadi tidak perlu request tambahan.
+    #
+    # (Review 30 Okt, fix 3) Definisi sektor terkuat/terlemah DISAMAKAN:
+    # relatif 20 sesi terhadap IHSG, bukan 1 sesi/5 sesi. Ini juga yang
+    # ditampilkan di ringkasan pasar dan label "Sektor terkuat/terlemah".
     sec_chg: Dict[str, List[float]] = defaultdict(list)
     sec_chg5: Dict[str, List[float]] = defaultdict(list)
+    sec_chg20: Dict[str, List[float]] = defaultdict(list)
+    def _ret_bars(b: List[Dict[str, Any]], n: int) -> Optional[float]:
+        try:
+            c1 = float(b[-1]["close"])
+            c0 = float(b[-1 - n]["close"])
+            if c0:
+                return (c1 / c0 - 1) * 100
+        except (KeyError, TypeError, ValueError, IndexError):
+            return None
+        return None
     for r in rows:
         ch = r.get("chg_pct")
+        sek = (r.get("sektor") or "LAINNYA").upper()
         if isinstance(ch, (int, float)):
-            sec_chg[(r.get("sektor") or "LAINNYA").upper()].append(float(ch))
+            sec_chg[sek].append(float(ch))
         b = r.get("_bars") or []
         if len(b) >= 6:
             try:
                 c1, c0 = float(b[-1]["close"]), float(b[-6]["close"])
                 if c0:
-                    sec_chg5[(r.get("sektor") or "LAINNYA").upper()].append(
-                        (c1 / c0 - 1) * 100)
+                    sec_chg5[sek].append((c1 / c0 - 1) * 100)
             except (KeyError, TypeError, ValueError):
                 pass
+        if len(b) >= 21:
+            r20 = _ret_bars(b, 20)
+            if r20 is not None:
+                sec_chg20[sek].append(r20)
+    # IHSG 20 sesi memakai bar yang sama (bukan fetch kedua).
+    ihsg_ret20 = None
+    if idx.get("ok") and isinstance(idx.get("data"), list) and len(idx["data"]) >= 21:
+        ihsg_ret20 = _ret_bars(idx["data"], 20)
+    # (Review 30 Okt, fix 3) Pakai MEDIAN, bukan mean, sama seperti
+    # `external.hitung_kekuatan_sektor`. Satu emiten liar tidak boleh
+    # menggeser seluruh sektor. Sektor dengan <3 emiten berdata 20 sesi
+    # tidak dipakai untuk label terkuat/terlemah.
+    def _med(vals: List[float]) -> Optional[float]:
+        return round(statistics.median(vals), 2) if vals else None
     sec_stats = [
         {
             "sektor": s,
-            "chg_pct": round(sum(v) / len(v), 2),
+            "chg_pct": _med(v),
             "periode_chg": "1 sesi (hari ini)",
             "jumlah": len(v),
-            "chg_5h_pct": (round(sum(sec_chg5[s]) / len(sec_chg5[s]), 2)
-                           if sec_chg5.get(s) else None),
+            "chg_5h_pct": _med(sec_chg5.get(s) or []),
             "periode_chg_5h": "5 sesi",
             "jumlah_5h": len(sec_chg5.get(s) or []),
+            "chg_20h_pct": _med(sec_chg20.get(s) or []),
+            "rel_20h_pct": (round(_med(sec_chg20.get(s) or []) - ihsg_ret20, 2)
+                            if _med(sec_chg20.get(s) or []) is not None
+                            and ihsg_ret20 is not None else None),
+            "periode_rel_20h": "20 sesi vs IHSG",
+            "jumlah_20h": len(sec_chg20.get(s) or []),
         }
         for s, v in sec_chg.items() if len(v) >= 1
     ]
-    sec_stats.sort(key=lambda x: x["chg_pct"], reverse=True)
+    # Terkuat/terlemah = rel 20 sesi vs IHSG, minimal 3 emiten berdata.
+    # Yang tidak memenuhi diletakkan di akhir agar tidak diam-diam menjadi
+    # "terkuat".
+    sec_stats.sort(key=lambda x: (x.get("rel_20h_pct") is None,
+                                  -(x.get("rel_20h_pct") or 0)))
+    valid20 = [x for x in sec_stats
+               if x.get("rel_20h_pct") is not None and (x.get("jumlah_20h") or 0) >= 3]
+    kuat = valid20[0] if valid20 else (sec_stats[0] if sec_stats else None)
+    lemah = valid20[-1] if valid20 else (sec_stats[-1] if sec_stats else None)
+    tanggal_ringkas = None
+    if idx.get("ok") and isinstance(idx.get("data"), list) and idx["data"]:
+        tanggal_ringkas = str(idx["data"][-1].get("date") or "")[:10] or None
 
     # net asing total (hanya kalau Sectors aktif & angkanya terkumpul)
     net_total = None
@@ -615,9 +670,12 @@ def _market_summary(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
 
     return {
         "ihsg": ihsg,
-        "sektor_terkuat": sec_stats[0] if sec_stats else None,
-        "sektor_terlemah": sec_stats[-1] if sec_stats else None,
+        "ihsg_ret_20h_pct": None if ihsg_ret20 is None else round(ihsg_ret20, 2),
+        "sektor_terkuat": kuat,
+        "sektor_terlemah": lemah,
         "sektor": sec_stats,
+        "tanggal_data": tanggal_ringkas,
+        "periode_sektor": "chg 1/5/20 sesi; kuat/lemah = rel 20 sesi vs IHSG",
         "net_asing_total": net_total,
         "net_asing_tersedia": net_total is not None,
         "rezim_pasar": rezim,
@@ -871,6 +929,18 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
         "emiten": rows,
         "disclaimer": "Hasil screening otomatis, bukan rekomendasi beli.",
     }
+
+    # ── Skor Investasi Jangka Panjang (J2) ────────────────────────────
+    # Dihitung dari fundamental.json + harga_jp.json/info_jp.json.
+    # Berbeda dari skor momentum: field lama tidak diubah. Kegagalan J2
+    # tidak boleh menggagalkan pipeline momentum (meta error dicatat).
+    try:
+        from idx import skor_jp as JP
+    except ImportError:
+        import skor_jp as JP
+    payload = JP.sisipkan(payload, bars=bars_untuk_history,
+                          tulis_ringkasan=False)
+
     out_path = os.path.join(DATA_DIR, out_name)
 
     # ── (Kelompok E) Validasi prepublish ──────────────────────────────
@@ -909,7 +979,34 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
                 "ada_harga": payload["jumlah_ada_harga"],
                 "ada_fundamental": payload["jumlah_ada_fundamental"]}
 
-    _tulis_atomic(out_path, payload)
+    _tulis_atomic(out_path, payload, rapat=True)
+
+    # File audit J2 ditulis setelah latest lolos validasi, supaya tidak
+    # pernah ada ringkasan dari payload yang ditolak.
+    try:
+        JP.tulis_ringkasan_payload(payload)
+    except Exception as e:  # noqa: BLE001
+        print(f"[skor_jp] ringkasan dilewati: {type(e).__name__}: {e}", flush=True)
+
+    # ── J4: snapshot bulanan Skor JP + akurasi 3/6/12 bulan ───────────
+    # Hanya run lengkap yang boleh membuat snapshot bulanan. Kegagalan J4
+    # tidak menggagalkan pipeline inti; file lama dibiarkan apa adanya.
+    try:
+        try:
+            from idx import akurasi_jp as AK      # sebagai paket
+        except ImportError:
+            import akurasi_jp as AK              # sebagai script langsung
+        if run_penuh_e:
+            s4 = AK.simpan_snapshot_bulanan(payload, tulis=True)
+            a4 = AK.hitung_akurasi(tulis=True)
+            print(f"[akurasi_jp] snapshot {s4.get('status')} {s4.get('bulan','')} "
+                  f"| akurasi {a4.get('status')} ({len(a4.get('hasil', []))} hasil)",
+                  flush=True)
+        else:
+            print("[akurasi_jp] run parsial -> snapshot bulanan tidak dibuat",
+                  flush=True)
+    except Exception as e:  # noqa: BLE001
+        print(f"[akurasi_jp] dilewati: {type(e).__name__}: {e}", flush=True)
 
     # ── (Kelompok B) history.json: SATU file riwayat harga untuk semua emiten ──
     # Aman ditulis pada run parsial juga: merge_lama mempertahankan riwayat
@@ -964,6 +1061,10 @@ def _run_locked(universe_limit: int, dengan_katalis: bool,
         "harga": r.get("harga"), "chg_pct": r.get("chg_pct"),
         "rsi": r.get("rsi"), "per": r.get("per"), "pbv": r.get("pbv"),
         "roe": r.get("roe"), "der": r.get("der"),
+        "skor_jp": r.get("skor_jp"),
+        "cakupan_bobot": r.get("cakupan_bobot"),
+        "lolos_gerbang": r.get("lolos_gerbang"),
+        "zona_timing": (r.get("zona_timing") or {}).get("zona"),
         "teknikal": _komponen_skor(r, "teknikal"),
         "fundamental": _komponen_skor(r, "fundamental"),
         "katalis": _komponen_skor(r, "katalis"),

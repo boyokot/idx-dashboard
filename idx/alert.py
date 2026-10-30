@@ -162,7 +162,9 @@ def dari_baris(r: Dict[str, Any]) -> List[Dict[str, Any]]:
 # sehingga alert kritis tenggelam di antara ratusan "info".
 # Batas dihitung PER TINGKAT, bukan satu angka global: memotong dari daftar
 # gabungan akan menghapus justru alert kritis kalau `info` lebih banyak.
-MAKS_PER_TINGKAT = {"kritis": 80, "perhatian": 120, "info": 60}
+# (Review 23 Okt) Ambang 'info' dinaikkan dari 60 ke 150 karena 537 info
+# (terutama likuiditas_tipis) menyebabkan potong 477 — info juga perlu dibaca.
+MAKS_PER_TINGKAT = {"kritis": 80, "perhatian": 120, "info": 150}
 
 # Hanya tingkat ini yang boleh dikirim ke Telegram (push notifikasi).
 # `perhatian` & `info` tetap ada di dashboard — yang dibatasi hanya push.

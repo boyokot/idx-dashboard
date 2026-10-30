@@ -1,100 +1,147 @@
 {
  "versi_skema": "1.1.0",
- "diperbarui_pada": "2026-10-24T21:47:02+07:00",
- "diperbarui_pada_teks": "24 Oktober 2026, 21:47 WIB",
- "tanggal_data": "2026-10-23",
+ "diperbarui_pada": "2026-10-30T13:13:14+07:00",
+ "diperbarui_pada_teks": "30 Oktober 2026, 13:13 WIB",
+ "tanggal_data": "2026-10-30",
+ "kesegaran": {
+  "tanggal_data_utama": "2026-10-30",
+  "status": "basi",
+  "jumlah_basi": 3,
+  "item_basi": [
+   {
+    "kunci": "sp500",
+    "label": "S&P 500",
+    "tanggal_sumber": "2026-10-29",
+    "selisih_hari": 1
+   },
+   {
+    "kunci": "cpo",
+    "label": "CPO (Malaysia, CME)",
+    "tanggal_sumber": "2026-10-29",
+    "selisih_hari": 1
+   },
+   {
+    "kunci": "iron_ore",
+    "label": "Biji Besi 62% Fe",
+    "tanggal_sumber": "2026-10-29",
+    "selisih_hari": 1
+   }
+  ],
+  "catatan": "Indikator dengan `basi: true` lebih lama dari tanggal data pasar utama. Jangan ditampilkan sebagai kondisi hari ini."
+ },
  "makro": {
-  "diambil_pada": "2026-10-24T21:47:02+07:00",
+  "diambil_pada": "2026-10-30T13:13:14+07:00",
   "ihsg": {
    "label": "IHSG",
    "simbol": "^JKSE",
    "mata_uang": "IDR",
    "satuan": "poin indeks",
-   "nilai": 5439.2578,
-   "tanggal_sumber": "2026-10-23",
-   "chg_1h_pct": 0.953,
-   "chg_5h_pct": 4.902,
-   "chg_20h_pct": -12.859,
+   "nilai": 5032.439,
+   "tanggal_sumber": "2026-10-30",
+   "chg_1h_pct": -1.287,
+   "chg_5h_pct": -7.479,
+   "chg_20h_pct": -16.639,
    "jumlah_bar": 65,
-   "sumber": "yfinance"
+   "sumber": "yfinance",
+   "basi": false,
+   "tanggal_data_utama": "2026-10-30",
+   "umur_hari_terhadap_data": 0
   },
   "usdidr": {
    "label": "USD/IDR",
    "simbol": "USDIDR=X",
    "mata_uang": "IDR",
    "satuan": "rupiah per 1 USD",
-   "nilai": 18050.0,
-   "tanggal_sumber": "2026-10-24",
-   "chg_1h_pct": -0.017,
-   "chg_5h_pct": -0.033,
-   "chg_20h_pct": 0.557,
-   "jumlah_bar": 68,
-   "sumber": "yfinance"
+   "nilai": 18140.0,
+   "tanggal_sumber": "2026-10-30",
+   "chg_1h_pct": 0.413,
+   "chg_5h_pct": 0.482,
+   "chg_20h_pct": 1.212,
+   "jumlah_bar": 67,
+   "sumber": "yfinance",
+   "basi": false,
+   "tanggal_data_utama": "2026-10-30",
+   "umur_hari_terhadap_data": 0
   },
   "sp500": {
    "label": "S&P 500",
    "simbol": "^GSPC",
    "mata_uang": "USD",
    "satuan": "poin indeks",
-   "nilai": 7623.6802,
-   "tanggal_sumber": "2026-10-23",
-   "chg_1h_pct": -0.519,
-   "chg_5h_pct": -0.467,
-   "chg_20h_pct": -1.546,
+   "nilai": 7720.3901,
+   "tanggal_sumber": "2026-10-29",
+   "chg_1h_pct": -0.305,
+   "chg_5h_pct": 0.743,
+   "chg_20h_pct": 0.704,
    "jumlah_bar": 65,
-   "sumber": "yfinance"
+   "sumber": "yfinance",
+   "basi": true,
+   "tanggal_data_utama": "2026-10-30",
+   "umur_hari_terhadap_data": 1
   },
   "minyak": {
    "label": "Minyak WTI",
    "simbol": "CL=F",
    "mata_uang": "USD",
    "satuan": "USD per barel",
-   "nilai": 103.27,
-   "tanggal_sumber": "2026-10-23",
-   "chg_1h_pct": 3.82,
-   "chg_5h_pct": 1.834,
-   "chg_20h_pct": 11.752,
-   "jumlah_bar": 65,
-   "sumber": "yfinance"
+   "nilai": 103.16,
+   "tanggal_sumber": "2026-10-30",
+   "chg_1h_pct": 1.137,
+   "chg_5h_pct": -0.107,
+   "chg_20h_pct": 13.226,
+   "jumlah_bar": 66,
+   "sumber": "yfinance",
+   "basi": false,
+   "tanggal_data_utama": "2026-10-30",
+   "umur_hari_terhadap_data": 0
   },
   "emas": {
    "label": "Emas",
    "simbol": "GC=F",
    "mata_uang": "USD",
    "satuan": "USD per troy ounce",
-   "nilai": 4007.8999,
-   "tanggal_sumber": "2026-10-23",
-   "chg_1h_pct": -1.293,
-   "chg_5h_pct": -4.142,
-   "chg_20h_pct": -7.25,
-   "jumlah_bar": 65,
-   "sumber": "yfinance"
+   "nilai": 4013.2,
+   "tanggal_sumber": "2026-10-30",
+   "chg_1h_pct": -0.451,
+   "chg_5h_pct": 0.132,
+   "chg_20h_pct": -3.582,
+   "jumlah_bar": 66,
+   "sumber": "yfinance",
+   "basi": false,
+   "tanggal_data_utama": "2026-10-30",
+   "umur_hari_terhadap_data": 0
   },
   "cpo": {
    "label": "CPO (Malaysia, CME)",
    "simbol": "CPO=F",
    "mata_uang": "USD",
    "satuan": "USD per metrik ton",
-   "nilai": 1151.5,
-   "tanggal_sumber": "2026-10-23",
-   "chg_1h_pct": 0.13,
-   "chg_5h_pct": 0.37,
-   "chg_20h_pct": -3.438,
+   "nilai": 1144.25,
+   "tanggal_sumber": "2026-10-29",
+   "chg_1h_pct": -0.109,
+   "chg_5h_pct": -0.5,
+   "chg_20h_pct": 1.576,
    "jumlah_bar": 65,
-   "sumber": "yfinance"
+   "sumber": "yfinance",
+   "basi": true,
+   "tanggal_data_utama": "2026-10-30",
+   "umur_hari_terhadap_data": 1
   },
   "iron_ore": {
    "label": "Biji Besi 62% Fe",
    "simbol": "TIO=F",
    "mata_uang": "USD",
    "satuan": "USD per metrik ton",
-   "nilai": 90.83,
-   "tanggal_sumber": "2026-10-23",
-   "chg_1h_pct": 0.11,
-   "chg_5h_pct": -0.077,
-   "chg_20h_pct": -6.496,
-   "jumlah_bar": 64,
-   "sumber": "yfinance"
+   "nilai": 90.71,
+   "tanggal_sumber": "2026-10-29",
+   "chg_1h_pct": 0.011,
+   "chg_5h_pct": -0.022,
+   "chg_20h_pct": -1.509,
+   "jumlah_bar": 65,
+   "sumber": "yfinance",
+   "basi": true,
+   "tanggal_data_utama": "2026-10-30",
+   "umur_hari_terhadap_data": 1
   },
   "batubara": {
    "label": "Batubara (Newcastle/API2)",
@@ -102,15 +149,18 @@
    "jenis": "proxy",
    "proxy": {
     "sektor": "COAL MINING",
-    "ret_5h_pct": 6.082,
-    "ret_20h_pct": -2.378,
-    "rel_5h_pct": 1.18,
-    "rel_20h_pct": 10.481
+    "ret_5h_pct": -4.684,
+    "ret_20h_pct": -7.327,
+    "rel_5h_pct": 2.795,
+    "rel_20h_pct": 9.312
    },
    "satuan": "persen (return sektor, bukan harga komoditas)",
    "catatan": "tidak ada kontrak batubara di yfinance (COAL=F/MTF=F/QCE=F kosong), globalCOAL berbayar -> dipakai return sektor COAL MINING sebagai proxy arah, BUKAN harga batubara",
    "sumber": "data/history.json (return median sektor)",
-   "tanggal_sumber": null
+   "tanggal_sumber": "2026-10-30",
+   "basi": false,
+   "tanggal_data_utama": "2026-10-30",
+   "umur_hari_terhadap_data": 0
   },
   "nikel": {
    "label": "Nikel (LME)",
@@ -118,15 +168,18 @@
    "jenis": "proxy",
    "proxy": {
     "sektor": "METAL AND MINERAL MINING",
-    "ret_5h_pct": 1.951,
-    "ret_20h_pct": -17.383,
-    "rel_5h_pct": -2.951,
-    "rel_20h_pct": -4.524
+    "ret_5h_pct": -15.714,
+    "ret_20h_pct": -28.571,
+    "rel_5h_pct": -8.235,
+    "rel_20h_pct": -11.932
    },
    "satuan": "persen (return sektor, bukan harga komoditas)",
    "catatan": "tidak ada kontrak nikel di yfinance (NI=F/CO=F kosong), LME butuh langganan -> dipakai return sektor pertambangan logam & mineral sebagai proxy arah, BUKAN harga nikel",
    "sumber": "data/history.json (return median sektor)",
-   "tanggal_sumber": null
+   "tanggal_sumber": "2026-10-30",
+   "basi": false,
+   "tanggal_data_utama": "2026-10-30",
+   "umur_hari_terhadap_data": 0
   }
  },
  "bi_rate": {
@@ -300,433 +353,436 @@
     "url": "https://www.bi.go.id/id/publikasi/kalender/default.aspx"
    }
   ],
+  "dihitung_dari": "2026-10-30",
   "berikutnya": {
    "tanggal": "2026-11-18",
    "judul": "Rapat Dewan Gubernur BI (November)",
    "jenis": "rapat_bi",
    "sumber": "bi.go.id — Kalender Publikasi",
-   "url": "https://www.bi.go.id/id/publikasi/kalender/default.aspx"
-  }
+   "url": "https://www.bi.go.id/id/publikasi/kalender/default.aspx",
+   "hari_lagi": 19
+  },
+  "catatan_berikutnya": null
  },
  "kekuatan_sektor": {
-  "ihsg_ret_5h_pct": 4.902,
-  "ihsg_ret_20h_pct": -12.859,
+  "ihsg_ret_5h_pct": -7.479,
+  "ihsg_ret_20h_pct": -16.639,
   "per_sektor": [
    {
-    "sektor": "TOLL ROAD, AIRPORT, HARBOR & ALLIED PROD.",
-    "jumlah_emiten": 4,
-    "ret_5h_pct": 16.717,
-    "ret_20h_pct": -3.648,
-    "rel_5h_pct": 11.815,
-    "rel_20h_pct": 9.211
-   },
-   {
-    "sektor": "ENERGY",
-    "jumlah_emiten": 13,
-    "ret_5h_pct": 9.901,
-    "ret_20h_pct": -5.245,
-    "rel_5h_pct": 4.999,
-    "rel_20h_pct": 7.614
-   },
-   {
-    "sektor": "ELECTRONICS",
-    "jumlah_emiten": 4,
-    "ret_5h_pct": 9.217,
-    "ret_20h_pct": -7.051,
-    "rel_5h_pct": 4.315,
-    "rel_20h_pct": 5.808
-   },
-   {
-    "sektor": "CROPS",
-    "jumlah_emiten": 3,
-    "ret_5h_pct": 8.943,
-    "ret_20h_pct": -9.494,
-    "rel_5h_pct": 4.041,
-    "rel_20h_pct": 3.365
+    "sektor": "CEMENT",
+    "jumlah_emiten": 7,
+    "ret_5h_pct": -3.81,
+    "ret_20h_pct": 0.0,
+    "rel_5h_pct": 3.669,
+    "rel_20h_pct": 16.639
    },
    {
     "sektor": "TOBACCO MANUFACTURERS",
     "jumlah_emiten": 4,
-    "ret_5h_pct": 8.705,
-    "ret_20h_pct": -3.334,
-    "rel_5h_pct": 3.803,
-    "rel_20h_pct": 9.525
-   },
-   {
-    "sektor": "PLANTATION",
-    "jumlah_emiten": 26,
-    "ret_5h_pct": 7.634,
-    "ret_20h_pct": -6.269,
-    "rel_5h_pct": 2.732,
-    "rel_20h_pct": 6.59
-   },
-   {
-    "sektor": "LAND/STONE QUARRYING",
-    "jumlah_emiten": 4,
-    "ret_5h_pct": 7.403,
-    "ret_20h_pct": -13.82,
-    "rel_5h_pct": 2.501,
-    "rel_20h_pct": -0.961
-   },
-   {
-    "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
-    "jumlah_emiten": 18,
-    "ret_5h_pct": 7.226,
-    "ret_20h_pct": -8.561,
-    "rel_5h_pct": 2.324,
-    "rel_20h_pct": 4.298
-   },
-   {
-    "sektor": "OTHER SECTORS",
-    "jumlah_emiten": 5,
-    "ret_5h_pct": 7.059,
-    "ret_20h_pct": -18.049,
-    "rel_5h_pct": 2.157,
-    "rel_20h_pct": -5.19
-   },
-   {
-    "sektor": "ANIMAL FEED",
-    "jumlah_emiten": 4,
-    "ret_5h_pct": 6.847,
-    "ret_20h_pct": -11.43,
-    "rel_5h_pct": 1.945,
-    "rel_20h_pct": 1.429
-   },
-   {
-    "sektor": "FISHERY",
-    "jumlah_emiten": 9,
-    "ret_5h_pct": 6.579,
-    "ret_20h_pct": -18.0,
-    "rel_5h_pct": 1.677,
-    "rel_20h_pct": -5.141
-   },
-   {
-    "sektor": "ANIMAL HUSBANDRY",
-    "jumlah_emiten": 5,
-    "ret_5h_pct": 6.522,
-    "ret_20h_pct": -3.922,
-    "rel_5h_pct": 1.62,
-    "rel_20h_pct": 8.937
-   },
-   {
-    "sektor": "NON BUILDING CONSTRUCTION",
-    "jumlah_emiten": 7,
-    "ret_5h_pct": 6.452,
-    "ret_20h_pct": -18.587,
-    "rel_5h_pct": 1.55,
-    "rel_20h_pct": -5.728
-   },
-   {
-    "sektor": "OTHERS - INFRASTRUCTURE, UTILITIES & TRANSPORTATIO",
-    "jumlah_emiten": 7,
-    "ret_5h_pct": 6.297,
-    "ret_20h_pct": -9.829,
-    "rel_5h_pct": 1.395,
-    "rel_20h_pct": 3.03
-   },
-   {
-    "sektor": "HEALTH CARE",
-    "jumlah_emiten": 26,
-    "ret_5h_pct": 6.152,
-    "ret_20h_pct": -5.668,
-    "rel_5h_pct": 1.25,
-    "rel_20h_pct": 7.191
-   },
-   {
-    "sektor": "TRANSPORTATION",
-    "jumlah_emiten": 61,
-    "ret_5h_pct": 6.122,
-    "ret_20h_pct": -5.839,
-    "rel_5h_pct": 1.22,
-    "rel_20h_pct": 7.02
-   },
-   {
-    "sektor": "COAL MINING",
-    "jumlah_emiten": 32,
-    "ret_5h_pct": 6.082,
-    "ret_20h_pct": -2.378,
-    "rel_5h_pct": 1.18,
-    "rel_20h_pct": 10.481
-   },
-   {
-    "sektor": "SECURITIES COMPANY",
-    "jumlah_emiten": 5,
-    "ret_5h_pct": 5.98,
-    "ret_20h_pct": -8.679,
-    "rel_5h_pct": 1.078,
-    "rel_20h_pct": 4.18
-   },
-   {
-    "sektor": "AUTOMOTIVE AND COMPONENTS",
-    "jumlah_emiten": 21,
-    "ret_5h_pct": 5.97,
-    "ret_20h_pct": -2.8,
-    "rel_5h_pct": 1.068,
-    "rel_20h_pct": 10.059
-   },
-   {
-    "sektor": "COMPUTER AND SERVICES",
-    "jumlah_emiten": 30,
-    "ret_5h_pct": 5.961,
-    "ret_20h_pct": -7.498,
-    "rel_5h_pct": 1.059,
-    "rel_20h_pct": 5.361
-   },
-   {
-    "sektor": "INSURANCE",
-    "jumlah_emiten": 17,
-    "ret_5h_pct": 5.833,
-    "ret_20h_pct": -4.158,
-    "rel_5h_pct": 0.931,
-    "rel_20h_pct": 8.701
-   },
-   {
-    "sektor": "CHEMICALS",
-    "jumlah_emiten": 16,
-    "ret_5h_pct": 5.828,
-    "ret_20h_pct": -4.15,
-    "rel_5h_pct": 0.926,
-    "rel_20h_pct": 8.709
-   },
-   {
-    "sektor": "CABLE",
-    "jumlah_emiten": 7,
-    "ret_5h_pct": 5.556,
-    "ret_20h_pct": -5.607,
-    "rel_5h_pct": 0.654,
-    "rel_20h_pct": 7.252
-   },
-   {
-    "sektor": "METAL AND ALLIED PRODUCTS",
-    "jumlah_emiten": 22,
-    "ret_5h_pct": 5.433,
-    "ret_20h_pct": -10.655,
-    "rel_5h_pct": 0.531,
-    "rel_20h_pct": 2.204
-   },
-   {
-    "sektor": "FINANCIAL INSTITUTION",
-    "jumlah_emiten": 16,
-    "ret_5h_pct": 5.42,
-    "ret_20h_pct": -2.73,
-    "rel_5h_pct": 0.518,
-    "rel_20h_pct": 10.129
-   },
-   {
-    "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
-    "jumlah_emiten": 19,
-    "ret_5h_pct": 5.303,
-    "ret_20h_pct": -6.977,
-    "rel_5h_pct": 0.401,
-    "rel_20h_pct": 5.882
-   },
-   {
-    "sektor": "PHARMACEUTICALS",
-    "jumlah_emiten": 12,
-    "ret_5h_pct": 5.297,
-    "ret_20h_pct": -2.163,
-    "rel_5h_pct": 0.395,
-    "rel_20h_pct": 10.696
-   },
-   {
-    "sektor": "PROPERTY AND REAL ESTATE",
-    "jumlah_emiten": 86,
-    "ret_5h_pct": 5.215,
-    "ret_20h_pct": -13.957,
-    "rel_5h_pct": 0.313,
-    "rel_20h_pct": -1.098
-   },
-   {
-    "sektor": "WOOD INDUSTRIES",
-    "jumlah_emiten": 6,
-    "ret_5h_pct": 5.089,
-    "ret_20h_pct": -10.14,
-    "rel_5h_pct": 0.187,
-    "rel_20h_pct": 2.719
-   },
-   {
-    "sektor": "OTHERS - CONSUMER GOODS INDUSTRY",
-    "jumlah_emiten": 10,
-    "ret_5h_pct": 5.057,
-    "ret_20h_pct": -9.013,
-    "rel_5h_pct": 0.155,
-    "rel_20h_pct": 3.846
-   },
-   {
-    "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
-    "jumlah_emiten": 23,
-    "ret_5h_pct": 4.663,
-    "ret_20h_pct": -8.745,
-    "rel_5h_pct": -0.239,
-    "rel_20h_pct": 4.114
-   },
-   {
-    "sektor": "BANK",
-    "jumlah_emiten": 48,
-    "ret_5h_pct": 4.189,
-    "ret_20h_pct": -11.471,
-    "rel_5h_pct": -0.713,
-    "rel_20h_pct": 1.388
-   },
-   {
-    "sektor": "CEMENT",
-    "jumlah_emiten": 7,
-    "ret_5h_pct": 4.032,
-    "ret_20h_pct": 0.0,
-    "rel_5h_pct": -0.87,
-    "rel_20h_pct": 12.859
-   },
-   {
-    "sektor": "HOUSEWARE",
-    "jumlah_emiten": 10,
-    "ret_5h_pct": 3.987,
-    "ret_20h_pct": -9.872,
-    "rel_5h_pct": -0.915,
-    "rel_20h_pct": 2.987
+    "ret_5h_pct": -1.491,
+    "ret_20h_pct": -0.277,
+    "rel_5h_pct": 5.988,
+    "rel_20h_pct": 16.362
    },
    {
     "sektor": "RETAIL TRADE",
     "jumlah_emiten": 25,
-    "ret_5h_pct": 3.934,
-    "ret_20h_pct": 0.0,
-    "rel_5h_pct": -0.968,
-    "rel_20h_pct": 12.859
-   },
-   {
-    "sektor": "TEXTILE, GARMENT",
-    "jumlah_emiten": 19,
-    "ret_5h_pct": 3.846,
-    "ret_20h_pct": -7.692,
-    "rel_5h_pct": -1.056,
-    "rel_20h_pct": 5.167
-   },
-   {
-    "sektor": "RESTAURANT, HOTEL & TOURISM",
-    "jumlah_emiten": 37,
-    "ret_5h_pct": 3.774,
-    "ret_20h_pct": -4.676,
-    "rel_5h_pct": -1.128,
-    "rel_20h_pct": 8.183
-   },
-   {
-    "sektor": "COSMETICS AND HOUSEHOLD",
-    "jumlah_emiten": 8,
-    "ret_5h_pct": 3.187,
-    "ret_20h_pct": 0.801,
-    "rel_5h_pct": -1.715,
-    "rel_20h_pct": 13.66
-   },
-   {
-    "sektor": "INVESTMENT COMPANY",
-    "jumlah_emiten": 26,
-    "ret_5h_pct": 3.116,
-    "ret_20h_pct": -11.608,
-    "rel_5h_pct": -1.786,
-    "rel_20h_pct": 1.251
-   },
-   {
-    "sektor": "PLASTICS & PACKAGING",
-    "jumlah_emiten": 15,
-    "ret_5h_pct": 2.97,
-    "ret_20h_pct": -0.971,
-    "rel_5h_pct": -1.932,
-    "rel_20h_pct": 11.888
-   },
-   {
-    "sektor": "FOOD & BEVERAGES",
-    "jumlah_emiten": 47,
-    "ret_5h_pct": 2.793,
-    "ret_20h_pct": -6.557,
-    "rel_5h_pct": -2.109,
-    "rel_20h_pct": 6.302
-   },
-   {
-    "sektor": "CRUDE PETROLEUM & NATURAL GAS PROD.",
-    "jumlah_emiten": 12,
-    "ret_5h_pct": 2.79,
-    "ret_20h_pct": -6.085,
-    "rel_5h_pct": -2.112,
-    "rel_20h_pct": 6.774
-   },
-   {
-    "sektor": "OTHERS - FINANCE",
-    "jumlah_emiten": 9,
-    "ret_5h_pct": 2.463,
-    "ret_20h_pct": -9.565,
-    "rel_5h_pct": -2.439,
-    "rel_20h_pct": 3.294
-   },
-   {
-    "sektor": "METAL AND MINERAL MINING",
-    "jumlah_emiten": 15,
-    "ret_5h_pct": 1.951,
-    "ret_20h_pct": -17.383,
-    "rel_5h_pct": -2.951,
-    "rel_20h_pct": -4.524
-   },
-   {
-    "sektor": "TELECOMUNICATION",
-    "jumlah_emiten": 18,
-    "ret_5h_pct": 1.314,
-    "ret_20h_pct": -9.202,
-    "rel_5h_pct": -3.588,
-    "rel_20h_pct": 3.657
-   },
-   {
-    "sektor": "MACHINERY AND HEAVY EQUIPMENT",
-    "jumlah_emiten": 6,
-    "ret_5h_pct": 1.22,
-    "ret_20h_pct": -6.001,
-    "rel_5h_pct": -3.682,
-    "rel_20h_pct": 6.858
-   },
-   {
-    "sektor": "BUILDING CONSTRUCTION",
-    "jumlah_emiten": 18,
-    "ret_5h_pct": 0.978,
-    "ret_20h_pct": -10.792,
-    "rel_5h_pct": -3.924,
-    "rel_20h_pct": 2.067
-   },
-   {
-    "sektor": "ADVERTISING,PRINTING AND MEDIA",
-    "jumlah_emiten": 26,
-    "ret_5h_pct": 0.682,
-    "ret_20h_pct": -15.523,
-    "rel_5h_pct": -4.22,
-    "rel_20h_pct": -2.664
+    "ret_5h_pct": -2.564,
+    "ret_20h_pct": -1.439,
+    "rel_5h_pct": 4.915,
+    "rel_20h_pct": 15.2
    },
    {
     "sektor": "CERAMICS, GLASS, PORCELAIN",
     "jumlah_emiten": 6,
-    "ret_5h_pct": 0.5,
-    "ret_20h_pct": -3.762,
-    "rel_5h_pct": -4.402,
-    "rel_20h_pct": 9.097
+    "ret_5h_pct": -1.401,
+    "ret_20h_pct": -3.317,
+    "rel_5h_pct": 6.078,
+    "rel_20h_pct": 13.322
+   },
+   {
+    "sektor": "COSMETICS AND HOUSEHOLD",
+    "jumlah_emiten": 8,
+    "ret_5h_pct": -2.5,
+    "ret_20h_pct": -5.237,
+    "rel_5h_pct": 4.979,
+    "rel_20h_pct": 11.402
    },
    {
     "sektor": "PULP & PAPER",
     "jumlah_emiten": 9,
-    "ret_5h_pct": 0.0,
-    "ret_20h_pct": -1.299,
-    "rel_5h_pct": -4.902,
-    "rel_20h_pct": 11.56
+    "ret_5h_pct": -2.19,
+    "ret_20h_pct": -5.556,
+    "rel_5h_pct": 5.289,
+    "rel_20h_pct": 11.083
+   },
+   {
+    "sektor": "INSURANCE",
+    "jumlah_emiten": 17,
+    "ret_5h_pct": -2.536,
+    "ret_20h_pct": -6.349,
+    "rel_5h_pct": 4.943,
+    "rel_20h_pct": 10.29
+   },
+   {
+    "sektor": "SECURITIES COMPANY",
+    "jumlah_emiten": 5,
+    "ret_5h_pct": -1.567,
+    "ret_20h_pct": -6.538,
+    "rel_5h_pct": 5.912,
+    "rel_20h_pct": 10.101
+   },
+   {
+    "sektor": "PHARMACEUTICALS",
+    "jumlah_emiten": 12,
+    "ret_5h_pct": -3.716,
+    "ret_20h_pct": -6.813,
+    "rel_5h_pct": 3.763,
+    "rel_20h_pct": 9.826
+   },
+   {
+    "sektor": "PLASTICS & PACKAGING",
+    "jumlah_emiten": 15,
+    "ret_5h_pct": -6.364,
+    "ret_20h_pct": -6.832,
+    "rel_5h_pct": 1.115,
+    "rel_20h_pct": 9.807
+   },
+   {
+    "sektor": "COAL MINING",
+    "jumlah_emiten": 32,
+    "ret_5h_pct": -4.684,
+    "ret_20h_pct": -7.327,
+    "rel_5h_pct": 2.795,
+    "rel_20h_pct": 9.312
+   },
+   {
+    "sektor": "FINANCIAL INSTITUTION",
+    "jumlah_emiten": 16,
+    "ret_5h_pct": -4.807,
+    "ret_20h_pct": -7.49,
+    "rel_5h_pct": 2.672,
+    "rel_20h_pct": 9.149
+   },
+   {
+    "sektor": "TOLL ROAD, AIRPORT, HARBOR & ALLIED PROD.",
+    "jumlah_emiten": 4,
+    "ret_5h_pct": -1.8,
+    "ret_20h_pct": -7.521,
+    "rel_5h_pct": 5.679,
+    "rel_20h_pct": 9.118
+   },
+   {
+    "sektor": "ANIMAL HUSBANDRY",
+    "jumlah_emiten": 5,
+    "ret_5h_pct": -19.048,
+    "ret_20h_pct": -8.696,
+    "rel_5h_pct": -11.569,
+    "rel_20h_pct": 7.943
+   },
+   {
+    "sektor": "FOOD & BEVERAGES",
+    "jumlah_emiten": 47,
+    "ret_5h_pct": -6.296,
+    "ret_20h_pct": -9.854,
+    "rel_5h_pct": 1.183,
+    "rel_20h_pct": 6.785
+   },
+   {
+    "sektor": "PLANTATION",
+    "jumlah_emiten": 26,
+    "ret_5h_pct": -5.177,
+    "ret_20h_pct": -10.214,
+    "rel_5h_pct": 2.302,
+    "rel_20h_pct": 6.425
+   },
+   {
+    "sektor": "CHEMICALS",
+    "jumlah_emiten": 16,
+    "ret_5h_pct": -4.049,
+    "ret_20h_pct": -11.036,
+    "rel_5h_pct": 3.43,
+    "rel_20h_pct": 5.603
+   },
+   {
+    "sektor": "BUILDING CONSTRUCTION",
+    "jumlah_emiten": 18,
+    "ret_5h_pct": -4.687,
+    "ret_20h_pct": -11.113,
+    "rel_5h_pct": 2.792,
+    "rel_20h_pct": 5.526
+   },
+   {
+    "sektor": "ANIMAL FEED",
+    "jumlah_emiten": 4,
+    "ret_5h_pct": -4.702,
+    "ret_20h_pct": -11.295,
+    "rel_5h_pct": 2.777,
+    "rel_20h_pct": 5.344
+   },
+   {
+    "sektor": "AUTOMOTIVE AND COMPONENTS",
+    "jumlah_emiten": 21,
+    "ret_5h_pct": -8.696,
+    "ret_20h_pct": -11.31,
+    "rel_5h_pct": -1.217,
+    "rel_20h_pct": 5.329
+   },
+   {
+    "sektor": "CRUDE PETROLEUM & NATURAL GAS PROD.",
+    "jumlah_emiten": 12,
+    "ret_5h_pct": -9.15,
+    "ret_20h_pct": -11.667,
+    "rel_5h_pct": -1.671,
+    "rel_20h_pct": 4.972
+   },
+   {
+    "sektor": "HOUSEWARE",
+    "jumlah_emiten": 10,
+    "ret_5h_pct": -4.449,
+    "ret_20h_pct": -11.81,
+    "rel_5h_pct": 3.03,
+    "rel_20h_pct": 4.829
    },
    {
     "sektor": "CONSTRUCTION",
     "jumlah_emiten": 18,
-    "ret_5h_pct": 0.0,
-    "ret_20h_pct": 0.0,
-    "rel_5h_pct": -4.902,
-    "rel_20h_pct": 12.859
+    "ret_5h_pct": -7.335,
+    "ret_20h_pct": -12.132,
+    "rel_5h_pct": 0.144,
+    "rel_20h_pct": 4.507
+   },
+   {
+    "sektor": "CABLE",
+    "jumlah_emiten": 7,
+    "ret_5h_pct": -2.778,
+    "ret_20h_pct": -12.143,
+    "rel_5h_pct": 4.701,
+    "rel_20h_pct": 4.496
+   },
+   {
+    "sektor": "WHOLESALE (DURABLE & NON DURABLE GOODS)",
+    "jumlah_emiten": 23,
+    "ret_5h_pct": -3.425,
+    "ret_20h_pct": -12.245,
+    "rel_5h_pct": 4.054,
+    "rel_20h_pct": 4.394
+   },
+   {
+    "sektor": "METAL AND ALLIED PRODUCTS",
+    "jumlah_emiten": 22,
+    "ret_5h_pct": -8.82,
+    "ret_20h_pct": -12.395,
+    "rel_5h_pct": -1.341,
+    "rel_20h_pct": 4.244
+   },
+   {
+    "sektor": "WOOD INDUSTRIES",
+    "jumlah_emiten": 6,
+    "ret_5h_pct": -5.472,
+    "ret_20h_pct": -12.513,
+    "rel_5h_pct": 2.007,
+    "rel_20h_pct": 4.126
+   },
+   {
+    "sektor": "ENERGY",
+    "jumlah_emiten": 13,
+    "ret_5h_pct": -8.333,
+    "ret_20h_pct": -12.613,
+    "rel_5h_pct": -0.854,
+    "rel_20h_pct": 4.026
+   },
+   {
+    "sektor": "MACHINERY AND HEAVY EQUIPMENT",
+    "jumlah_emiten": 6,
+    "ret_5h_pct": -8.178,
+    "ret_20h_pct": -13.057,
+    "rel_5h_pct": -0.699,
+    "rel_20h_pct": 3.582
+   },
+   {
+    "sektor": "RESTAURANT, HOTEL & TOURISM",
+    "jumlah_emiten": 37,
+    "ret_5h_pct": -12.95,
+    "ret_20h_pct": -13.065,
+    "rel_5h_pct": -5.471,
+    "rel_20h_pct": 3.574
+   },
+   {
+    "sektor": "COMPUTER AND SERVICES",
+    "jumlah_emiten": 30,
+    "ret_5h_pct": -11.609,
+    "ret_20h_pct": -13.866,
+    "rel_5h_pct": -4.13,
+    "rel_20h_pct": 2.773
+   },
+   {
+    "sektor": "TELECOMUNICATION",
+    "jumlah_emiten": 18,
+    "ret_5h_pct": -8.238,
+    "ret_20h_pct": -14.106,
+    "rel_5h_pct": -0.759,
+    "rel_20h_pct": 2.533
+   },
+   {
+    "sektor": "ELECTRONICS",
+    "jumlah_emiten": 4,
+    "ret_5h_pct": -12.511,
+    "ret_20h_pct": -14.121,
+    "rel_5h_pct": -5.032,
+    "rel_20h_pct": 2.518
+   },
+   {
+    "sektor": "TRANSPORTATION",
+    "jumlah_emiten": 61,
+    "ret_5h_pct": -7.353,
+    "ret_20h_pct": -14.167,
+    "rel_5h_pct": 0.126,
+    "rel_20h_pct": 2.472
+   },
+   {
+    "sektor": "CROPS",
+    "jumlah_emiten": 3,
+    "ret_5h_pct": -5.31,
+    "ret_20h_pct": -14.171,
+    "rel_5h_pct": 2.169,
+    "rel_20h_pct": 2.468
+   },
+   {
+    "sektor": "OTHERS - CONSUMER GOODS INDUSTRY",
+    "jumlah_emiten": 10,
+    "ret_5h_pct": -12.073,
+    "ret_20h_pct": -14.532,
+    "rel_5h_pct": -4.594,
+    "rel_20h_pct": 2.107
+   },
+   {
+    "sektor": "HEALTH CARE",
+    "jumlah_emiten": 26,
+    "ret_5h_pct": -9.386,
+    "ret_20h_pct": -15.149,
+    "rel_5h_pct": -1.907,
+    "rel_20h_pct": 1.49
+   },
+   {
+    "sektor": "TEXTILE, GARMENT",
+    "jumlah_emiten": 19,
+    "ret_5h_pct": -11.111,
+    "ret_20h_pct": -15.789,
+    "rel_5h_pct": -3.632,
+    "rel_20h_pct": 0.85
+   },
+   {
+    "sektor": "OTHERS - FINANCE",
+    "jumlah_emiten": 9,
+    "ret_5h_pct": -6.897,
+    "ret_20h_pct": -15.979,
+    "rel_5h_pct": 0.582,
+    "rel_20h_pct": 0.66
+   },
+   {
+    "sektor": "PROPERTY AND REAL ESTATE",
+    "jumlah_emiten": 86,
+    "ret_5h_pct": -8.835,
+    "ret_20h_pct": -16.715,
+    "rel_5h_pct": -1.356,
+    "rel_20h_pct": -0.076
+   },
+   {
+    "sektor": "LAND/STONE QUARRYING",
+    "jumlah_emiten": 4,
+    "ret_5h_pct": -14.53,
+    "ret_20h_pct": -16.833,
+    "rel_5h_pct": -7.051,
+    "rel_20h_pct": -0.194
+   },
+   {
+    "sektor": "BANK",
+    "jumlah_emiten": 48,
+    "ret_5h_pct": -6.086,
+    "ret_20h_pct": -16.881,
+    "rel_5h_pct": 1.393,
+    "rel_20h_pct": -0.242
+   },
+   {
+    "sektor": "INVESTMENT COMPANY",
+    "jumlah_emiten": 26,
+    "ret_5h_pct": -8.114,
+    "ret_20h_pct": -17.321,
+    "rel_5h_pct": -0.635,
+    "rel_20h_pct": -0.682
+   },
+   {
+    "sektor": "FISHERY",
+    "jumlah_emiten": 9,
+    "ret_5h_pct": -13.514,
+    "ret_20h_pct": -17.949,
+    "rel_5h_pct": -6.035,
+    "rel_20h_pct": -1.31
    },
    {
     "sektor": "OTHERS - MISCELLANENEOUS INDUSTRY",
     "jumlah_emiten": 7,
-    "ret_5h_pct": 0.0,
-    "ret_20h_pct": -9.6,
-    "rel_5h_pct": -4.902,
-    "rel_20h_pct": 3.259
+    "ret_5h_pct": -8.434,
+    "ret_20h_pct": -18.033,
+    "rel_5h_pct": -0.955,
+    "rel_20h_pct": -1.394
+   },
+   {
+    "sektor": "OTHER - BASIC INDUSTRY AND CHEMICALS",
+    "jumlah_emiten": 18,
+    "ret_5h_pct": -11.871,
+    "ret_20h_pct": -18.479,
+    "rel_5h_pct": -4.392,
+    "rel_20h_pct": -1.84
+   },
+   {
+    "sektor": "OTHERS - TRADE, SERVICES & INVESTMENT",
+    "jumlah_emiten": 19,
+    "ret_5h_pct": -12.102,
+    "ret_20h_pct": -18.824,
+    "rel_5h_pct": -4.623,
+    "rel_20h_pct": -2.185
+   },
+   {
+    "sektor": "ADVERTISING,PRINTING AND MEDIA",
+    "jumlah_emiten": 26,
+    "ret_5h_pct": -14.67,
+    "ret_20h_pct": -25.21,
+    "rel_5h_pct": -7.191,
+    "rel_20h_pct": -8.571
+   },
+   {
+    "sektor": "OTHER SECTORS",
+    "jumlah_emiten": 5,
+    "ret_5h_pct": -11.304,
+    "ret_20h_pct": -26.619,
+    "rel_5h_pct": -3.825,
+    "rel_20h_pct": -9.98
+   },
+   {
+    "sektor": "METAL AND MINERAL MINING",
+    "jumlah_emiten": 15,
+    "ret_5h_pct": -15.714,
+    "ret_20h_pct": -28.571,
+    "rel_5h_pct": -8.235,
+    "rel_20h_pct": -11.932
+   },
+   {
+    "sektor": "OTHERS - INFRASTRUCTURE, UTILITIES & TRANSPORTATIO",
+    "jumlah_emiten": 7,
+    "ret_5h_pct": -14.286,
+    "ret_20h_pct": -28.713,
+    "rel_5h_pct": -6.807,
+    "rel_20h_pct": -12.074
+   },
+   {
+    "sektor": "NON BUILDING CONSTRUCTION",
+    "jumlah_emiten": 7,
+    "ret_5h_pct": -20.091,
+    "ret_20h_pct": -31.102,
+    "rel_5h_pct": -12.612,
+    "rel_20h_pct": -14.463
    },
    {
     "sektor": "FORESTRY",
@@ -754,23 +810,26 @@
    }
   ],
   "jumlah_sektor": 56,
+  "min_emiten": 3,
   "sektor_terkuat": {
-   "sektor": "TOLL ROAD, AIRPORT, HARBOR & ALLIED PROD.",
-   "jumlah_emiten": 4,
-   "ret_5h_pct": 16.717,
-   "ret_20h_pct": -3.648,
-   "rel_5h_pct": 11.815,
-   "rel_20h_pct": 9.211
+   "sektor": "CEMENT",
+   "jumlah_emiten": 7,
+   "ret_5h_pct": -3.81,
+   "ret_20h_pct": 0.0,
+   "rel_5h_pct": 3.669,
+   "rel_20h_pct": 16.639
   },
   "sektor_terlemah": {
-   "sektor": "OTHERS - MISCELLANENEOUS INDUSTRY",
+   "sektor": "NON BUILDING CONSTRUCTION",
    "jumlah_emiten": 7,
-   "ret_5h_pct": 0.0,
-   "ret_20h_pct": -9.6,
-   "rel_5h_pct": -4.902,
-   "rel_20h_pct": 3.259
+   "ret_5h_pct": -20.091,
+   "ret_20h_pct": -31.102,
+   "rel_5h_pct": -12.612,
+   "rel_20h_pct": -14.463
   },
-  "catatan": "Return sektor = median return emiten (min. 3 emiten berdata). rel_* = selisih terhadap IHSG pada jendela sama.",
+  "tanggal_data": "2026-10-30",
+  "periode_terkuat": "20 sesi vs IHSG",
+  "catatan": "Return sektor = median return emiten (min. 3 emiten berdata). rel_* = selisih terhadap IHSG pada jendela sama; terkuat/terlemah memakai rel_20h_pct.",
   "sumber": "data/history.json + ^JKSE (yfinance)"
  },
  "aliran_dana": {
@@ -787,35 +846,14 @@
   "catatan": "Hanya laporan keuangan & ex-dividen. RUPS/cum-date resmi IDX TIDAK tersedia karena idx.co.id memblokir (403) dan proteksinya tidak dilewati.",
   "events": [
    {
-    "kode": "BBNI",
+    "kode": "JPFA",
     "jenis": "laporan_keuangan",
-    "tanggal": "2026-10-27",
+    "tanggal": "2026-10-30",
     "sumber": "yfinance (calendar)",
     "dapat_diverifikasi": true
    },
    {
     "kode": "PWON",
-    "jenis": "laporan_keuangan",
-    "tanggal": "2026-10-27",
-    "sumber": "yfinance (calendar)",
-    "dapat_diverifikasi": true
-   },
-   {
-    "kode": "AXIO",
-    "jenis": "ex_dividen",
-    "tanggal": "2026-10-29",
-    "sumber": "yfinance (calendar)",
-    "dapat_diverifikasi": true
-   },
-   {
-    "kode": "DMAS",
-    "jenis": "ex_dividen",
-    "tanggal": "2026-10-29",
-    "sumber": "yfinance (calendar)",
-    "dapat_diverifikasi": true
-   },
-   {
-    "kode": "TLKM",
     "jenis": "laporan_keuangan",
     "tanggal": "2026-10-30",
     "sumber": "yfinance (calendar)",
@@ -827,13 +865,48 @@
     "tanggal": "2026-11-03",
     "sumber": "yfinance (calendar)",
     "dapat_diverifikasi": true
+   },
+   {
+    "kode": "JPFA",
+    "jenis": "ex_dividen",
+    "tanggal": "2026-11-06",
+    "sumber": "yfinance (calendar)",
+    "dapat_diverifikasi": true
    }
   ],
   "terakhir": [
    {
-    "kode": "BUKA",
+    "kode": "DMAS",
+    "jenis": "ex_dividen",
+    "tanggal": "2026-10-29",
+    "sumber": "yfinance (calendar)",
+    "dapat_diverifikasi": true
+   },
+   {
+    "kode": "AXIO",
+    "jenis": "ex_dividen",
+    "tanggal": "2026-10-29",
+    "sumber": "yfinance (calendar)",
+    "dapat_diverifikasi": true
+   },
+   {
+    "kode": "ASII",
     "jenis": "laporan_keuangan",
+    "tanggal": "2026-10-29",
+    "sumber": "yfinance (calendar)",
+    "dapat_diverifikasi": true
+   },
+   {
+    "kode": "CSRA",
+    "jenis": "ex_dividen",
     "tanggal": "2026-10-23",
+    "sumber": "yfinance (calendar)",
+    "dapat_diverifikasi": true
+   },
+   {
+    "kode": "PLIN",
+    "jenis": "ex_dividen",
+    "tanggal": "2026-10-16",
     "sumber": "yfinance (calendar)",
     "dapat_diverifikasi": true
    },
@@ -845,49 +918,21 @@
     "dapat_diverifikasi": true
    },
    {
+    "kode": "ASII",
+    "jenis": "ex_dividen",
+    "tanggal": "2026-10-13",
+    "sumber": "yfinance (calendar)",
+    "dapat_diverifikasi": true
+   },
+   {
     "kode": "AALI",
     "jenis": "ex_dividen",
     "tanggal": "2026-10-09",
     "sumber": "yfinance (calendar)",
     "dapat_diverifikasi": true
-   },
-   {
-    "kode": "ASGR",
-    "jenis": "ex_dividen",
-    "tanggal": "2026-10-08",
-    "sumber": "yfinance (calendar)",
-    "dapat_diverifikasi": true
-   },
-   {
-    "kode": "BSSR",
-    "jenis": "ex_dividen",
-    "tanggal": "2026-09-30",
-    "sumber": "yfinance (calendar)",
-    "dapat_diverifikasi": true
-   },
-   {
-    "kode": "MARK",
-    "jenis": "ex_dividen",
-    "tanggal": "2026-08-14",
-    "sumber": "yfinance (calendar)",
-    "dapat_diverifikasi": true
-   },
-   {
-    "kode": "SMSM",
-    "jenis": "ex_dividen",
-    "tanggal": "2026-08-07",
-    "sumber": "yfinance (calendar)",
-    "dapat_diverifikasi": true
-   },
-   {
-    "kode": "GPRA",
-    "jenis": "ex_dividen",
-    "tanggal": "2026-07-08",
-    "sumber": "yfinance (calendar)",
-    "dapat_diverifikasi": true
    }
   ],
-  "jumlah_event": 6,
+  "jumlah_event": 4,
   "dicek": 60,
   "gagal": 0,
   "cek": {
@@ -900,14 +945,20 @@
  "rezim_pasar": {
   "rezim": "stres",
   "pasar_stres": true,
-  "ihsg_ret_1h_pct": 0.953,
-  "ihsg_ret_5h_pct": 4.902,
-  "ihsg_ret_20h_pct": -12.859,
-  "ihsg_terakhir": 5439.26,
+  "ihsg_ret_1h_pct": -1.287,
+  "ihsg_ret_5h_pct": -7.479,
+  "ihsg_ret_20h_pct": -16.639,
+  "ihsg_terakhir": 5032.44,
   "pemicu": [
    {
+    "faktor": "ihsg_5h",
+    "nilai_pct": -7.479,
+    "ambang_pct": -5.0,
+    "keterangan": "IHSG turun lebih dari 5% dalam 5 sesi"
+   },
+   {
     "faktor": "ihsg_20h",
-    "nilai_pct": -12.859,
+    "nilai_pct": -16.639,
     "ambang_pct": -10.0,
     "keterangan": "IHSG turun lebih dari 10% dalam 20 sesi"
    }
@@ -927,7 +978,7 @@
  },
  "event_risiko": {
   "nilai": "tersedia",
-  "jumlah": 1,
+  "jumlah": 2,
   "events": [
    {
     "id": "msci_reklasifikasi_2026",
@@ -945,7 +996,53 @@
     "dampak": "risiko arus keluar dana asing pada emiten dengan kepemilikan asing tinggi dan konstituen indeks MSCI",
     "emiten_terdampak": "data tidak tersedia",
     "alasan_emiten": "daftar konstituen MSCI dan data kepemilikan asing per emiten tidak tersedia tanpa langganan; TIDAK ditebak",
-    "umur_hari": 9
+    "sumber_berita": [
+     {
+      "nama": "CNBC Indonesia — Market",
+      "url": "https://www.cnbcindonesia.com/market"
+     },
+     {
+      "nama": "Reuters — Asia Markets",
+      "url": "https://www.reuters.com/markets/asia/"
+     },
+     {
+      "nama": "Antara — Ekonomi",
+      "url": "https://www.antaranews.com/berita/ekonomi"
+     }
+    ],
+    "umur_hari": 15
+   },
+   {
+    "id": "trading_halt_16okt2026",
+    "judul": "Trading halt Bursa Efek Indonesia, 16 Oktober 2026",
+    "tanggal_diumumkan": "2026-10-16",
+    "status": "terjadi; tanggal dari review, sumber resmi perlu dibuka",
+    "arah": "negatif jangka pendek / likuiditas",
+    "sumber_nama": "IDX — Pengumuman Bursa; CNBC Indonesia; Reuters",
+    "sumber_url": "https://www.idx.co.id/berita/pengumuman/",
+    "sumber_url_alternatif": [
+     "https://www.cnbcindonesia.com/market",
+     "https://www.reuters.com/markets/asia/"
+    ],
+    "sumber_berita": [
+     {
+      "nama": "IDX — Pengumuman Bursa",
+      "url": "https://www.idx.co.id/berita/pengumuman/"
+     },
+     {
+      "nama": "CNBC Indonesia — Market",
+      "url": "https://www.cnbcindonesia.com/market"
+     },
+     {
+      "nama": "Reuters — Asia Markets",
+      "url": "https://www.reuters.com/markets/asia/"
+     }
+    ],
+    "catatan_verifikasi": "Peristiwa trading halt 16 Okt 2026 dicatat dari review. URL yang tersedia adalah halaman pengumuman/berita, bukan artikel spesifik; durasi dan cakupan halt tidak diklaim tanpa membuka sumber resmi.",
+    "dampak": "gangguan likuiditas dan kepanikan jangka pendek; bukan pengurang skor otomatis",
+    "emiten_terdampak": "data tidak tersedia",
+    "alasan_emiten": "tidak ada daftar emiten yang dapat diverifikasi dari sumber otomatis; TIDAK ditebak",
+    "umur_hari": 14
    }
   ],
   "catatan": "Faktor risiko dipakai sebagai penanda, bukan pengurang skor otomatis sampai daftar emiten terlacak."

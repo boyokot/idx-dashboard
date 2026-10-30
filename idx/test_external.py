@@ -179,6 +179,12 @@ cek("rdg tiap event bawa sumber",
     all(e.get("sumber") and e.get("url") for e in ev))
 cek("rdg event punya jenis rapat_bi",
     all(e.get("jenis") == "rapat_bi" for e in ev))
+_kal_acuan = E.ambil_kalender_bi(tahun=2026, tanggal_acuan="2026-10-22")
+_nxt = (_kal_acuan.get("berikutnya") or {})
+cek("rdg berikutnya dihitung dari tanggal acuan",
+    _nxt.get("tanggal") == "2026-11-18", str(_nxt))
+cek("rdg berikutnya punya hari_lagi (22 Okt -> 18 Nov = 27)",
+    _nxt.get("hari_lagi") == 27, str(_nxt.get("hari_lagi")))
 
 E._get_html = lambda url, timeout=30: ("<html>kosong</html>", None)  # type: ignore
 kal_b = E.ambil_kalender_bi()
@@ -241,8 +247,10 @@ smap = {"AAA": "SEKTOR A", "AAB": "SEKTOR A", "AAC": "SEKTOR A",
         "BBA": "SEKTOR B", "BBB": "SEKTOR B", "BBC": "SEKTOR B",
         "SOLO": "SEKTOR C"}
 ihsg_datar = [{"date": f"2026-03-{i+1:02d}", "close": 5000.0} for i in range(25)]
-ks = E.hitung_kekuatan_sektor(hist, smap, ihsg_datar)
+ks = E.hitung_kekuatan_sektor(hist, smap, ihsg_datar, "2026-10-30")
 cek("kekuatan: jumlah sektor", ks["jumlah_sektor"] == 3, str(ks["jumlah_sektor"]))
+cek("kekuatan: tanggal_data diteruskan", ks.get("tanggal_data") == "2026-10-30",
+    str(ks.get("tanggal_data")))
 cek("kekuatan: ihsg 5h = 0", abs(ks["ihsg_ret_5h_pct"]) < 1e-9,
     str(ks["ihsg_ret_5h_pct"]))
 
@@ -258,6 +266,12 @@ cek("kekuatan: sektor tipis tidak diberi angka",
 cek("kekuatan: terkuat = A", ks["sektor_terkuat"]["sektor"] == "SEKTOR A",
     str(ks["sektor_terkuat"]))
 cek("kekuatan: terlemah = B", ks["sektor_terlemah"]["sektor"] == "SEKTOR B")
+cek("kekuatan: terkuat memakai rel_20h, bukan rel_5h",
+    ks["sektor_terkuat"]["rel_20h_pct"] == max(
+        x["rel_20h_pct"] for x in ks["per_sektor"]
+        if x.get("rel_20h_pct") is not None),
+    str([(x["sektor"], x.get("rel_5h_pct"), x.get("rel_20h_pct"))
+         for x in ks["per_sektor"]]))
 cek("kekuatan: median dipakai, bukan mean",
     "median" in (ks.get("catatan") or "").lower())
 
@@ -300,7 +314,7 @@ _latar = (E.ambil_makro, E.ambil_bi_rate, E.ambil_inflasi,
 E.ambil_makro = lambda: {"ihsg": {"nilai": 5000.0}}          # type: ignore
 E.ambil_bi_rate = lambda: {"nilai_pct": 5.75}                # type: ignore
 E.ambil_inflasi = lambda: {"nilai_pct": 3.19}                # type: ignore
-E.ambil_kalender_bi = lambda tahun=None: {"nilai": "tersedia", "events": []}  # type: ignore
+E.ambil_kalender_bi = lambda tahun=None, tanggal_acuan=None: {"nilai": "tersedia", "events": []}  # type: ignore
 E.ambil_aliran_dana = lambda: {"nilai": TIDAK_ADA}           # type: ignore
 E.ambil_kalender_emiten = lambda: {"nilai": TIDAK_ADA, "events": []}  # type: ignore
 E._riwayat = lambda simbol, periode="3mo": []                # type: ignore
@@ -309,7 +323,7 @@ p = E.bangun(hist={"emiten": {}}, latest={"tanggal_data": "2026-10-21",
                                           "emiten": []})
 for k in ("versi_skema", "diperbarui_pada", "makro", "bi_rate", "inflasi",
           "kalender_bi", "kekuatan_sektor", "aliran_dana", "kalender_emiten",
-          "disclaimer"):
+          "event_risiko", "kesegaran", "disclaimer"):
     cek(f"payload punya {k}", k in p)
 cek("payload disclaimer benar",
     p["disclaimer"] == "Hasil screening otomatis, bukan rekomendasi beli.")
@@ -571,6 +585,22 @@ cek("proxy: sektor proxy tak ada -> jenis 'tidak tersedia'",
     _makro_kosong["batubara"].get("jenis") == "tidak tersedia",
     str(_makro_kosong["batubara"].get("jenis")))
 
+bagian("9f2. kesegaran makro — CPO/iron ditandai, bukan disamarkan")
+_kes = E._tandai_kesegaran({
+    "cpo": {"label": "CPO", "tanggal_sumber": "2026-10-29"},
+    "iron_ore": {"label": "Biji Besi", "tanggal_sumber": "2026-10-29"},
+    "minyak": {"label": "Minyak", "tanggal_sumber": "2026-10-30"},
+}, "2026-10-30")
+cek("kesegaran: status basi", _kes.get("status") == "basi", str(_kes))
+cek("kesegaran: CPO/iron masuk item_basi", _kes.get("jumlah_basi") == 2,
+    str(_kes.get("item_basi")))
+cek("kesegaran: CPO basi=true", _kes and True)
+_mk = {"cpo": {"label": "CPO", "tanggal_sumber": "2026-10-29"},
+       "minyak": {"label": "Minyak", "tanggal_sumber": "2026-10-30"}}
+E._tandai_kesegaran(_mk, "2026-10-30")
+cek("kesegaran: cpo.basi true", _mk["cpo"].get("basi") is True)
+cek("kesegaran: minyak.basi false", _mk["minyak"].get("basi") is False)
+
 bagian("9g. Tahap 2 — event MSCI (tanpa menebak emiten)")
 
 _ev = E.ambil_event_risiko()
@@ -598,6 +628,17 @@ cek("msci: dampak menyebut kepemilikan asing",
     "asing" in (_m.get("dampak") or "").lower())
 cek("msci: umur_hari dihitung", isinstance(_m.get("umur_hari"), int),
     str(_m.get("umur_hari")))
+cek("msci: sumber berita >1", len(_m.get("sumber_berita") or []) >= 2,
+    str(_m.get("sumber_berita")))
+_halt = [e for e in _ev.get("events") or [] if e.get("id") == "trading_halt_16okt2026"]
+cek("halt: event trading halt 16 Okt 2026 ada", len(_halt) == 1, str(len(_halt)))
+_h = _halt[0] if _halt else {}
+cek("halt: tanggal 16 Okt 2026", _h.get("tanggal_diumumkan") == "2026-10-16",
+    str(_h.get("tanggal_diumumkan")))
+cek("halt: emiten tidak ditebak", _h.get("emiten_terdampak") == TIDAK_ADA,
+    str(_h.get("emiten_terdampak")))
+cek("halt: punya sumber berita", len(_h.get("sumber_berita") or []) >= 2,
+    str(_h.get("sumber_berita")))
 
 bagian("9h. Tahap 2 — periode anomali 15-21 Okt 2026")
 

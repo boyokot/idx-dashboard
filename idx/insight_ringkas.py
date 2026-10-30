@@ -374,10 +374,23 @@ def _poin_event(external: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             "tanggal_diumumkan": teratas.get("tanggal_diumumkan"),
             "umur_hari": umur,
             "arah": teratas.get("arah"),
+            "events": [
+                {
+                    "id": ev.get("id"),
+                    "judul": ev.get("judul"),
+                    "status": ev.get("status"),
+                    "tanggal_diumumkan": ev.get("tanggal_diumumkan"),
+                    "sumber_nama": ev.get("sumber_nama"),
+                    "sumber_url": ev.get("sumber_url"),
+                    "sumber_berita": ev.get("sumber_berita") or [],
+                }
+                for ev in items
+            ],
         },
         "sumber": f"{teratas.get('sumber_nama', 'tidak tersedia')} → {teratas.get('sumber_url', '')}",
         "tautan": teratas.get("sumber_url"),
         "tautan_alternatif": teratas.get("sumber_url_alternatif") or [],
+        "sumber_berita": teratas.get("sumber_berita") or [],
         "tanggal": (external or {}).get("tanggal_data"),
         "tone": "negatif",
     }

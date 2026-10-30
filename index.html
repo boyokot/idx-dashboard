@@ -290,21 +290,348 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
   #jpTbl{min-width:1000px}
   #jpAkurasiTbl{min-width:900px}
 }
+/* ======================================================================
+   Professional dashboard polish (2026)
+   Lapisan visual di atas aturan lama. Tidak mengubah data/skor.
+   ====================================================================== */
+:root{
+  --bg:#f3f5f9;
+  --card:#ffffff;
+  --text:#101828;
+  --muted:#667085;
+  --border:#e4e7ec;
+  --border-strong:#d0d5dd;
+  --up:#067647;
+  --down:#b42318;
+  --warn:#b54708;
+  --warnbg:#fffaeb;
+  --accent:#1d4ed8;
+  --accent-2:#0e7490;
+  --accent-soft:#eaf1ff;
+  --shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.06);
+  --shadow-lg:0 12px 28px rgba(16,24,40,.08);
+  --sticky:#f8fafc;
+}
+[data-theme="dark"]{
+  --bg:#0b1017;
+  --card:#111827;
+  --text:#e5e7eb;
+  --muted:#98a2b3;
+  --border:#243041;
+  --border-strong:#344054;
+  --up:#32d583;
+  --down:#f97066;
+  --warn:#fdb022;
+  --warnbg:#2a210d;
+  --accent:#84adff;
+  --accent-2:#67e8f9;
+  --accent-soft:#172554;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 1px 3px rgba(0,0,0,.45);
+  --shadow-lg:0 16px 34px rgba(0,0,0,.35);
+  --sticky:#151c26;
+}
+body{
+  font-family:"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:
+    radial-gradient(1100px 440px at 18% -12%,rgba(29,78,216,.075),transparent 62%),
+    radial-gradient(900px 380px at 92% -18%,rgba(14,116,144,.055),transparent 58%),
+    var(--bg);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.wrap{max-width:1360px;padding:0 22px 38px}
+header{
+  position:sticky;top:0;z-index:30;align-items:center;
+  padding:15px 0 13px;margin-bottom:16px;
+  background:color-mix(in srgb,var(--bg) 86%,transparent);
+  border-bottom:1px solid color-mix(in srgb,var(--border) 72%,transparent);
+  backdrop-filter:blur(16px) saturate(1.25);
+  -webkit-backdrop-filter:blur(16px) saturate(1.25);
+}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand-mark{
+  width:43px;height:43px;flex:0 0 43px;border-radius:12px;
+  display:grid;place-items:center;
+  background:linear-gradient(145deg,#1d4ed8 0%,#0e7490 100%);
+  color:#fff;font-size:11px;font-weight:800;letter-spacing:.09em;
+  box-shadow:0 6px 14px rgba(29,78,216,.20),inset 0 1px 0 rgba(255,255,255,.22);
+}
+.brand-copy{min-width:0}
+.eyebrow,.section-kicker{
+  color:var(--accent);font-size:10px;font-weight:800;line-height:1.4;
+  letter-spacing:.13em;text-transform:uppercase;
+}
+h1{font-size:19px;line-height:1.25;letter-spacing:-.025em;font-weight:760;margin:1px 0 2px}
+.sub{font-size:12.5px;line-height:1.45}
+.meta{font-size:11.5px;line-height:1.55;margin-top:3px}
+.hdr-right{gap:7px}
+button{
+  border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:600;
+  background:var(--card);box-shadow:0 1px 2px rgba(16,24,40,.03);
+}
+button:hover{border-color:var(--accent);background:color-mix(in srgb,var(--accent-soft) 34%,var(--card))}
+button.primary{
+  background:linear-gradient(135deg,#1d4ed8,#1e40af);border-color:transparent;
+  box-shadow:0 4px 10px rgba(29,78,216,.20);color:#fff;
+}
+button.primary:hover{background:linear-gradient(135deg,#1e40af,#1d4ed8);color:#fff}
+#btnTheme{width:37px;height:37px;padding:0;display:grid;place-items:center}
+#staleWarn{
+  width:fit-content;margin-top:7px;padding:4px 8px;border-radius:6px;
+  font-size:11px;line-height:1.3;font-weight:600;
+}
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:15px;
+  box-shadow:var(--shadow);padding:17px;margin-bottom:16px;
+}
+.kpis{gap:12px;margin-bottom:18px;grid-template-columns:repeat(auto-fit,minmax(162px,1fr))}
+.kpi{
+  position:relative;overflow:hidden;padding:14px 14px 13px;border-radius:14px;
+  border-color:var(--border);box-shadow:var(--shadow);min-width:0;
+}
+.kpi::before{
+  content:"";position:absolute;inset:0 0 auto 0;height:3px;
+  background:var(--accent);opacity:.9;
+}
+.kpi[data-tone="teal"]::before{background:var(--accent-2)}
+.kpi[data-tone="green"]::before{background:var(--up)}
+.kpi[data-tone="amber"]::before{background:#dc6803}
+.kpi[data-tone="red"]::before{background:var(--down)}
+.kpi[data-tone="slate"]::before{background:#98a2b3}
+.kpi-head{display:flex;align-items:center;gap:7px;min-width:0}
+.kpi-icon{
+  width:25px;height:25px;flex:0 0 25px;border-radius:7px;display:grid;place-items:center;
+  background:var(--accent-soft);color:var(--accent);
+}
+.kpi-icon svg{width:14px;height:14px;display:block}
+.kpi[data-tone="teal"] .kpi-icon{background:color-mix(in srgb,var(--accent-2) 12%,var(--card));color:var(--accent-2)}
+.kpi[data-tone="green"] .kpi-icon{background:color-mix(in srgb,var(--up) 12%,var(--card));color:var(--up)}
+.kpi[data-tone="amber"] .kpi-icon{background:color-mix(in srgb,#dc6803 13%,var(--card));color:#dc6803}
+.kpi[data-tone="red"] .kpi-icon{background:color-mix(in srgb,var(--down) 12%,var(--card));color:var(--down)}
+.kpi[data-tone="slate"] .kpi-icon{background:color-mix(in srgb,#98a2b3 15%,var(--card));color:var(--muted)}
+.kpi .l{font-size:10px;line-height:1.3;letter-spacing:.055em;text-transform:uppercase;margin:0}
+.kpi .v{font-size:24px;line-height:1.15;letter-spacing:-.035em;font-weight:760;margin-top:7px;font-variant-numeric:tabular-nums}
+.kpi .v.long{
+  font-size:14px;line-height:1.35;letter-spacing:-.01em;margin-top:9px;font-weight:720;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  overflow-wrap:anywhere;min-height:38px;
+}
+.kpi .s{font-size:11px;line-height:1.45;margin-top:3px;color:var(--muted)}
+.tabs{
+  gap:2px;padding:4px;margin-bottom:16px;border:1px solid var(--border);
+  border-radius:12px;background:var(--card);box-shadow:var(--shadow);
+  scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  padding:9px 14px;border:none;border-radius:8px;font-size:12.5px;font-weight:600;
+  color:var(--muted);letter-spacing:-.005em;
+}
+.tab:hover{color:var(--text);background:color-mix(in srgb,var(--bg) 70%,var(--card))}
+.tab.active{
+  color:var(--accent);background:var(--accent-soft);border:none;font-weight:700;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 14%,transparent);
+}
+.section-kicker{margin-bottom:3px}
+.section-title{
+  font-size:20px;line-height:1.2;letter-spacing:-.025em;font-weight:760;
+  margin:0 0 5px;color:var(--text);
+}
+.section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:13px}
+.section-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+#topJPCard{
+  position:relative;overflow:hidden;padding:18px 18px 14px;
+  border-color:color-mix(in srgb,var(--accent) 22%,var(--border));
+  background:linear-gradient(180deg,var(--card) 0%,color-mix(in srgb,var(--accent-soft) 30%,var(--card)) 100%);
+}
+#topJPCard::before{
+  content:"";position:absolute;inset:0 0 auto 0;height:3px;
+  background:linear-gradient(90deg,#1d4ed8 0%,#0e7490 58%,#12b76a 100%);
+}
+#topJPInfo{font-size:12px;line-height:1.55;margin:0}
+#topJPBadge{background:color-mix(in srgb,var(--accent-soft) 60%,var(--card));border-color:color-mix(in srgb,var(--accent) 16%,var(--border));color:var(--accent)}
+.jp-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.jp-card{
+  position:relative;padding:14px;border-radius:14px;background:var(--card);
+  border-color:var(--border);box-shadow:0 1px 2px rgba(16,24,40,.035);
+  min-height:194px;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;
+}
+.jp-card:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent) 45%,var(--border));box-shadow:var(--shadow-lg)}
+.jp-top{gap:8px}
+.jp-rank{
+  display:inline-flex;align-items:center;gap:5px;min-width:0;
+  padding:3px 7px;border-radius:6px;background:var(--bg);border:1px solid var(--border);
+  color:var(--muted);font-size:10.5px;font-weight:700;letter-spacing:.02em;
+}
+.jp-code{color:var(--text);font-size:12px;letter-spacing:.035em;font-weight:800}
+.jp-score{
+  min-width:52px;text-align:center;font-size:22px;line-height:1;letter-spacing:-.04em;
+  padding:6px 9px;border-radius:9px;font-variant-numeric:tabular-nums;
+  background:var(--accent-soft);color:var(--accent);
+}
+.jp-score.hi{background:color-mix(in srgb,var(--up) 12%,var(--card));color:var(--up)}
+.jp-score.lo{background:color-mix(in srgb,#98a2b3 16%,var(--card));color:var(--muted)}
+.jp-name{
+  font-size:12.5px;line-height:1.38;color:var(--text);margin:8px 0 7px;
+  min-height:34px;font-weight:500;
+}
+.jp-meta{font-size:11.5px;align-items:center}
+.jp-meta>span:first-child{font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+.jp-zone{
+  max-width:64%;padding:2px 6px;border-radius:5px;background:var(--bg);
+  border:1px solid var(--border);font-size:10px;line-height:1.45;
+}
+.jp-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:9px}
+.jp-metrics>div{min-width:0;padding:5px 6px;border-radius:6px;background:color-mix(in srgb,var(--bg) 70%,var(--card))}
+.jp-metrics span{display:block;font-size:8.5px;line-height:1.2;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.jp-metrics b{display:block;margin-top:2px;font-size:11.5px;line-height:1.2;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jp-bars{gap:4px;margin-top:10px;height:6px}
+.jp-bar{height:6px;border-radius:3px}
+.jp-bars-legend{
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin-top:4px;
+  color:var(--muted);font-size:8.5px;line-height:1.2;text-align:center;letter-spacing:.01em;
+}
+.jp-tags{gap:4px;margin-top:9px;padding-top:8px;border-top:1px solid var(--border-soft);min-height:0}
+.jp-tag-risk,.jp-tag-info{font-size:9px;padding:2px 5px;line-height:1.4}
+#top10List > div{
+  background:var(--card);border:1px solid var(--border)!important;border-radius:11px!important;
+  padding:11px!important;box-shadow:var(--shadow);transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;
+}
+#top10List > div:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--accent) 45%,var(--border))!important;box-shadow:var(--shadow-lg)}
+.jp-table-title h2{font-size:18px;letter-spacing:-.02em;margin:0 0 4px}
+.jp-table-title{gap:14px;margin-bottom:12px}
+.jp-table-title .note{font-size:12px;line-height:1.55;max-width:830px}
+.toolbar{gap:8px;margin-bottom:14px}
+.toolbar input[type=text],select{
+  height:37px;border-radius:9px;border-color:var(--border);
+  background:var(--card);box-shadow:0 1px 1px rgba(16,24,40,.025);
+  font-size:12.5px;padding:7px 10px;
+}
+.toolbar input[type=text]{flex:1 1 230px}
+.toolbar input[type=text]::placeholder{color:color-mix(in srgb,var(--muted) 78%,transparent)}
+.toolbar input[type=text]:focus,select:focus{
+  outline:3px solid color-mix(in srgb,var(--accent) 14%,transparent);
+  outline-offset:1px;border-color:color-mix(in srgb,var(--accent) 55%,var(--border));
+}
+#jpCsv,#jpMethod{height:37px;font-size:12px;padding:7px 10px}
+.tbl-wrap{border-radius:11px;border-color:var(--border);background:var(--card)}
+.jp-table-wrap{max-height:min(68vh,700px);overflow:auto}
+thead th{
+  padding:10px 10px;background:var(--sticky);font-size:10px;font-weight:750;
+  letter-spacing:.055em;border-bottom:1px solid var(--border-strong);
+}
+tbody td{padding:9px 10px;border-bottom:1px solid var(--border-soft);font-variant-numeric:tabular-nums}
+tbody tr:nth-child(even){background:color-mix(in srgb,var(--bg) 36%,var(--card))}
+tbody tr:hover{background:color-mix(in srgb,var(--accent-soft) 52%,var(--card))}
+tbody tr:hover td.stick{background:color-mix(in srgb,var(--accent-soft) 52%,var(--card))}
+tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var(--card))}
+#jpTbl{min-width:1200px}
+#jpTbl th,#jpTbl td{padding:8px 9px}
+#jpTbl td{font-size:11.5px}
+.jp-status{font-size:9.5px;padding:3px 6px;border-radius:5px;background:var(--bg)}
+.jp-mini{font-size:11px}
+.banner{
+  margin-bottom:18px;padding:14px 16px;border-radius:14px;border:1px solid var(--border);
+  background:var(--card);box-shadow:var(--shadow);
+}
+.banner.stres{
+  border-color:color-mix(in srgb,var(--down) 28%,var(--border));
+  border-left:4px solid var(--down);
+  background:linear-gradient(90deg,color-mix(in srgb,var(--down) 7%,var(--card)) 0%,var(--card) 72%);
+}
+.banner.positif{border-left:4px solid var(--up);background:linear-gradient(90deg,color-mix(in srgb,var(--up) 6%,var(--card)) 0%,var(--card) 72%)}
+.banner .bt{font-size:13.5px;letter-spacing:-.005em;line-height:1.4}
+.banner.stres .bt{color:var(--down)}
+.banner .bm{font-size:12px;line-height:1.6;margin-top:5px}
+.banner ul{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 22px;
+  margin-top:8px;padding-left:18px;
+}
+.banner li{font-size:11.5px;line-height:1.55;color:var(--muted)}
+.warnbox{border-radius:8px;box-shadow:none}
+.disclaimer{
+  margin-top:16px;padding:10px 12px;background:color-mix(in srgb,var(--bg) 62%,var(--card));
+  color:var(--muted);border:1px solid var(--border);border-left:3px solid color-mix(in srgb,var(--accent) 60%,var(--border));
+  border-radius:8px;font-size:11.5px;line-height:1.55;font-weight:400;
+}
+.tag{background:color-mix(in srgb,var(--bg) 65%,var(--card));border-color:var(--border);font-weight:600}
+.note{line-height:1.6}
+@media(max-width:1180px){
+  .jp-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:900px){
+  .jp-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .wrap{padding:0 12px 28px}
+  header{padding:11px 0;margin-bottom:12px}
+  .brand{gap:10px}
+  .brand-mark{width:39px;height:39px;flex-basis:39px;border-radius:10px}
+  h1{font-size:17px}
+  .sub{font-size:11.5px}
+  .meta{font-size:11px}
+  .hdr-right{width:100%;justify-content:flex-end;margin-top:2px}
+  .hdr-right button{flex:1;max-width:160px}
+  #btnTheme{flex:0 0 37px;max-width:37px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .kpi{padding:12px 12px 11px;border-radius:12px}
+  .kpi .v{font-size:21px}
+  .kpi .s{font-size:10.5px}
+  .card{padding:14px;border-radius:13px}
+  .section-title{font-size:18px}
+  .jp-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .jp-card{min-height:0;padding:12px}
+  #topJPList .jp-card{padding:12px!important;min-height:0}
+  #topJPList .jp-score{font-size:20px}
+  #topJPList .jp-name{font-size:12px;min-height:0}
+  #topJPList .jp-meta{font-size:11px}
+  #topJPList .jp-zone{max-width:64%}
+  .banner ul{grid-template-columns:1fr}
+  .banner{padding:12px 13px}
+  .tabs{margin-bottom:13px;padding:3px}
+  .tab{padding:8px 11px;font-size:12px}
+  .jp-table-wrap{max-height:none}
+  .jp-table-title h2{font-size:17px}
+  .jp-table-title .note{font-size:11.5px}
+}
+@media(max-width:560px){
+  .brand-copy > .eyebrow{display:none}
+  #topJPList{grid-template-columns:1fr!important;gap:10px}
+  #topJPList .jp-card{padding:14px!important;min-height:0}
+  #topJPList .jp-name{font-size:12.5px;min-height:0}
+  #topJPList .jp-meta{font-size:11.5px}
+  #topJPList .jp-zone{max-width:65%;font-size:10px}
+  #topJPList .jp-score{font-size:21px}
+  #topJPList .jp-tag-risk,#topJPList .jp-tag-info{font-size:9px}
+  .section-head{gap:10px}
+  .section-actions{width:100%}
+  .section-actions #topJPTableLink,.section-actions #topJPBadge{flex:1;text-align:center}
+  .toolbar input,.toolbar select{height:36px}
+  .toolbar input[type=text]{flex-basis:100%}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <header>
-  <div>
-    <h1>IDX Stock Screener</h1>
-    <div class="sub" id="lastUpdate">Memuat data…</div>
-    <div class="meta" id="metaSkema"></div>
-    <div class="warnbox" id="staleWarn" style="display:none">⚠️ Data mungkin sudah kedaluwarsa</div>
+  <div class="brand">
+    <div class="brand-mark" aria-hidden="true">IDX</div>
+    <div class="brand-copy">
+      <div class="eyebrow">Indonesia Stock Exchange</div>
+      <h1>IDX Stock Screener</h1>
+      <div class="sub" id="lastUpdate">Memuat data…</div>
+      <div class="meta" id="metaSkema"></div>
+      <div class="warnbox" id="staleWarn" style="display:none">⚠️ Data mungkin sudah kedaluwarsa</div>
+    </div>
   </div>
   <div class="hdr-right">
-    <button id="btnInfo" title="Penjelasan skor">ℹ️ Skor</button>
-    <button id="btnTheme" title="Ganti tema">🌗</button>
+    <button id="btnInfo" title="Penjelasan skor">Metodologi</button>
+    <button id="btnTheme" title="Ganti tema" aria-label="Ganti tema">◐</button>
     <button id="btnRefresh" class="primary">↻ Muat ulang</button>
   </div>
 </header>
@@ -332,15 +659,18 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
   <div class="kpis" id="kpisJP"></div>
 
   <div class="card" id="topJPCard" style="display:none">
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px">
-      <div><b style="font-size:15px">Top 20 Investasi Jangka Panjang</b>
-        <span class="tag" style="margin-left:6px">Kartu Investasi</span></div>
-      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-        <button id="topJPTableLink" style="padding:4px 8px;font-size:12px">Lihat tabel ↓</button>
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Portofolio prioritas</div>
+        <h2 class="section-title">Top 20 Investasi Jangka Panjang</h2>
+        <div class="note" id="topJPInfo"></div>
+      </div>
+      <div class="section-actions">
+        <span class="tag">Kartu Investasi</span>
+        <button id="topJPTableLink" style="padding:6px 9px;font-size:11.5px">Lihat tabel ↓</button>
         <span class="tag" id="topJPBadge">Skor JP · 0–100</span>
       </div>
     </div>
-    <div class="note" id="topJPInfo" style="margin-bottom:10px"></div>
     <div class="jp-grid" id="topJPList"></div>
     <div class="jp-disclaimer">Kartu ini adalah ringkasan screening, bukan rekomendasi beli/jual.
       Tidak ada target harga tunggal. Klik kartu untuk melihat rincian pilar, valuasi, timing, dan penanda risiko.</div>
@@ -361,6 +691,7 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
     <div class="card">
       <div class="jp-table-title">
         <div>
+          <div class="section-kicker">Screening fundamental</div>
           <h2>Screening Investasi Jangka Panjang</h2>
           <div class="note">Skor JP 0–100 dari kualitas profitabilitas, pertumbuhan, kesehatan keuangan,
             valuasi, dividen, dan risiko/tata kelola. Hanya emiten yang lolos gerbang dan punya cukup data
@@ -387,7 +718,7 @@ details summary{cursor:pointer;font-weight:600;padding:6px 0;font-size:13px}
         <button id="jpCsv">⬇ CSV JP</button>
         <button id="jpMethod">ℹ️ Metode</button>
       </div>
-      <div class="tbl-wrap">
+      <div class="tbl-wrap jp-table-wrap">
         <table id="jpTbl">
           <thead><tr id="jpThead"></tr></thead>
           <tbody id="jpTbody"></tbody>
@@ -1199,40 +1530,41 @@ function renderKPI(){
   // persen sektor: sebutkan periodenya, jangan telanjang
   const secTxt=(s)=>{
     if(!s||!s.sektor) return 'data tidak tersedia';
-    const n=sektorSingkat(s.sektor);
     // (Review 30 Okt, fix 3) Angka utama = relatif 20 sesi vs IHSG, sama
     // dengan definisi sektor terkuat/terlemah di tab Alert.
     const p20=s.rel_20h_pct!=null?`${s.rel_20h_pct>0?'+':''}${fx(s.rel_20h_pct,2)}% (rel 20s vs IHSG)`:'';
     const p5=s.chg_5h_pct!=null?`${fx(s.chg_5h_pct,2)}% (chg 5s)`:'';
     const p1=s.chg_pct!=null?`${fx(s.chg_pct,2)}% (chg 1s)`:'';
-    return [n,p20,p5,p1].filter(Boolean).join(' · ');
+    return [p20,p5,p1].filter(Boolean).join(' · ')||'data tidak tersedia';
   };
   const k=[
-    {l:'IHSG',v:ihsg.tersedia?nf(ihsg.nilai,2):'–',s:ihsg.tersedia?(ihsg.chg_pct!=null?('Chg '+fx(ihsg.chg_pct,2)+'% (1 sesi)'):'Chg tidak tersedia'):'data tidak tersedia',t:'Indeks Harga Saham Gabungan'},
-    {l:'Emiten dinilai',v:nf(skor.length,0),s:`${nf(adaTop,0)} lolos syarat Top 10`,t:'Jumlah emiten yang punya skor'},
+    {l:'IHSG',v:ihsg.tersedia?nf(ihsg.nilai,2):'–',s:ihsg.tersedia?(ihsg.chg_pct!=null?('Chg '+fx(ihsg.chg_pct,2)+'% (1 sesi)'):'Chg tidak tersedia'):'data tidak tersedia',t:'Indeks Harga Saham Gabungan',icon:'market',tone:'slate'},
+    {l:'Emiten dinilai',v:nf(skor.length,0),s:`${nf(adaTop,0)} lolos syarat Top 10`,t:'Jumlah emiten yang punya skor',icon:'issuer',tone:'blue'},
     {l:'Skor tertinggi',v:top!=null?fx(top,1):'–',
       s:topR?`${topR.kode} · rata-rata ${avg!=null?fx(avg,1):'–'}`:'Top 10 kosong',
-      t:'Sama definisinya dengan Top 10: bukan waspada tinggi & likuid. Bukan maksimum seluruh pasar.'},
-    {l:'Breakout',v:nf(brk,0),s:'volume >1,5× rata-rata',t:'Sinyal breakout dengan konfirmasi volume'},
+      t:'Sama definisinya dengan Top 10: bukan waspada tinggi & likuid. Bukan maksimum seluruh pasar.',icon:'trophy',tone:'green'},
+    {l:'Breakout',v:nf(brk,0),s:'volume >1,5× rata-rata',t:'Sinyal breakout dengan konfirmasi volume',icon:'market',tone:'teal'},
     {l:'Waspada',v:nf(wst,0),s:`tinggi ${nf(pt.tinggi||0,0)} · ringan ${nf(pt.ringan||0,0)}`,
-      t:'Tinggi = tidak masuk Top 10. Ringan = hanya catatan, tetap boleh masuk Top 10.'},
-    {l:'Sektor terkuat',v:st?(sektorSingkat(st.sektor)||'–'):'–',s:secTxt(st),t:st?String(st.sektor):'data tidak tersedia'},
-    {l:'Sektor terlemah',v:sw?(sektorSingkat(sw.sektor)||'–'):'–',s:secTxt(sw),t:sw?String(sw.sektor):'data tidak tersedia'},
+      t:'Tinggi = tidak masuk Top 10. Ringan = hanya catatan, tetap boleh masuk Top 10.',icon:'warning',tone:'red'},
+    {l:'Sektor terkuat',v:st?(st.sektor||'–'):'–',s:secTxt(st),t:st?String(st.sektor):'data tidak tersedia',icon:'market',tone:'green',long:true},
+    {l:'Sektor terlemah',v:sw?(sw.sektor||'–'):'–',s:secTxt(sw),t:sw?String(sw.sektor):'data tidak tersedia',icon:'sectorweak',tone:'red',long:true},
   ];
   const box=$('#kpisMomentum');
-  if(box) box.innerHTML = k.map(x=>`<div class="kpi" title="${esc(x.t||'')}"><div class="l">${esc(x.l)}</div><div class="v">${esc(String(x.v))}</div><div class="s">${esc(String(x.s))}</div></div>`).join('');
+  if(box) box.innerHTML = k.map(x=>`<div class="kpi" data-tone="${x.tone||'blue'}" title="${esc(x.t||'')}">
+    <div class="kpi-head"><span class="kpi-icon">${kpiIcon(x.icon)}</span><div class="l">${esc(x.l)}</div></div>
+    <div class="v${x.long?' long':''}">${esc(String(x.v))}</div><div class="s">${esc(String(x.s))}</div></div>`).join('');
 }
 
 /* ---------- J3: Skor JP, tabel, dan Kartu Investasi ---------- */
 /* Semua nilai di bawah berasal dari field J2 di latest.json. Tidak ada
    skor atau nilai fundamental yang diisi 0 ketika sumbernya kosong. */
 const JP_PILAR = [
-  {k:'kualitas_profitabilitas', t:'Kualitas'},
-  {k:'pertumbuhan', t:'Pertumbuhan'},
-  {k:'kesehatan_keuangan', t:'Kesehatan'},
-  {k:'valuasi', t:'Valuasi'},
-  {k:'dividen', t:'Dividen'},
-  {k:'risiko_tata_kelola', t:'Risiko'},
+  {k:'kualitas_profitabilitas', t:'Kualitas profitabilitas', s:'Kualitas'},
+  {k:'pertumbuhan', t:'Pertumbuhan', s:'Tumbuh'},
+  {k:'kesehatan_keuangan', t:'Kesehatan keuangan', s:'Sehat'},
+  {k:'valuasi', t:'Valuasi', s:'Valuasi'},
+  {k:'dividen', t:'Dividen', s:'Dividen'},
+  {k:'risiko_tata_kelola', t:'Risiko & tata kelola', s:'Risiko'},
 ];
 let JP_SORT = {key:'peringkat_jp', dir:1};
 
@@ -1356,6 +1688,20 @@ function jpRingkas(r){
 }
 
 /* ---------- KPI Jangka Panjang ---------- */
+function kpiIcon(kind){
+  const p={
+    market:'<path d="M3 17l5-5 4 3 7-8"/><path d="M15 7h4v4"/>',
+    issuer:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 15v-3M12 15V8M17 15v-5"/>',
+    trophy:'<path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M17 5h2a3 3 0 0 1-3 3M7 5H5a3 3 0 0 0 3 3"/>',
+    gate:'<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/>',
+    partial:'<path d="M12 3 2 21h20L12 3Z"/><path d="M12 9v5M12 17h.01"/>',
+    file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',
+    warning:'<path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"/><path d="M12 8v4M12 16h.01"/>',
+    sectorweak:'<path d="M3 7l6 6 4-4 8 8"/><path d="M14 17h7v-7"/>'
+  };
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p[kind]||p.market}</svg>`;
+}
 function renderKPIJP(){
   const box=$('#kpisJP'); if(!box) return;
   const e=DATA.emiten||[];
@@ -1373,27 +1719,29 @@ function renderKPIJP(){
   const ihsgTxt=ihsg.tersedia?(nf(ihsg.nilai,2)||'data tidak tersedia'):'data tidak tersedia';
   const ihsgSub=ihsg.tersedia&&ihsg.chg_pct!=null?('Chg '+fx(ihsg.chg_pct,2)+'% (1 sesi)'):'data tidak tersedia';
   const items=[
-    {l:'IHSG',v:ihsgTxt,s:ihsgSub,t:'Indeks Harga Saham Gabungan; konteks pasar, bukan skor JP.'},
+    {l:'IHSG',v:ihsgTxt,s:ihsgSub,t:'Indeks Harga Saham Gabungan; konteks pasar, bukan skor JP.',icon:'market',tone:'slate'},
     {l:'Emiten JP',v:nf(scored.length,0)||'data tidak tersedia',
       s:(nf(ranked.length,0)||'0')+' diperingkat · '+(nf(nofund.length,0)||'0')+' tanpa laporan',
-      t:'Jumlah emiten dengan Skor JP. Tanpa laporan keuangan tetap "data tidak tersedia", bukan 0.'},
+      t:'Jumlah emiten dengan Skor JP. Tanpa laporan keuangan tetap "data tidak tersedia", bukan 0.',icon:'issuer',tone:'blue'},
     {l:'Skor JP tertinggi',v:top?fx(top.skor_jp,1):'data tidak tersedia',
       s:top?(esc(top.kode)+' · median '+(dist.median!=null?fx(dist.median,1):'data tidak tersedia')):'belum ada peringkat',
-      t:'Skor JP tertinggi di antara emiten yang lolos gerbang dan diperingkat. Bukan rekomendasi.'},
+      t:'Skor JP tertinggi di antara emiten yang lolos gerbang dan diperingkat. Bukan rekomendasi.',icon:'trophy',tone:'green'},
     {l:'Lolos gerbang',v:nf(ranked.length,0)||'data tidak tersedia',
       s:'dari '+(nf(scored.length,0)||'0')+' emiten berdata',
-      t:'Lolos likuiditas, market cap, laba, ekuitas, waspada, dan cakupan ≥70%.'},
+      t:'Lolos likuiditas, market cap, laba, ekuitas, waspada, dan cakupan ≥70%.',icon:'gate',tone:'teal'},
     {l:'Data kurang',v:nf(kurang.length,0)||'data tidak tersedia',
       s:'cakupan <70%; tidak diperingkat',
-      t:'Punya sebagian laporan tetapi cakupan bobot di bawah 70%; tidak dipaksa diberi skor.'},
+      t:'Punya sebagian laporan tetapi cakupan bobot di bawah 70%; tidak dipaksa diberi skor.',icon:'partial',tone:'amber'},
     {l:'Tanpa laporan',v:nf(nofund.length,0)||'data tidak tersedia',
       s:'Skor JP = data tidak tersedia',
-      t:'Tidak ada laporan fundamental yang bisa dipakai; skor tidak diisi 0.'},
+      t:'Tidak ada laporan fundamental yang bisa dipakai; skor tidak diisi 0.',icon:'file',tone:'slate'},
     {l:'Waspada tinggi',v:nf(high.length,0)||'data tidak tersedia',
       s:'tidak masuk peringkat JP',
-      t:'Waspada tinggi mendiskualifikasi dari peringkat JP dan Top 20.'},
+      t:'Waspada tinggi mendiskualifikasi dari peringkat JP dan Top 20.',icon:'warning',tone:'red'},
   ];
-  box.innerHTML=items.map(x=>`<div class="kpi" title="${esc(x.t||'')}"><div class="l">${esc(x.l)}</div><div class="v">${esc(String(x.v))}</div><div class="s">${esc(String(x.s))}</div></div>`).join('');
+  box.innerHTML=items.map(x=>`<div class="kpi" data-tone="${x.tone||'blue'}" title="${esc(x.t||'')}">
+    <div class="kpi-head"><span class="kpi-icon">${kpiIcon(x.icon)}</span><div class="l">${esc(x.l)}</div></div>
+    <div class="v">${esc(String(x.v))}</div><div class="s">${esc(String(x.s))}</div></div>`).join('');
 }
 
 /* ---------- Top 20 / Kartu Investasi ringkas ---------- */
@@ -1433,6 +1781,10 @@ function renderTopJP(){
       const w=v==null?0:Math.max(0,Math.min(100,v));
       return `<span class="jp-bar ${cls}" title="${esc(p.t)}: ${v==null?'data tidak tersedia':fx(v,1)}"><i style="width:${w}%"></i></span>`;
     }).join('');
+    const legend=JP_PILAR.map(p=>`<span title="${esc(p.t)}">${esc(p.s)}</span>`).join('');
+    const perTxt=r.per!=null?fx(r.per,1)+'×':'—';
+    const pbvTxt=r.pbv!=null?fx(r.pbv,2)+'×':'—';
+    const roeTxt=r.roe!=null?fx(Number(r.roe)*100,1)+'%':'—';
     const tagHtml=tags.length
       ? tags.map(t=>`<span class="jp-tag-risk" title="Penanda risiko; tidak dipakai mengurangi skor">${esc(t)}</span>`).join('')
       : '<span class="jp-tag-info">risiko: lihat kartu</span>';
@@ -1444,7 +1796,13 @@ function renderTopJP(){
       <div class="jp-name">${esc(r.nama||'')}</div>
       <div class="jp-meta"><span>${r.harga!=null?'Rp'+nf(r.harga,0):jpNa()}</span>
         <span class="jp-zone" title="${esc(zona)}">${esc(zona)}</span></div>
+      <div class="jp-metrics">
+        <div><span>PER</span><b>${perTxt}</b></div>
+        <div><span>PBV</span><b>${pbvTxt}</b></div>
+        <div><span>ROE</span><b>${roeTxt}</b></div>
+      </div>
       <div class="jp-bars" title="Enam pilar Skor JP; panjang batang = skor pilar 0–100">${bars}</div>
+      <div class="jp-bars-legend">${legend}</div>
       <div class="jp-tags">
         <span class="jp-tag-info" title="Cakupan bobot data fundamental">cakupan ${cov!=null?fx(cov,1)+'%':'data tidak tersedia'}</span>
         ${tagHtml}

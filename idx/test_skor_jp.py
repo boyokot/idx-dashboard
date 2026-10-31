@@ -216,6 +216,105 @@ def main() -> int:
         median_kurang is None and n_kurang == 1,
         f"{median_kurang} / {n_kurang}")
 
+    print("2c. penyesuaian split pada median historis")
+    fund_split = {
+        "tahun_keuangan": [2025, 2024],
+        "periode_laporan": {"2025": "2025-12-31", "2024": "2024-12-31"},
+        "data_mentah": {
+            "laba_bersih": {"2025": 30e9, "2024": 30e9},
+            "ekuitas": {"2025": 500e9, "2024": 500e9},
+            "eps": {"2025": 30.0, "2024": 30.0},
+            "jumlah_saham": {"2025": 1e9, "2024": 1e9},
+        },
+    }
+    hv_split = {"tahun": [
+        {"tahun": 2025, "target_harga": "2026-04-30", "harga": 120.0,
+         "eps_idr": 30.0, "per": 4.0, "pbv": 0.24, "kurs_usd_idr": None},
+        {"tahun": 2024, "target_harga": "2025-04-30", "harga": 1000.0,
+         "eps_idr": 30.0, "per": 33.333, "pbv": 2.0, "kurs_usd_idr": None},
+    ]}
+    harga_split = {"split": [{"tanggal": "2025-09-09", "rasio": 10.0}]}
+    hp_split, np_split = S._median_historis_relatif(
+        fund_split, harga_split, hv_split, "per", 2, 1.0, 100.0, 4)
+    hb_split, nb_split = S._median_historis_relatif(
+        fund_split, harga_split, hv_split, "pbv", 2, 0.1, 20.0, 4)
+    cek("PER historis disesuaikan split 10:1",
+        hp_split is not None and abs(hp_split - 3.6667) < 0.001 and np_split == 2,
+        f"{hp_split} / {np_split}")
+    cek("PBV historis disesuaikan split 10:1",
+        hb_split is not None and abs(hb_split - 0.22) < 0.001 and nb_split == 2,
+        f"{hb_split} / {nb_split}")
+    cek("data mentah historis tidak diubah",
+        hv_split["tahun"][1]["per"] == 33.333)
+
+    harga_reverse = {"split": [{"tanggal": "2025-09-09", "rasio": 0.5}]}
+    hp_rev, np_rev = S._median_historis_relatif(
+        fund_split, harga_reverse, hv_split, "per", 2, 1.0, 100.0, 4)
+    cek("reverse split 0.5 menaikkan harga historis",
+        hp_rev is not None and abs(hp_rev - 35.3333) < 0.001 and np_rev == 2,
+        f"{hp_rev} / {np_rev}")
+
+    row_split = {
+        "fund_ada": True, "kelompok": "nonkeuangan", "sektor": "SEKTOR A",
+        "asli": {"harga": 100.0}, "fund": fund_split,
+        "_raw": {
+            "per": 10.0, "pbv": 1.0, "eps_idr": 30.0, "ekuitas": 500e9,
+            "laba_once": {"flag": False}, "valuasi_historis": hv_split,
+            "harga_emiten": harga_split,
+        },
+    }
+    vr_split = S._valuasi_relatif(
+        row_split, {"SEKTOR A": 10.0}, {"SEKTOR A": 1.8},
+        {"SEKTOR A": 10}, CFG)
+    cek("indikator memakai median split-adjusted",
+        abs(vr_split["komponen"]["per"]["historis"] - 3.6667) < 0.001
+        and abs(vr_split["komponen"]["pbv"]["historis"] - 0.22) < 0.001,
+        str(vr_split["komponen"]))
+    cek("catatan split ada di indikator",
+        any("disesuaikan split" in x for x in vr_split["catatan"]),
+        str(vr_split["catatan"]))
+
+    print("2d. laba berbalik dari rugi")
+    fund_turn = {
+        "tahun_keuangan": [2025, 2024, 2023],
+        "data_mentah": {
+            "laba_bersih": {"2025": 10e9, "2024": -5e9, "2023": -3e9},
+            "eps": {"2025": 10.0, "2024": -5.0, "2023": -3.0},
+            "ekuitas": {"2025": 500e9, "2024": 490e9, "2023": 480e9},
+            "jumlah_saham": {"2025": 1e9, "2024": 1e9, "2023": 1e9},
+        },
+    }
+    cek("turnaround terdeteksi",
+        S._laba_transisi(fund_turn)["flag"] is True,
+        str(S._laba_transisi(fund_turn)))
+    cek("laba stabil tidak dianggap turnaround",
+        S._laba_transisi(_fund("AAAA", 0))["flag"] is False)
+    row_turn = {
+        "fund_ada": True, "kelompok": "nonkeuangan", "sektor": "SEKTOR A",
+        "asli": {"harga": 800.0}, "fund": fund_turn,
+        "_raw": {
+            "per": 8.0, "pbv": 1.6, "eps_idr": 10.0, "ekuitas": 500e9,
+            "laba_once": {"flag": False},
+            "valuasi_historis": {"tahun": [
+                {"tahun": 2025, "per": 9.0, "pbv": 1.5},
+                {"tahun": 2024, "per": 9.0, "pbv": 1.5},
+            ]},
+        },
+    }
+    vr_turn = S._valuasi_relatif(
+        row_turn, {"SEKTOR A": 10.0}, {"SEKTOR A": 1.8},
+        {"SEKTOR A": 10}, CFG)
+    cek("PER turnaround tidak dipakai",
+        vr_turn["komponen"]["per"]["tersedia"] is False
+        and vr_turn["komponen"]["pbv"]["tersedia"] is True,
+        str(vr_turn["komponen"]))
+    cek("status turnaround sebagian",
+        vr_turn["status"] == "sebagian", str(vr_turn["status"]))
+    cek("catatan turnaround ada",
+        any("tahun rugi" in x or "belum tentu berulang" in x
+            for x in vr_turn["catatan"]),
+        str(vr_turn["catatan"]))
+
     vr_bank = S._valuasi_relatif(
         {**row_vr(), "kelompok": "keuangan"}, {"SEKTOR A": 10.0},
         {"SEKTOR A": 1.8}, {"SEKTOR A": 10}, CFG)

@@ -389,6 +389,118 @@ def _sejarah_valuasi(fund: Optional[Dict[str, Any]],
     return out
 
 
+def _faktor_split(harga: Optional[Dict[str, Any]], target: str) -> float:
+    """Faktor split kumulatif setelah tanggal target harga.
+
+    Harga bulanan di harga_jp.json adalah close mentah. Untuk indikator
+    diskon/overprice, harga sebelum split harus dibawa ke basis saham
+    sekarang supaya PER/PBV historis sebanding. J2 tidak memakai fungsi ini.
+    """
+    if not target:
+        return 1.0
+    faktor = 1.0
+    for item in (harga or {}).get("split") or []:
+        if not isinstance(item, dict):
+            continue
+        tanggal = str(item.get("tanggal") or "")[:10]
+        rasio = _angka(item.get("rasio"))
+        if tanggal and rasio is not None and rasio > 0 and tanggal > target:
+            faktor *= rasio
+    return faktor
+
+
+def _nilai_historis_relatif(fund: Optional[Dict[str, Any]],
+                            item: Dict[str, Any], key: str,
+                            faktor: float,
+                            saham_terakhir: Optional[float]
+                            ) -> Optional[float]:
+    """PER/PBV satu tahun setelah penyesuaian split.
+
+    EPS dan jumlah saham historis bisa berasal dari basis sebelum atau
+    sesudah split. Basis dideteksi dari laba bersih / jumlah saham; kalau
+    tidak dapat dipastikan, nilai dilewati (tidak ditebak).
+    """
+    px = _angka(item.get("harga"))
+    if px is None or px <= 0:
+        return None
+    if abs(faktor - 1.0) <= 1e-9:
+        return _angka(item.get(key))
+    try:
+        tahun = int(item.get("tahun"))
+    except (TypeError, ValueError):
+        return None
+    raw = (fund or {}).get("data_mentah") or {}
+    if key == "per":
+        eps_idr = _angka(item.get("eps_idr"))
+        eps = _nilai_tahun(raw, tahun, "eps")
+        laba = _nilai_tahun(raw, tahun, "laba_bersih")
+        if (eps_idr is None or eps_idr <= 0 or eps is None or eps <= 0
+                or laba is None or laba <= 0 or not saham_terakhir
+                or saham_terakhir <= 0):
+            return None
+        eps_sekarang = laba / saham_terakhir
+        if eps_sekarang <= 0:
+            return None
+        rasio = eps / eps_sekarang
+        if abs(rasio - 1.0) <= 0.25:
+            return (px / faktor) / eps_idr
+        if abs(rasio - faktor) <= 0.25 * abs(faktor):
+            return px / eps_idr
+        return None
+    if key != "pbv":
+        return None
+    ekuitas = _nilai_tahun(raw, tahun, "ekuitas")
+    saham = _saham_tahun(fund or {}, tahun)
+    if ekuitas is None or ekuitas <= 0 or not saham or saham <= 0:
+        return None
+    fx = _angka(item.get("kurs_usd_idr")) or 1.0
+    bvps = ekuitas * fx / saham
+    if bvps <= 0:
+        return None
+    if saham_terakhir and saham_terakhir > 0:
+        rasio_saham = saham_terakhir / saham
+        if abs(rasio_saham - 1.0) <= 0.25:
+            return (px / faktor) / bvps
+        if abs(rasio_saham - faktor) <= 0.25 * abs(faktor):
+            return px / bvps
+    return None
+
+
+def _median_historis_relatif(fund: Optional[Dict[str, Any]],
+                             harga: Optional[Dict[str, Any]],
+                             hv: Optional[Dict[str, Any]], key: str,
+                             min_n: int = 2, vmin: float = 0.0,
+                             vmax: float = float("inf"),
+                             maks_n: int = 4
+                             ) -> Tuple[Optional[float], int]:
+    """Median PER/PBV historis dengan harga disesuaikan split."""
+    items = [x for x in ((hv or {}).get("tahun") or [])
+             if isinstance(x, dict)]
+    items.sort(key=lambda x: _angka(x.get("tahun")) or 0, reverse=True)
+    sh_terakhir = _saham_terakhir(fund)[0] if fund else None
+    vals: List[float] = []
+    for item in items[:max(0, maks_n)]:
+        target = str(item.get("target_harga") or "")
+        faktor = _faktor_split(harga, target)
+        v = _nilai_historis_relatif(fund, item, key, faktor, sh_terakhir)
+        if v is not None and vmin <= v <= vmax:
+            vals.append(v)
+    if len(vals) < min_n:
+        return None, len(vals)
+    return float(statistics.median(vals)), len(vals)
+
+
+def _ada_split_historis(harga: Optional[Dict[str, Any]],
+                        hv: Optional[Dict[str, Any]]) -> bool:
+    for item in ((hv or {}).get("tahun") or []):
+        if not isinstance(item, dict):
+            continue
+        faktor = _faktor_split(harga, str(item.get("target_harga") or ""))
+        if abs(faktor - 1.0) > 1e-9:
+            return True
+    return False
+
+
 def _median_historis(hv: Optional[Dict[str, Any]], key: str,
                      min_n: int = 2, vmin: float = 0.0,
                      vmax: float = float("inf"),
@@ -457,12 +569,25 @@ def _valuasi_relatif(r: Dict[str, Any],
     sektor = str(r.get("sektor") or "LAINNYA").upper()
     harga = _angka((r.get("asli") or {}).get("harga"))
     hv = raw.get("valuasi_historis") or {}
+    transisi = _laba_transisi(r.get("fund"))
+    harga_historis = raw.get("harga_emiten")
+    ada_split = _ada_split_historis(harga_historis, hv)
     sp = _angka((median_per or {}).get(sektor))
     sb = _angka((median_pbv or {}).get(sektor))
     sp = sp if sp is not None and per_min <= sp <= per_max else None
     sb = sb if sb is not None and pbv_min <= sb <= pbv_max else None
-    hp, n_hp = _median_historis(hv, "per", min_hist, per_min, per_max, maks_hist)
-    hb, n_hb = _median_historis(hv, "pbv", min_hist, pbv_min, pbv_max, maks_hist)
+    if ada_split:
+        hp, n_hp = _median_historis_relatif(
+            r.get("fund"), harga_historis, hv, "per",
+            min_hist, per_min, per_max, maks_hist)
+        hb, n_hb = _median_historis_relatif(
+            r.get("fund"), harga_historis, hv, "pbv",
+            min_hist, pbv_min, pbv_max, maks_hist)
+    else:
+        hp, n_hp = _median_historis(
+            hv, "per", min_hist, per_min, per_max, maks_hist)
+        hb, n_hb = _median_historis(
+            hv, "pbv", min_hist, pbv_min, pbv_max, maks_hist)
     n_sec = int((n_sektor or {}).get(sektor, 0) or 0)
     # _median_sektor memakai median gabungan untuk sektor tipis. Indikator
     # ini tidak boleh memakainya sebagai "median sektor"; sektor <5 emiten
@@ -499,9 +624,18 @@ def _valuasi_relatif(r: Dict[str, Any],
         "catatan": [],
     }
 
+    if ada_split:
+        out["sumber"] += "; harga historis disesuaikan split"
     if not r.get("fund_ada"):
         out["catatan"].append("laporan fundamental tidak tersedia")
         return out
+    if ada_split:
+        out["catatan"].append(
+            "harga historis disesuaikan split; skor J2 tidak berubah")
+    if transisi.get("flag"):
+        out["catatan"].append(
+            "laba terakhir positif setelah minimal 2 tahun rugi; "
+            "PER belum tentu berulang")
     if sp is None and sb is None and hp is None and hb is None:
         out["catatan"].append("median sektor dan riwayat valuasi tidak tersedia")
         return out
@@ -558,6 +692,11 @@ def _valuasi_relatif(r: Dict[str, Any],
     elif (raw.get("laba_once") or {}).get("flag"):
         per_now = None
         per_alasan = "laba sekali-jadi; PER tidak dipakai"
+    elif transisi.get("flag"):
+        per_now = None
+        per_alasan = (
+            "laba berbalik dari rugi; PER tidak dipakai karena belum "
+            "terbukti berulang")
     elif per_now is None:
         per_alasan = "PER sekarang tidak tersedia"
     elif not (per_min <= per_now <= per_max):
@@ -761,6 +900,39 @@ def _payout_sehat(p: Optional[float], cfg: Dict[str, Any]) -> Optional[float]:
     if p <= maks:
         return 1.0 - 0.8 * ((p - hi) / (maks - hi)) if maks > hi else 0.2
     return 0.0
+
+
+def _laba_transisi(fund: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    """Laba terakhir positif setelah minimal 2 tahun rugi.
+
+    Ini bukan bukti laba sekali-jadi, tetapi PER dari satu tahun pemulihan
+    belum terbukti berulang. Indikator diskon/overprice melewati PER untuk
+    kasus ini; PBV tetap boleh dipakai bila valid. Skor J2 tidak memakai
+    flag ini.
+    """
+    out = {"flag": False, "laba_terakhir": None, "tahun_rugi": 0}
+    if not fund:
+        return out
+    raw = fund.get("data_mentah") or {}
+    ni = raw.get("laba_bersih") or {}
+    years = []
+    for y, v in ni.items():
+        if _angka(v) is not None:
+            try:
+                years.append(int(y))
+            except (TypeError, ValueError):
+                pass
+    years = sorted(set(years), reverse=True)
+    if len(years) < 3:
+        return out
+    terakhir = _angka(ni.get(str(years[0])))
+    prev = [_angka(ni.get(str(y))) for y in years[1:4]]
+    prev = [x for x in prev if x is not None]
+    out["laba_terakhir"] = terakhir
+    out["tahun_rugi"] = sum(1 for x in prev if x < 0)
+    if terakhir is not None and terakhir > 0 and out["tahun_rugi"] >= 2:
+        out["flag"] = True
+    return out
 
 
 def _laba_once(fund: Optional[Dict[str, Any]], cfg: Dict[str, Any]
@@ -1055,7 +1227,8 @@ def _bangun_baris(latest: Dict[str, Any], fund: Optional[Dict[str, Any]],
             "per": cp["per"], "pbv": cp["pbv"],
             "sumber_per": cp["sumber_per"], "sumber_pbv": cp["sumber_pbv"],
             "per_sejarah": hv.get("per_rata2"), "pbv_sejarah": hv.get("pbv_rata2"),
-            "valuasi_historis": hv, "payout": payout_mentah,
+            "valuasi_historis": hv, "harga_emiten": harga_emiten,
+            "payout": payout_mentah,
             "payout_sumber": payout_sumber, "payout_sehat": payout_s,
             "eps_idr": eps_now, "laba_once": once,
             "waspada_skor": waspada_skor, "waspada_tingkat": waspada_tingkat,
@@ -1580,7 +1753,9 @@ def hitung(latest: Dict[str, Any], fundamental: Dict[str, Any],
         "valuasi_relatif": {
             "dipakai_skor": False,
             "metode": ("60% median sektor + 40% median historis; "
+                       "median historis 2-4 tahun dan harga disesuaikan split; "
                        "PER/PBV non-keuangan 55%/45%, keuangan 30%/70%; "
+                       "PER dilewati untuk laba sekali-jadi/berbalik dari rugi; "
                        "bukan target harga dan tidak dipakai Skor JP"),
             "status": vr_status,
             "label": dict(sorted(vr_label.items())),
@@ -1596,7 +1771,7 @@ def hitung(latest: Dict[str, Any], fundamental: Dict[str, Any],
             "Penanda risiko (utang USD, siklikal, free float, komoditas, sensitivitas) tidak mengurangi skor.",
             "NPL/CAR tidak tersedia dari yfinance; bank/lembaga keuangan hanya memakai ROE & PBV.",
             "Zona timing hanya informasi, tidak masuk skor.",
-            "Indikator diskon/overprice memakai median sektor dan median historis; hanya informasi, bukan target harga, dan tidak mengubah Skor JP.",
+            "Indikator diskon/overprice memakai median sektor dan median historis split-adjusted; PER dilewati untuk laba sekali-jadi/berbalik dari rugi; hanya informasi, bukan target harga, dan tidak mengubah Skor JP.",
         ] + catatan_data,
     }
     ringkasan = {

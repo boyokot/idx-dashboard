@@ -4,8 +4,10 @@ Pengambil data pasar tambahan untuk Skor Investasi Jangka Panjang (J2).
 
 Dua kelompok data:
   1. Riwayat harga 5 tahun per emiten
-     - bulanan: close MENTAH, dipakai menghitung PER/PBV historis
+     - bulanan: close MENTAH, dipakai menghitung PER/PBV historis J2
      - harian 260 sesi terakhir: Adj Close, dipakai MA200 / puncak 52 minggu
+     - split: riwayat split, dipakai indikator diskon/overprice agar
+       PER/PBV historis tidak terdistorsi split
   2. Info ringkas yfinance: mata uang laporan, market cap, saham beredar,
      free float, EPS/BOOK value terkini, total utang, DER.
 
@@ -47,7 +49,7 @@ PATH_HARGA = os.path.join(_ROOT, "data", "harga_jp.json")
 PATH_INFO = os.path.join(_ROOT, "data", "info_jp.json")
 
 WIB = timezone(timedelta(hours=7))
-VERSI = "1.0.0"
+VERSI = "1.1.0"
 DEFAULT_WORKERS = int(os.environ.get("IDX_JP_WORKERS", "8"))
 MAX_RETRY = 2
 BASE_BACKOFF = 1.2
@@ -147,7 +149,7 @@ def _ambil_satu(kode: str) -> Dict[str, Any]:
     # ── harga ────────────────────────────────────────────────────────
     try:
         h = t.history(period="5y", interval="1d", auto_adjust=False,
-                      actions=False)
+                      actions=True)
         if h is None or getattr(h, "empty", True):
             galat.append("harga kosong")
         else:
@@ -170,6 +172,25 @@ def _ambil_satu(kode: str) -> Dict[str, Any]:
                 out["harian"] = {"d": hd, "c": hc}
             if not bc and not hc:
                 galat.append("harga tidak valid")
+            # Riwayat split untuk penyesuaian PER/PBV historis indikator.
+            # J2 tetap memakai harga bulanan mentah.
+            try:
+                if "Stock Splits" in h.columns:
+                    sp = h["Stock Splits"].dropna()
+                    events = []
+                    for idx, val in sp.items():
+                        rasio = _angka(val)
+                        if rasio is None or rasio <= 0:
+                            continue
+                        try:
+                            tanggal = idx.date().isoformat()
+                        except Exception:
+                            tanggal = str(idx)[:10]
+                        events.append({"tanggal": tanggal, "rasio": rasio})
+                    if events:
+                        out["split"] = sorted(events, key=lambda x: x["tanggal"])
+            except Exception as e:  # noqa: BLE001
+                galat.append(f"split: {type(e).__name__}: {e}")
     except Exception as e:  # noqa: BLE001
         galat.append(f"harga: {type(e).__name__}: {e}")
 
@@ -262,13 +283,14 @@ def jalankan(kode: Optional[List[str]] = None, batas: int = 0,
         "periode": "5y",
         "interval": "1d",
         "penyesuaian": {
-            "bulanan": "Close mentah (untuk PER/PBV historis)",
+            "bulanan": "Close mentah (untuk PER/PBV historis J2)",
             "harian": "Adj Close (split & dividen, untuk MA200/52 minggu)",
+            "split": "riwayat split yfinance (untuk indikator diskon/overprice)",
         },
         "kurs_usd_idr": kurs,
         "jumlah_emiten": len(hasil),
         "emiten": {
-            k: {x: r[x] for x in ("bulanan", "harian") if x in r}
+            k: {x: r[x] for x in ("bulanan", "harian", "split") if x in r}
             for k, r in sorted(hasil.items())
         },
         "gagal": dict(sorted(gagal.items())),

@@ -347,7 +347,7 @@ Alur data:
 | File / modul | Isi |
 |---|---|
 | `idx/fundamental_historical.py` (J1) | laporan 3–4 tahun → `data/fundamental.json` |
-| `idx/pasar_jp.py` | harga bulanan 5 tahun + harian 260 sesi, kurs USD/IDR → `data/harga_jp.json`; info yfinance → `data/info_jp.json` |
+| `idx/pasar_jp.py` | harga bulanan 5 tahun + harian 260 sesi + riwayat split, kurs USD/IDR → `data/harga_jp.json`; info yfinance → `data/info_jp.json` |
 | `idx/skor_jp.py` | gerbang, persentil sektor, enam pilar, ranking → field JP di `data/latest.json` + `data/skor_jp_ringkasan.json` |
 | `config/bobot_jp.json` | bobot pilar, bobot metrik, ambang gerbang |
 
@@ -398,11 +398,16 @@ Diskon (%)  = (Harga_rel / harga sekarang − 1) × 100
 Positif = diskon relatif; negatif = overprice. Jika salah satu komponen
 tidak tersedia, bobotnya dinormalisasi dan status menjadi `sebagian`.
 Median historis memakai 2–4 tahun terbaru dari `valuasi_historis.tahun[]`;
-bukan rata-rata, agar satu tahun ekstrem tidak mendominasi. Sektor dengan
-<5 emiten/observasi valid tidak memakai median sektor (memakai riwayat bila ada).
+bukan rata-rata, agar satu tahun ekstrem tidak mendominasi. Harga historis
+untuk indikator ini **disesuaikan split** memakai riwayat `split` dari
+`harga_jp.json`; skor J2 tetap memakai harga bulanan mentah. Bila basis
+EPS/saham tidak dapat dipastikan, observasi tersebut dilewati, bukan ditebak.
+Sektor dengan <5 emiten/observasi valid tidak memakai median sektor
+(memakai riwayat bila ada).
 
 Perlindungan data: PER di luar 1–100× dan PBV di luar 0,10–20× tidak
-dipakai; EPS ≤0, laba sekali-jadi, atau ekuitas ≤0 juga tidak dipakai.
+dipakai; EPS ≤0, laba sekali-jadi, laba yang berbalik dari rugi (belum
+terbukti berulang), atau ekuitas ≤0 juga tidak dipakai.
 Selisih di atas 100% diberi `ekstrem: true` dan catatan untuk memeriksa
 split/data. Label: `Diskon dalam` (≥20%), `Diskon` (≥10%), `Wajar`
 (−10% s/d +10%), `Overprice` (≤−10%), `Overprice berat` (≤−20%);
@@ -436,7 +441,7 @@ target harga tunggal di UI maupun detail momentum.
 python3 -m idx.fundamental_historical   # J1, jaringan
 python3 idx/pasar_jp.py --workers 8     # harga + info, jaringan
 python3 idx/skor_jp.py                  # hitung & tulis latest.json
-python3 idx/test_skor_jp.py             # 70 tes offline
+python3 idx/test_skor_jp.py             # 81 tes offline
 python3 idx/test_frontend_JP.py         # 61 tes UI J3 (desktop + mobile)
 ```
 
@@ -467,15 +472,17 @@ gagal, pipeline momentum tetap terbit dan `skor_jp_meta.status` mencatat
 error. `harga_jp.json`/`info_jp.json` perlu diperbarui berkala; umur datanya
 terlihat di `skor_jp_meta.sumber_data`. Keterbatasan yang disengaja: NPL/CAR
 tidak tersedia dari yfinance, rincian mata uang utang tidak tersedia (hanya
-mata uang laporan), dan valuasi historis memakai harga mentah sehingga aksi
-split dapat mendistorsi rasio.
+mata uang laporan), valuasi historis J2 tetap memakai harga mentah, dan
+indikator diskon/overprice hanya dapat menyesuaikan split yang tercatat di
+`harga_jp.json` (aksi korporasi lain seperti rights issue tidak otomatis
+disesuaikan).
 
 ### Menjalankan tes
 
 ```bash
 cd /root/idx-dashboard
 python3 idx/test_validate.py        # 99 tes — validasi, snapshot, notifikasi
-python3 idx/test_skor_jp.py         # 70 tes — skor JP, gerbang, pilar, ranking
+python3 idx/test_skor_jp.py         # 81 tes — skor JP, gerbang, pilar, ranking, split, turnaround
 python3 idx/test_akurasi_jp.py      # 21 tes — snapshot bulanan + akurasi J4
 python3 idx/test_waspada.py         # 25 tes — aturan tinggi + penyempitan 15–20%
 python3 idx/test_frontend_JP.py     # 61 tes UI J3/J4 (desktop + mobile)

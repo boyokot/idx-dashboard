@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
 <title>IDX Stock Screener — Screening Otomatis</title>
 <style>
 :root{
@@ -650,6 +651,59 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
 }
 .tag{background:color-mix(in srgb,var(--bg) 65%,var(--card));border-color:var(--border);font-weight:600}
 .note{line-height:1.6}
+
+/* ---------- status data & kondisi pasar ---------- */
+table,.kpi .v,.stat b,.jp-score,.jp-value-badge{font-variant-numeric:tabular-nums}
+.status-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.status-pill{
+  display:inline-flex;align-items:center;gap:4px;font-size:10px;line-height:1.35;
+  padding:2px 7px;border:1px solid var(--border);border-radius:999px;
+  background:color-mix(in srgb,var(--bg) 55%,var(--card));color:var(--muted);
+  font-weight:650;white-space:nowrap;
+}
+.status-pill.ok{color:var(--up);border-color:color-mix(in srgb,var(--up) 28%,var(--border));background:color-mix(in srgb,var(--up) 7%,var(--card))}
+.status-pill.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 32%,var(--border));background:var(--warnbg)}
+.status-pill.bad{color:var(--down);border-color:color-mix(in srgb,var(--down) 30%,var(--border));background:color-mix(in srgb,var(--down) 7%,var(--card))}
+.status-pill.info{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 28%,var(--border));background:color-mix(in srgb,var(--accent) 7%,var(--card))}
+.market-strip{padding:12px 14px;margin-bottom:12px}
+.mb-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.mb-head h2{font-size:14px;margin:0}
+.mb-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.mb-item{border:1px solid var(--border);border-radius:9px;padding:8px 9px;background:color-mix(in srgb,var(--bg) 40%,var(--card))}
+.mb-item .l{font-size:10.5px;color:var(--muted);font-weight:650;margin-bottom:2px}
+.mb-item .v{font-size:15px;font-weight:750;font-variant-numeric:tabular-nums;line-height:1.3}
+.mb-item .s{font-size:10.5px;color:var(--muted);margin-top:2px}
+.mb-bar{display:flex;height:5px;border-radius:999px;overflow:hidden;background:var(--border);margin-top:5px}
+.mb-bar i{display:block;height:100%}
+.retry-inline{margin-left:6px;padding:3px 8px;font-size:11px;border-radius:6px}
+.skeleton{position:relative;overflow:hidden;background:color-mix(in srgb,var(--border) 45%,var(--card));border-radius:6px}
+.skeleton::after{content:'';position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--card) 55%,transparent),transparent);
+  animation:sk 1.2s infinite}
+@keyframes sk{100%{transform:translateX(100%)}}
+.skeleton-lines{display:grid;gap:7px;margin-top:8px}
+.skeleton-lines .skeleton{height:11px}
+.skeleton-lines .skeleton:nth-child(2){width:82%}
+.skeleton-lines .skeleton:nth-child(3){width:64%}
+.jp-cards-mobile,.wl-cards-mobile{display:none}
+.jp-mcard{border:1px solid var(--border);border-radius:10px;padding:11px;background:var(--card);cursor:pointer}
+.jp-mcard:active{border-color:var(--accent)}
+.jp-mcard-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.jp-mcard-code{font-weight:800;font-size:14px;letter-spacing:.01em}
+.jp-mcard-name{font-size:11px;color:var(--muted);margin-top:1px}
+.jp-mcard-score{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.jp-mcard-row{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:7px;font-size:11.5px}
+.jp-mcard-metrics{display:flex;gap:10px;flex-wrap:wrap;font-size:10.5px;color:var(--muted);margin-top:5px}
+.jp-mcard-metrics b{color:var(--text);font-variant-numeric:tabular-nums}
+.jp-mcard-pillars{display:flex;gap:4px;margin-top:7px}
+.jp-mcard-pillars span{height:4px;flex:1;background:var(--border);border-radius:99px;overflow:hidden}
+.jp-mcard-pillars i{display:block;height:100%;background:var(--accent)}
+.jp-mcard-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:7px;font-size:10px;color:var(--muted)}
+.wl-mcard{border:1px solid var(--border);border-radius:10px;padding:10px;background:var(--card)}
+.wl-mcard-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.wl-mcard-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:7px;font-size:11px}
+.wl-mcard-metrics span{color:var(--muted);font-size:10px;display:block}
+.wl-mcard-metrics b{font-variant-numeric:tabular-nums}
 @media(max-width:1080px){
   .app-shell{
     grid-template-columns:minmax(0,1fr);
@@ -674,10 +728,17 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
 }
 @media(max-width:760px){
   #jpTbl{scroll-margin-top:180px}
+  .jp-table-wrap{display:none}
+  .jp-cards-mobile{display:grid;grid-template-columns:1fr;gap:8px}
+  .wl-table-wrap{display:none}
+  .wl-cards-mobile{display:grid;grid-template-columns:1fr;gap:8px}
+  .mb-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .status-pill{font-size:9.5px;padding:2px 6px}
+  .retry-inline,#wlCards button[data-del],#wlBody button[data-del]{min-height:32px;padding:5px 9px}
   .wrap{padding:0 12px 28px}
   header{padding:11px 0;margin-bottom:12px}
-  .brand{gap:10px}
-  .brand-mark{width:39px;height:39px;flex-basis:39px;border-radius:10px}
+  .brand{gap:10px;align-items:flex-start}
+  .brand-mark{width:39px;height:39px;flex-basis:39px;border-radius:10px;margin-top:1px}
   h1{font-size:17px}
   .sub{font-size:11.5px}
   .meta{font-size:11px}
@@ -699,7 +760,7 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
   #topJPList .jp-zone{max-width:64%}
   .banner ul{grid-template-columns:1fr}
   .banner{padding:12px 13px}
-  .tabs{margin-bottom:13px;padding:3px}
+  .tabs{margin-bottom:13px;padding:3px;flex-wrap:wrap;overflow:visible}
   .tab{padding:8px 11px;font-size:12px}
   .jp-table-wrap{max-height:none}
   .jp-table-title h2{font-size:17px}
@@ -734,15 +795,19 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
     <div class="brand-copy">
       <div class="eyebrow">Indonesia Stock Exchange</div>
       <h1>IDX Stock Screener</h1>
-      <div class="sub" id="lastUpdate">Memuat data…</div>
+      <div class="sub" id="lastUpdate" aria-live="polite">Memuat data…</div>
       <div class="meta" id="metaSkema"></div>
+      <div class="status-row" id="dataStatus" aria-live="polite">
+        <span class="status-pill info">Memuat data…</span>
+      </div>
       <div class="warnbox" id="staleWarn" style="display:none">⚠️ Data mungkin sudah kedaluwarsa</div>
+      <div class="warnbox" id="refreshWarn" style="display:none" role="status"></div>
     </div>
   </div>
   <div class="hdr-right">
     <button id="btnInfo" title="Penjelasan skor">Metodologi</button>
     <button id="btnTheme" title="Ganti tema" aria-label="Ganti tema">◐</button>
-    <button id="btnRefresh" class="primary">↻ Muat ulang</button>
+    <button id="btnRefresh" class="primary" aria-label="Muat ulang data">↻ Muat ulang</button>
   </div>
 </header>
 
@@ -750,6 +815,7 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
   <div class="spinner"></div>
   <div class="msg">Memuat data…</div>
   <div class="detail">Mengambil data screening terakhir.</div>
+  <div class="skeleton-lines" aria-hidden="true"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
 </div>
 
 <div id="app" style="display:none">
@@ -814,6 +880,11 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
     </aside>
 
     <div class="content-col">
+  <div class="card market-strip" id="marketBreadth" aria-label="Ringkasan kondisi pasar">
+    <div class="skeleton-lines" aria-hidden="true" style="margin:0">
+      <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+    </div>
+  </div>
   <div class="card" id="topJPCard" style="display:none">
     <div class="section-head">
       <div>
@@ -846,16 +917,16 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
         <span class="tag">J2 · data fundamental</span>
       </div>
       <div class="toolbar">
-        <input type="text" id="jpSearch" placeholder="Cari kode / nama emiten…">
-        <select id="jpSektor"><option value="">Semua sektor</option></select>
-        <select id="jpStatus" title="Status gerbang dan ketersediaan data">
+        <input type="text" id="jpSearch" placeholder="Cari kode / nama emiten…" aria-label="Cari kode atau nama emiten JP">
+        <select id="jpSektor" aria-label="Filter sektor JP"><option value="">Semua sektor</option></select>
+        <select id="jpStatus" title="Status gerbang dan ketersediaan data" aria-label="Filter status Skor JP">
           <option value="ranked">Lolos gerbang &amp; diperingkat</option>
           <option value="scored">Punya skor JP (termasuk gagal gerbang)</option>
           <option value="kurang">Data kurang (&lt;70% cakupan)</option>
           <option value="tanpa">Tanpa laporan (skor tidak tersedia)</option>
           <option value="all">Semua emiten</option>
         </select>
-        <select id="jpSkor" title="Batas minimum skor JP">
+        <select id="jpSkor" title="Batas minimum skor JP" aria-label="Batas minimum Skor JP">
           <option value="">Semua skor JP</option>
           <option value="70">Skor JP ≥ 70</option>
           <option value="60">Skor JP ≥ 60</option>
@@ -870,6 +941,7 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
           <tbody id="jpTbody"></tbody>
         </table>
       </div>
+      <div class="jp-cards-mobile" id="jpCards" aria-label="Daftar emiten versi kartu"></div>
       <div class="table-pager">
         <div class="pager-info" id="jpPageInfo">—</div>
         <div class="pager-controls">
@@ -957,16 +1029,16 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
 
 
     <div class="toolbar">
-      <input type="text" id="search" placeholder="Cari kode / nama emiten…">
-      <select id="fSektor"><option value="">Semua sektor</option></select>
-      <select id="fSinyal">
+      <input type="text" id="search" placeholder="Cari kode / nama emiten…" aria-label="Cari kode atau nama emiten momentum">
+      <select id="fSektor" aria-label="Filter sektor momentum"><option value="">Semua sektor</option></select>
+      <select id="fSinyal" aria-label="Filter sinyal momentum">
         <option value="">Semua sinyal</option>
         <option value="Breakout">Breakout</option>
         <option value="Normal">Normal</option>
         <option value="Tembus Support">Tembus Support</option>
         <option value="waspada">Waspada saja</option>
       </select>
-      <select id="fSkor">
+      <select id="fSkor" aria-label="Filter skor momentum">
         <option value="">Semua skor</option>
         <option value="70">≥ 70</option>
         <option value="60">≥ 60</option>
@@ -995,10 +1067,15 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
   <!-- INSIGHT -->
   <div class="panel" id="panel-insight">
     <div id="insightState" class="card" style="text-align:center">
-      <div class="note">Memuat data insight…</div>
+      <div class="spinner"></div>
+      <div class="note" style="margin-top:8px">Memuat data insight…</div>
+      <div class="skeleton-lines" aria-hidden="true" style="max-width:520px;margin:10px auto 0">
+        <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+      </div>
     </div>
 
     <div id="insightBody" style="display:none">
+      <div class="warnbox" id="insightWarn" style="display:none;margin-bottom:10px"></div>
       <!-- 1. Ringkasan hari ini -->
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:4px">
@@ -1142,14 +1219,15 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
   <div class="panel" id="panel-watchlist">
     <div class="card">
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-        <input type="text" id="wlInput" placeholder="Tambah kode emiten (mis. BBCA)" style="flex:1;min-width:170px;padding:8px 11px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit">
+        <input type="text" id="wlInput" placeholder="Tambah kode emiten (mis. BBCA)" aria-label="Kode emiten untuk watchlist" style="flex:1;min-width:170px;padding:8px 11px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit">
         <button class="primary" id="wlAdd">+ Tambah</button>
       </div>
       <div class="note" style="margin-top:8px">Watchlist disimpan di perangkat ini (localStorage). Tidak dikirim ke mana pun.</div>
     </div>
-    <div class="tbl-wrap">
+    <div class="tbl-wrap wl-table-wrap">
       <table><thead><tr id="wlThead"></tr></thead><tbody id="wlBody"></tbody></table>
     </div>
+    <div class="wl-cards-mobile" id="wlCards" aria-label="Watchlist versi kartu"></div>
     <div class="tblnote" id="wlInfo"></div>
   </div>
 
@@ -1164,7 +1242,9 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
         </div>
         <span class="tag" id="jpAkurasiTanggal"></span>
       </div>
-      <div class="note" id="jpAkurasiInfo">Memuat data akurasi JP…</div>
+      <div class="note" id="jpAkurasiInfo">
+        <div class="skeleton-lines" aria-hidden="true"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+      </div>
       <div class="jp-kv" id="jpAkurasiRingkas" style="margin-top:8px"></div>
       <div class="tbl-wrap" style="margin-top:10px">
         <table id="jpAkurasiTbl">
@@ -1235,16 +1315,17 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
       <h2 style="font-size:15px;margin:0 0 12px">Kalkulator Ukuran Posisi</h2>
       <div class="grid2">
         <div>
-          <label class="note">Modal total (Rp)</label>
-          <input type="number" id="rkModal" value="10000000" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;margin-bottom:10px">
-          <label class="note">Risiko per transaksi (%)</label>
-          <input type="number" id="rkRisk" value="2" step="0.5" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;margin-bottom:10px">
-          <label class="note">Harga entry (Rp)</label>
-          <input type="number" id="rkEntry" value="5000" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;margin-bottom:10px">
-          <label class="note">Harga cut loss (Rp)</label>
-          <input type="number" id="rkCut" value="4700" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;margin-bottom:10px">
-          <label class="note">Harga acuan R/R (Rp, opsional)</label>
-          <input type="number" id="rkTarget" value="5600" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit">
+          <label class="note" for="rkModal">Modal total (Rp)</label>
+          <input type="number" id="rkModal" value="10000000" min="0" step="100000" inputmode="numeric" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;margin-bottom:10px">
+          <label class="note" for="rkRisk">Risiko per transaksi (%)</label>
+          <input type="number" id="rkRisk" value="2" min="0.1" max="100" step="0.5" inputmode="decimal" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;margin-bottom:10px">
+          <label class="note" for="rkEntry">Harga entry (Rp)</label>
+          <input type="number" id="rkEntry" value="5000" min="1" step="1" inputmode="numeric" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;margin-bottom:10px">
+          <label class="note" for="rkCut">Harga cut loss (Rp)</label>
+          <input type="number" id="rkCut" value="4700" min="1" step="1" inputmode="numeric" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit;margin-bottom:10px">
+          <label class="note" for="rkTarget">Harga acuan R/R (Rp, opsional)</label>
+          <input type="number" id="rkTarget" value="5600" min="1" step="1" inputmode="numeric" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font:inherit">
+          <div class="note" style="margin-top:8px">1 lot = 100 saham. Perhitungan belum termasuk komisi, levy, spread, slippage, dan pajak; harga eksekusi bisa berbeda dari harga entry.</div>
         </div>
         <div id="rkOut"></div>
       </div>
@@ -1256,9 +1337,9 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
 
 <!-- info modal -->
 <div class="overlay" id="infoModal">
-  <div class="drawer">
-    <button class="close" onclick="document.getElementById('infoModal').classList.remove('show')">✕</button>
-    <h2>Penjelasan Skor</h2>
+  <div class="drawer" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle">
+    <button class="close" aria-label="Tutup penjelasan" onclick="document.getElementById('infoModal').classList.remove('show')">✕</button>
+    <h2 id="infoModalTitle">Penjelasan Skor</h2>
     <div class="sub" style="margin-bottom:14px">Ada dua skor yang terpisah. Tab <b>Jangka Panjang</b> memakai Skor JP;
       tab <b>Momentum/Trading</b> memakai skor momentum lama. Keduanya bukan rekomendasi beli/jual.</div>
 
@@ -1275,10 +1356,15 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
         Metrik dinilai dengan persentil sektor. Sektor dengan kurang dari 5 emiten memakai persentil gabungan
         dan diberi catatan. Bank/asuransi/lembaga keuangan tidak memakai DER dan interest coverage;
         NPL/CAR hanya dipakai bila datanya tersedia, selain itu “data tidak tersedia”.</div>
+      <div class="note" style="margin-top:8px"><b>Kontribusi dan bobot efektif:</b> kontribusi tiap pilar =
+        skor pilar × bobot efektif. Bila ada pilar yang datanya tidak tersedia, bobot pilar lain dinormalisasi
+        agar total tetap 100%; bobot efektif dan kontribusi ditampilkan di Kartu Investasi. Jumlah kontribusi
+        bisa berbeda tipis dari skor akhir karena pembulatan. Skor tidak diisi 0 untuk data yang hilang.</div>
       <div class="note" style="margin-top:8px"><b>Valuasi pilar:</b> PER/PBV dibandingkan dengan median sektor
         <i>dan</i> rata-rata historis emiten (maksimal 5 tahun, minimal 2 tahun). PER yang sangat rendah karena
         laba sekali-besar tidak otomatis dianggap murah: persentilnya dibatasi dan payout di atas 200% dianggap
-        tidak wajar. Riwayat valuasi memakai harga mentah, jadi split dapat mendistorsi rasio.</div>
+        tidak wajar. Riwayat valuasi pilar memakai harga mentah, jadi split dapat mendistorsi rasio; indikator
+        diskon/overprice memakai penyesuaian split terpisah dan menandai selisih ekstrem dengan tanda *.</div>
       <div class="note" style="margin-top:8px"><b>Diskon / overprice (informasi):</b> indikator terpisah dari Skor JP.
         Kelipatan wajar = 60% median sektor + 40% median historis (median sektor hanya bila sektor punya
         ≥5 observasi valid; historis 2–4 tahun terbaru). Harga relatif dihitung dari EPS/BVPS; bobot PER/PBV
@@ -1290,6 +1376,17 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
         Zona timing hanya menjelaskan posisi harga terhadap MA200 dan puncak 52 minggu. Penanda risiko
         (misalnya utang USD, free float rendah, sektor siklikal, ketergantungan komoditas, sensitivitas sektor)
         tidak mengubah Skor JP. Peta sensitivitas juga tidak dipakai untuk skor.</div>
+    </div>
+
+    <div class="card" style="box-shadow:none;margin-bottom:10px">
+      <b>Status data</b>
+      <div class="note" style="margin-top:5px">Badge di header menunjukkan kondisi data:
+        <b>Data terbaru</b> = tanggal data sudah mencapai sesi bursa terakhir yang selesai;
+        <b>Kedaluwarsa N sesi</b> = data tertinggal dan tidak boleh dibaca sebagai kondisi terkini;
+        <b>Parsial</b> = sebagian emiten tidak punya harga/fundamental (tidak diisi 0);
+        <b>Gagal</b> = permintaan gagal dan data lama yang valid tetap ditampilkan dengan peringatan.
+        Saat memuat, skeleton ditampilkan; tombol “Coba lagi” tersedia pada kegagalan.
+        Sumber dan waktu pembaruan tercantum di header dan Kartu Investasi.</div>
     </div>
 
     <div class="card" style="box-shadow:none;margin-bottom:10px">
@@ -1332,13 +1429,13 @@ tbody tr:nth-child(even) td.stick{background:color-mix(in srgb,var(--bg) 36%,var
 
 <!-- detail modal -->
 <div class="overlay" id="detailModal">
-  <div class="drawer" id="detailBody"></div>
+  <div class="drawer" id="detailBody" role="dialog" aria-modal="true" aria-label="Kartu Investasi"></div>
 </div>
 
 <!-- info indikator modal -->
 <div class="overlay" id="indicatorInfoModal">
-  <div class="drawer indicator-info-drawer">
-    <button class="close" onclick="document.getElementById('indicatorInfoModal').classList.remove('show')">✕</button>
+  <div class="drawer indicator-info-drawer" role="dialog" aria-modal="true" aria-labelledby="indicatorInfoTitle">
+    <button class="close" aria-label="Tutup penjelasan indikator" onclick="document.getElementById('indicatorInfoModal').classList.remove('show')">✕</button>
     <div class="section-kicker">Penjelasan indikator</div>
     <h2 id="indicatorInfoTitle">Indikator</h2>
     <div class="info-question">Pertanyaan: apa yang diukur indikator ini, dan bagaimana cara membacanya?</div>
@@ -1450,6 +1547,10 @@ function naCell(kolom){
    jadi nilai 12 juta tampil "Rp0,01 M" — angka yang technically benar
    tapi menyesatkan karena ambang default-nya justru Rp1 miliar.
    Sekarang satuan ikut menyesuaikan: T / M / jt. */
+function csvCell(v){
+  if(v==null) return '';
+  return '"'+String(v).replace(/"/g,'""')+'"';
+}
 function rpRingkas(v){
   if(v==null||Number.isNaN(Number(v))) return '—';
   const f=Number(v);
@@ -1519,7 +1620,8 @@ function initTema(){
 function showState(kind,msg,detail,retry){
   $('#app').style.display='none';
   const box=$('#stateBox'); box.style.display='block';
-  if(kind==='loading'){ box.innerHTML=`<div class="spinner"></div><div class="msg">${esc(msg)}</div><div class="detail">${esc(detail||'')}</div>`; return; }
+  if(kind==='loading'){ box.innerHTML=`<div class="spinner"></div><div class="msg">${esc(msg)}</div><div class="detail">${esc(detail||'')}</div>
+    <div class="skeleton-lines" aria-hidden="true"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>`; return; }
   const icon = kind==='error'?'⚠️':'📭';
   box.innerHTML=`<div style="font-size:30px;margin-bottom:8px">${icon}</div>
     <div class="msg">${esc(msg)}</div><div class="detail">${esc(detail||'')}</div>
@@ -1529,34 +1631,80 @@ function showState(kind,msg,detail,retry){
 function showApp(){ $('#stateBox').style.display='none'; $('#app').style.display='block'; }
 
 /* ---------- load ---------- */
+let LOADING=false;
+function setRefreshBusy(on){
+  const b=$('#btnRefresh'); if(!b) return;
+  b.disabled=!!on;
+  b.textContent=on?'⏳ Memuat…':'↻ Muat ulang';
+  b.setAttribute('aria-busy',on?'true':'false');
+}
+function showRefreshWarn(msg,retry){
+  const box=$('#refreshWarn'); if(!box) return;
+  if(!msg){ box.style.display='none'; box.innerHTML=''; return; }
+  box.style.display='block';
+  box.innerHTML='⚠️ '+esc(msg)
+    +(retry?' <button class="retry-inline" id="btnRefreshRetry">Coba lagi</button>':'');
+  if(retry) $('#btnRefreshRetry').onclick=()=>load();
+}
+function errHint(e){
+  const msg=String(e&&e.message||e);
+  if(e&&e.code==='timeout') return 'Waktu permintaan habis. Periksa koneksi lalu coba lagi.';
+  if(e&&e.status===429) return 'Server membatasi permintaan (rate limit). Tunggu sebentar lalu coba lagi.';
+  if(e&&e.status===404) return 'File data belum tersedia. Pipeline mungkin belum dijalankan.';
+  if(e&&e.status>=500) return 'Server sumber data sedang bermasalah. Coba lagi beberapa saat.';
+  if(/Failed to fetch|NetworkError|Load failed/i.test(msg)) return 'Tidak bisa menghubungi server. Periksa koneksi internet.';
+  if(/JSON|Unexpected token/i.test(msg)) return 'Respons server bukan JSON yang valid (mungkin halaman error). Coba lagi.';
+  return 'Periksa koneksi lalu coba lagi.';
+}
 async function load(){
-  showState('loading','Memuat data…','Mengambil data screening terakhir.');
+  if(LOADING) return;
+  LOADING=true; setRefreshBusy(true);
+  const hadData=!!(DATA&&Array.isArray(DATA.emiten)&&DATA.emiten.length);
+  if(!hadData){
+    showState('loading','Memuat data…','Mengambil data screening terakhir.');
+  }else{
+    showRefreshWarn('');
+  }
   let j;
   try{
-    const r = await fetch(DATA_URL+'?_='+Date.now(),{cache:'no-store'});
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    j = await r.json();
+    j = await fetchJson(DATA_URL,45000);
     if(!j || !Array.isArray(j.emiten) || !j.emiten.length)
       throw new Error('Data kosong: tidak ada emiten pada respons.');
   }catch(e){
-    /* (A2) GAGAL MEMUAT DATA — fetch/parse/payload bermasalah */
+    /* (A2) GAGAL MEMUAT DATA — fetch/parse/payload bermasalah.
+       Jika sudah ada data valid di layar, JANGAN menghapusnya: tampilkan
+       peringatan non-blocking dan biarkan pengguna memakai data terakhir. */
     const msg = String(e.message||e);
-    let hint = 'Periksa koneksi lalu coba lagi.';
-    if(/Failed to fetch|NetworkError/i.test(msg)) hint='Tidak bisa menghubungi server. Periksa koneksi internet.';
-    if(/404/.test(msg)) hint='File data belum tersedia (data/latest.json). Pipeline mungkin belum dijalankan.';
+    const hint = errHint(e);
+    if(hadData){
+      showRefreshWarn('Gagal memperbarui data. Data terakhir yang valid tetap ditampilkan. '
+        +msg+' — '+hint, true);
+      $('#lastUpdate').textContent='Data terakhir: '
+        +(DATA.diperbarui_pada_teks||DATA.diperbarui_pada||'–')
+        +' · pembaruan gagal';
+      renderDataStatus(DATA,cekKedaluwarsa(DATA.tanggal_data||DATA.diperbarui_pada),true);
+      return;
+    }
+    const status=$('#dataStatus');
+    if(status) status.innerHTML='<span class="status-pill bad">Gagal memuat data</span>';
+    $('#lastUpdate').textContent='Gagal memuat data';
     showState('error','Gagal memuat data', msg+' — '+hint, true);
     return;
+  }finally{
+    LOADING=false; setRefreshBusy(false);
   }
 
   /* Data sudah berhasil dimuat. Kegagalan berikutnya = masalah RENDER,
      bukan masalah pemuatan — jangan samakan pesannya (A2). */
   DATA=j;
+  showRefreshWarn('');
   const tgl=j.diperbarui_pada_teks || j.diperbarui_pada || '–';
   $('#lastUpdate').textContent = 'Terakhir diperbarui: '+tgl;
   const sideDate=$('#sideDataDate');
   if(sideDate) sideDate.textContent='Data '+(j.tanggal_data||tgl);
   renderMetaSkema(j);
-  cekKedaluwarsa(j.diperbarui_pada);
+  const stale=cekKedaluwarsa(j.tanggal_data||j.diperbarui_pada);
+  renderDataStatus(j,stale);
   try{
     showApp(); renderAll();
   }catch(e){
@@ -1611,55 +1759,109 @@ function renderMetaSkema(j){
 }
 
 /* (A7) Peringatan data basi: lebih tua dari 1 hari bursa (akhir pekan + libur bursa diabaikan). */
+function wibParts(d){
+  const fmt=new Intl.DateTimeFormat('en-CA',{
+    timeZone:'Asia/Jakarta',year:'numeric',month:'2-digit',day:'2-digit',
+    hour:'2-digit',minute:'2-digit',hour12:false
+  });
+  const o={};
+  fmt.formatToParts(d).forEach(p=>{ if(p.type!=='literal') o[p.type]=Number(p.value); });
+  const hh=(o.hour||0)%24, mm=o.minute||0;
+  return {
+    iso:`${o.year}-${String(o.month).padStart(2,'0')}-${String(o.day).padStart(2,'0')}`,
+    hh, mm, mins:hh*60+mm
+  };
+}
+function isoAddDays(iso,n){
+  const [y,m,d]=String(iso).split('-').map(Number);
+  const x=new Date(Date.UTC(y,m-1,d+n));
+  return x.toISOString().slice(0,10);
+}
+function isoDow(iso){ return new Date(iso+'T00:00:00Z').getUTCDay(); }
+function liburSet(){
+  const L=(DATA&&DATA.hari_libur_bursa&&DATA.hari_libur_bursa.length)
+    ?DATA.hari_libur_bursa:LIBUR_BURSA_FALLBACK;
+  return new Set(L);
+}
+function isBursaDayIso(iso){
+  const dow=isoDow(iso);
+  return dow!==0 && dow!==6 && !liburSet().has(iso);
+}
+function prevBursaDayIso(iso){
+  let x=iso;
+  for(let i=0;i<15;i++){ if(isBursaDayIso(x)) return x; x=isoAddDays(x,-1); }
+  return x;
+}
+function hitungHariBursa(a,b){
+  let n=0, x=a;
+  while(x<b){ x=isoAddDays(x,1); if(isBursaDayIso(x)) n++; }
+  return n;
+}
+function statusBursaSekarang(){
+  const p=wibParts(new Date());
+  if(!isBursaDayIso(p.iso)){
+    return {open:false,label:liburSet().has(p.iso)?'Bursa libur':'Bursa tutup'};
+  }
+  const dow=isoDow(p.iso);
+  const sesi=dow===5
+    ?[[9*60,11*60+30],[14*60,15*60+49]]
+    :[[9*60,12*60],[13*60+30,15*60+49]];
+  const open=sesi.some(([a,b])=>p.mins>=a&&p.mins<=b);
+  return {open,label:open?'Sesi bursa buka':'Bursa tutup'};
+}
+/* (A7) Peringatan data basi: bandingkan dengan sesi bursa WIB, bukan zona
+   waktu perangkat. Mengembalikan objek supaya badge status bisa memakai
+   angka sesi yang sama. */
 function cekKedaluwarsa(timestamp){
-  const box=$('#staleWarn'); if(!box) return false;
-  box.style.display='none';
-  if(!timestamp) return false;
+  const box=$('#staleWarn');
+  const hasil={stale:false,diff:0,dataDay:null,todayBursa:null};
+  if(box){ box.style.display='none'; box.textContent=''; }
+  if(!timestamp) return hasil;
   const t=new Date(timestamp);
-  if(isNaN(t.getTime())) return false;
-
-  // Hari libur bursa (dari latest.json -> pipeline). Kalau belum ada, fallback
-  // ke kalender hardcoded 2026/2027 di bawah.
-  const LIBUR=(DATA&&DATA.hari_libur_bursa&&DATA.hari_libur_bursa.length)?DATA.hari_libur_bursa:LIBUR_BURSA_FALLBACK;
-  const LIBUR_SET=new Set(LIBUR);
-  const hari=(d)=>new Date(d.getFullYear(),d.getMonth(),d.getDate());
-  const iso=(d)=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-  // bursa buka: bukan akhir pekan dan bukan hari libur
-  const isBursaDay=(d)=>{ const dow=d.getDay(); return dow!==0 && dow!==6 && !LIBUR_SET.has(iso(d)); };
-  // mundur ke hari bursa terakhir yang <= d
-  const prevBursaDay=(d)=>{
-    const x=hari(d);
-    for(let i=0;i<15;i++){ if(isBursaDay(x)) return x; x.setDate(x.getDate()-1); }
-    return x;
-  };
-  // hitung JUMLAH sesi bursa yang SUDAH lewat sejak data terakhir
-  // (bukan selisih kalender, supaya Jumat->Senin tidak dihitung 3 hari).
-  // Sesi hari ini hanya dihitung kalau sudah lewat jam tutup (~16:30 WIB).
-  const hitungHariBursa=(a,b)=>{
-    let n=0; const x=hari(a);
-    while(x<b){ x.setDate(x.getDate()+1); if(isBursaDay(x)) n++; }
-    return n;
-  };
-
-  const now=new Date();
-  const dataDay=prevBursaDay(t);
-  // batas = hari bursa terakhir yang sesinya sudah selesai
-  let batas=hari(now);
-  const menitSekarang=now.getHours()*60+now.getMinutes();
-  if(isBursaDay(batas) && menitSekarang < 16*60+30){
-    batas.setDate(batas.getDate()-1);   // sesi hari ini belum tutup
-  }
-  const todayBursa=prevBursaDay(batas);
+  if(isNaN(t.getTime())) return hasil;
+  const dataDay=prevBursaDayIso(wibParts(t).iso);
+  const now=wibParts(new Date());
+  let batas=now.iso;
+  // Sesi hari ini baru dianggap selesai setelah 16:30 WIB.
+  if(isBursaDayIso(batas) && now.mins<16*60+30) batas=isoAddDays(batas,-1);
+  const todayBursa=prevBursaDayIso(batas);
   const diff=hitungHariBursa(dataDay,todayBursa);
+  hasil.dataDay=dataDay; hasil.todayBursa=todayBursa;
   if(diff>=1){
-    box.style.display='block';
-    box.textContent='⚠️ Data mungkin sudah kedaluwarsa — data terakhir tertinggal '
-      + diff+' sesi bursa ('
-      + dataDay.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})
-      + ').';
-    return true;
+    hasil.stale=true; hasil.diff=diff;
+    if(box){
+      box.style.display='block';
+      box.textContent='⚠️ Data mungkin sudah kedaluwarsa — data terakhir tertinggal '
+        +diff+' sesi bursa ('+dataDay+').';
+    }
   }
-  return false;
+  return hasil;
+}
+function renderDataStatus(j,stale,gagal=false){
+  const box=$('#dataStatus'); if(!box) return;
+  j=j||{};
+  const sd=j.sumber_data_ringkas||{};
+  const parts=[];
+  if(gagal){
+    parts.push('<span class="status-pill bad" title="Permintaan data terbaru gagal; data valid terakhir tetap ditampilkan">Pembaruan gagal</span>');
+  }
+  if(stale&&stale.stale){
+    parts.push(`<span class="status-pill bad" title="Data terakhir ${esc(stale.dataDay||'–')}; sesi selesai terakhir ${esc(stale.todayBursa||'–')}">Kedaluwarsa ${stale.diff} sesi</span>`);
+  }else if(!gagal){
+    parts.push('<span class="status-pill ok">Data terbaru</span>');
+  }
+  const tanpa=Number(sd.emiten_tanpa_data||0);
+  const total=Number(sd.emiten_total||j.jumlah_emiten||0);
+  if(tanpa>0){
+    parts.push(`<span class="status-pill warn" title="Emiten tanpa harga/fundamental; tidak diisi 0">Parsial · ${nf(tanpa)} tanpa data</span>`);
+  }else if(total){
+    parts.push('<span class="status-pill ok">Cakupan lengkap</span>');
+  }
+  const bs=statusBursaSekarang();
+  parts.push(`<span class="status-pill ${bs.open?'ok':'info'}" title="Jam bursa WIB; data dashboard bisa tertinggal satu sesi">${bs.label}</span>`);
+  const sumber=sd.harga?Object.keys(sd.harga).sort((a,b)=>(sd.harga[b]||0)-(sd.harga[a]||0))[0]:j.sumber_utama;
+  if(sumber) parts.push(`<span class="status-pill info" title="Sumber data utama">${esc(sumber)}</span>`);
+  box.innerHTML=parts.join('');
 }
 
 /* ---------- KPI ---------- */
@@ -1677,6 +1879,63 @@ function sektorSingkat(s){
     'TRANSPORTATION':'Transportasi','TELECOMMUNICATIONS':'Telekomunikasi',
     'UTILITIES':'Utilitas','LAINNYA':'Lainnya'};
   return M[k] || (k.length>14 ? k.slice(0,13)+'…' : k);
+}
+
+/* Ringkasan kondisi pasar: IHSG, breadth sesi, sektor ekstrem, nilai transaksi.
+   Semua dihitung dari DATA yang sama; emiten tanpa data tidak dihitung dan
+   tidak diisi nol. */
+function renderMarketBreadth(){
+  const box=$('#marketBreadth'); if(!box) return;
+  const e=DATA.emiten||[];
+  const mp=DATA.ringkasan_pasar||{};
+  const ihsg=mp.ihsg||{};
+  const rows=e.filter(r=>r.chg_pct!=null&&Number.isFinite(Number(r.chg_pct)));
+  const up=rows.filter(r=>Number(r.chg_pct)>0).length;
+  const down=rows.filter(r=>Number(r.chg_pct)<0).length;
+  const flat=rows.length-up-down;
+  const total=rows.length;
+  const pctUp=total?up/total*100:null;
+  const pctDown=total?down/total*100:null;
+  const pctFlat=total?flat/total*100:null;
+  const nilaiRows=e.filter(r=>r.nilai_transaksi!=null&&Number.isFinite(Number(r.nilai_transaksi)));
+  const nilai=nilaiRows.length?nilaiRows.reduce((s,r)=>s+Number(r.nilai_transaksi),0):null;
+  const kuat=mp.sektor_terkuat||null, lemah=mp.sektor_terlemah||null;
+  const tgl=DATA.tanggal_data||'–';
+  const ihsgVal=ihsg.tersedia&&ihsg.nilai!=null?nf(ihsg.nilai,2):'data tidak tersedia';
+  const ihsgChg=ihsg.tersedia?pct(ihsg.chg_pct):'<span class="na">data tidak tersedia</span>';
+  const breadthTxt=total?`${nf(up)} naik / ${nf(down)} turun`:'data tidak tersedia';
+  const breadthSub=total?`${nf(flat)} stagnan · ${nf(total)} emiten berdata`:'tidak ada emiten dengan perubahan harga';
+  const bar=total?`<div class="mb-bar" title="Naik ${up} · turun ${down} · stagnan ${flat}">
+      <i style="width:${pctUp}%;background:var(--up)"></i>
+      <i style="width:${pctFlat}%;background:var(--muted)"></i>
+      <i style="width:${pctDown}%;background:var(--down)"></i></div>`:'';
+  const sektorTxt=(x,tone)=>{
+    if(!x||!x.sektor) return '<span class="na">data tidak tersedia</span>';
+    const chg=x.chg_pct!=null?pct(x.chg_pct):'';
+    return `<span style="color:${tone}">${esc(sektorSingkat(x.sektor)||x.sektor)}</span> ${chg}`;
+  };
+  box.innerHTML=`
+    <div class="mb-head">
+      <div>
+        <div class="section-kicker">Kondisi pasar</div>
+        <h2>Ringkasan sesi ${esc(tgl)}</h2>
+      </div>
+      <span class="tag">${esc(statusBursaSekarang().label)} · WIB</span>
+    </div>
+    <div class="mb-grid">
+      <div class="mb-item"><div class="l">IHSG</div><div class="v">${esc(String(ihsgVal))}</div>
+        <div class="s">${ihsgChg} · 1 sesi</div></div>
+      <div class="mb-item"><div class="l">Breadth saham</div>
+        <div class="v">${breadthTxt}</div>
+        <div class="s">${breadthSub}</div>${bar}</div>
+      <div class="mb-item"><div class="l">Sektor terkuat / terlemah</div>
+        <div class="v" style="font-size:12px;line-height:1.55">${sektorTxt(kuat,'var(--up)')}<br>${sektorTxt(lemah,'var(--down)')}</div>
+        <div class="s">perubahan 1 sesi</div></div>
+      <div class="mb-item"><div class="l">Nilai transaksi</div><div class="v">${nilai!=null?rpRingkas(nilai):'data tidak tersedia'}</div>
+        <div class="s">akumulasi ${nf(nilaiRows.length)} emiten berharga; bukan total pasar</div></div>
+    </div>
+    <div class="note" style="margin-top:7px">Breadth hanya menghitung emiten yang punya perubahan harga.
+      Emiten tanpa data tidak dianggap stagnan dan tidak diisi 0. Klik tab Alert untuk rincian rezim dan waspada.</div>`;
 }
 
 function renderTop10(){
@@ -2227,6 +2486,7 @@ function renderJPTable(){
   if(JP_PAGE<1) JP_PAGE=1;
   const start=(JP_PAGE-1)*JP_PAGE_SIZE;
   const end=Math.min(start+JP_PAGE_SIZE,totalFiltered);
+  renderJPCards(rows,start,end);
   if(!rows.length){
     body.innerHTML=`<tr><td colspan="${cols.length}" class="empty">Tidak ada emiten yang cocok dengan filter.</td></tr>`;
   } else {
@@ -2261,6 +2521,43 @@ function renderJPTable(){
   if(next) next.disabled=JP_PAGE>=pageCount;
 }
 
+/* Kartu ringkas untuk layar kecil. Tabel desktop tetap ada di DOM agar
+   sorting/filter/pagination lama tidak berubah; CSS menyembunyikannya di
+   <=760px dan menampilkan kartu ini. */
+function renderJPCards(rows,start,end){
+  const box=$('#jpCards'); if(!box) return;
+  const page=(rows||[]).slice(start,end);
+  if(!page.length){
+    box.innerHTML='<div class="note" style="padding:8px 2px">Tidak ada emiten yang cocok dengan filter.</div>';
+    return;
+  }
+  box.innerHTML=page.map(r=>{
+    const rank=r.peringkat_jp!=null?'#'+r.peringkat_jp:'—';
+    const score=r.skor_jp;
+    const status=jpStatus(r);
+    const cov=r.cakupan_bobot;
+    const risk=jpRiskTags(r);
+    const bars=JP_PILAR.map(p=>{
+      const v=jpPilar(r,p.k);
+      const w=v==null?0:Math.max(0,Math.min(100,Number(v)));
+      return `<span title="${esc(p.t)}: ${v==null?'data tidak tersedia':fx(v,1)}"><i style="width:${w}%;background:${v==null?'var(--border)':(v>=70?'var(--up)':(v<50?'var(--down)':'var(--accent)'))}"></i></span>`;
+    }).join('');
+    return `<div class="jp-mcard" data-jp="${esc(r.kode)}" title="${esc(r.nama||'')} · ${esc(r.sektor||'')}">
+      <div class="jp-mcard-top">
+        <div><div class="jp-mcard-code">${esc(r.kode)} <span class="note" style="font-weight:500">${rank}</span></div>
+          <div class="jp-mcard-name">${esc(r.nama||'')} · ${esc(sektorSingkat(r.sektor)||r.sektor||'data tidak tersedia')}</div></div>
+        <div style="text-align:right"><div class="jp-mcard-score ${score>=70?'up':(score!=null&&score<50?'down':'')}">${score!=null?fx(score,1):'n/a'}</div>
+          <div class="note" style="font-size:10px">Skor JP</div></div>
+      </div>
+      <div class="jp-mcard-row"><span>${r.harga!=null?'Rp'+nf(r.harga,0):'<span class="na">harga n/a</span>'} ${pct(r.chg_pct)}</span>${jpValuasiBadge(r)}</div>
+      <div class="jp-mcard-metrics"><span>PER <b>${jpRatio(r.per,1)}</b></span><span>PBV <b>${jpRatio(r.pbv,2)}</b></span><span>ROE <b>${jpPct(r.roe,1)}</b></span></div>
+      <div class="jp-mcard-pillars">${bars}</div>
+      <div class="jp-mcard-foot"><span>${esc(status)} · cakupan ${cov!=null?fx(cov,1)+'%':'data tidak tersedia'}${risk.length?' · '+risk.map(esc).join(', '):''}</span><span>Buka Kartu →</span></div>
+    </div>`;
+  }).join('');
+  $$('#jpCards [data-jp]').forEach(el=>el.onclick=()=>bukaDetailJP(el.dataset.jp));
+}
+
 function unduhCSVJP(){
   const rows=jpRowsTampil();
   const cols=[...JP_COLS,
@@ -2269,15 +2566,15 @@ function unduhCSVJP(){
     {k:'diskon_label',t:'Label diskon/overprice'},
     {k:'zona',t:'Zona timing'},
     {k:'status',t:'Status'}];
-  const head=cols.map(c=>c.t);
+  const head=cols.map(c=>csvCell(c.t)).join(';');
   const val=(r,k)=>{
     let v=jpRaw(r,k);
     if(v==null) return '';
     if(typeof v==='number'&&!Number.isNaN(v)) return String(v).replace('.',',');
     return String(v);
   };
-  const lines=[head.join(';')];
-  rows.forEach(r=>lines.push(cols.map(c=>val(r,c.k)).join(';')));
+  const lines=[head];
+  rows.forEach(r=>lines.push(cols.map(c=>csvCell(val(r,c.k))).join(';')));
   const blob=new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
@@ -2318,6 +2615,11 @@ function jpKenapa(r){
     const kuat=ranked.slice().sort((a,b)=>b.s-a.s)[0];
     const lemah=ranked.slice().sort((a,b)=>a.s-b.s)[0];
     out.push(`Skor JP <b>${fx(r.skor_jp,1)}/100</b> dari ${ranked.length} pilar yang punya data. Pilar terkuat: <b>${esc(kuat.t)}</b> (${fx(kuat.s,1)}); terlemah: <b>${esc(lemah.t)}</b> (${fx(lemah.s,1)}).`);
+    const kontrib=JP_PILAR.map(p=>{
+      const d=(r.skor_jp_rincian&&r.skor_jp_rincian[p.k])||{};
+      return d.kontribusi!=null?`${esc(p.s)} ${fx(d.kontribusi,1)}`:'';
+    }).filter(Boolean);
+    if(kontrib.length) out.push(`Kontribusi pilar (poin): ${kontrib.join(' · ')}. Totalnya mendekati skor akhir karena pembulatan.`);
   }
   const met=jpMetricDetails(r).filter(x=>x.m.tersedia!==false&&x.m.persentil!=null);
   if(met.length){
@@ -2398,6 +2700,9 @@ function bukaDetailJP(kode){
     const s=d.skor!=null?Number(d.skor):jpPilar(r,p.k);
     const w=d.bobot!=null?Number(d.bobot):((DATA.skor_jp_meta&&DATA.skor_jp_meta.bobot_pilar&&DATA.skor_jp_meta.bobot_pilar[p.k])||null);
     const covP=d.cakupan;
+    const kontrib=d.kontribusi;
+    const bobotEff=d.bobot_efektif;
+    const catatanP=d.catatan;
     const metric=(d.metrik||[]).map(m=>{
       const val=jpMetricValue(m);
       const pers=m.persentil!=null?`persentil ${fx(m.persentil,1)}`:'persentil data tidak tersedia';
@@ -2411,11 +2716,18 @@ function bukaDetailJP(kode){
       <div class="jp-pillar-head"><span>${esc(p.t)} <span class="tag">bobot ${w!=null?fx(w*100,0)+'%':'data tidak tersedia'}</span></span>
         <b>${s!=null?fx(s,1):'data tidak tersedia'}</b></div>
       ${s!=null?`<div class="bar"><i style="width:${Math.max(0,Math.min(100,s))}%;background:${s>=70?'var(--up)':(s>=50?'var(--accent)':'var(--muted)')}"></i></div>`:''}
-      <div class="note">cakupan ${covP!=null?fx(covP,1)+'%':'data tidak tersedia'}</div>
+      <div class="note">cakupan ${covP!=null?fx(covP,1)+'%':'data tidak tersedia'}
+        ${kontrib!=null?` · kontribusi <b>${fx(kontrib,2)} poin</b>`:''}
+        ${bobotEff!=null?` · bobot efektif ${fx(bobotEff*100,1)}%`:''}</div>
+      ${catatanP?`<div class="note">Catatan pilar: ${esc(catatanP)}</div>`:''}
       ${metric?`<details><summary>Rincian metrik</summary>${metric}</details>`:'<div class="note">Rincian metrik data tidak tersedia.</div>'}
     </div>`;
   }).join('');
 
+  const kontribusiTotal=JP_PILAR.reduce((sum,p)=>{
+    const d=(r.skor_jp_rincian&&r.skor_jp_rincian[p.k])||{};
+    return sum+(d.kontribusi!=null?Number(d.kontribusi):0);
+  },0);
   const medPer=(DATA.median_per_sektor&&DATA.median_per_sektor[r.sektor]!=null)?DATA.median_per_sektor[r.sektor]:null;
   const medPbv=(DATA.median_pbv_sektor&&DATA.median_pbv_sektor[r.sektor]!=null)?DATA.median_pbv_sektor[r.sektor]:null;
   const zHtml=z?`<div class="jp-kv">
@@ -2430,7 +2742,7 @@ function bukaDetailJP(kode){
   const alasanHtml=al?`<div class="note" style="margin-top:5px">Alasan: ${esc(al)}</div>`:'';
   const why=jpKenapa(r);
   const body=`
-    <button class="close" onclick="document.getElementById('detailModal').classList.remove('show')">✕</button>
+    <button class="close" aria-label="Tutup detail" onclick="document.getElementById('detailModal').classList.remove('show')">✕</button>
     <div class="lbl">Kartu Investasi Jangka Panjang</div>
     <h2>${esc(r.kode)} <span style="font-weight:400;font-size:14px;color:var(--muted)">${esc(r.nama||'')}</span></h2>
     <div class="sub" style="margin-bottom:10px">${esc(r.sektor||'data tidak tersedia')} · ${esc(r.industri||'')}</div>
@@ -2471,6 +2783,8 @@ function bukaDetailJP(kode){
 
     <div class="jp-section-title">Pilar skor</div>
     ${score!=null?pilarHtml:'<div class="note">Skor JP data tidak tersedia; pilar tidak dihitung. Lihat alasan gerbang di atas.</div>'}
+    ${score!=null?`<div class="note" style="margin-top:7px">Jumlah kontribusi pilar = <b>${fx(kontribusiTotal,2)}</b> poin
+      (pembulatan tampilan; skor akhir ${fx(score,2)}). Bobot efektif sudah dinormalisasi bila ada data yang tidak tersedia.</div>`:''}
 
     <div class="jp-section-title">Valuasi historis</div>
     ${jpHistHtml(vh)}
@@ -2822,7 +3136,7 @@ function bukaDetail(kode){
   };
 
   $('#detailBody').innerHTML=`
-    <button class="close" onclick="document.getElementById('detailModal').classList.remove('show')">✕</button>
+    <button class="close" aria-label="Tutup detail" onclick="document.getElementById('detailModal').classList.remove('show')">✕</button>
     <h2>${esc(r.kode)} <span style="font-weight:400;font-size:14px;color:var(--muted)">${esc(r.nama||'')}</span></h2>
     <div class="sub" style="margin-bottom:14px">${esc(r.sektor||'')} · ${esc(r.industri||'')} · ${skorCell(r.skor)} ${sinyalPill(r.sinyal)}
       <span class="tag">sumber: ${esc(r.sumber_data||'–')}</span></div>
@@ -3105,44 +3419,103 @@ async function gambarChart(kode){
 }
 
 function getCss(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
-async function fetchJson(u){ const r=await fetch(u+'?_='+Date.now(),{cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); }
+async function fetchJson(u,timeoutMs=30000){
+  const ctrl=(typeof AbortController!=='undefined')?new AbortController():null;
+  const timer=ctrl?setTimeout(()=>ctrl.abort(),timeoutMs):null;
+  try{
+    const sep=u.includes('?')?'&':'?';
+    const r=await fetch(u+sep+'_='+Date.now(),{
+      cache:'no-store', signal:ctrl?ctrl.signal:undefined
+    });
+    if(!r.ok){
+      const err=new Error('HTTP '+r.status);
+      err.status=r.status;
+      throw err;
+    }
+    const ct=(r.headers.get('content-type')||'').toLowerCase();
+    if(ct && !ct.includes('json')){
+      const err=new Error('Respons bukan JSON (content-type '+ct+')');
+      err.code='bukan_json';
+      throw err;
+    }
+    return await r.json();
+  }catch(e){
+    if(e&&e.name==='AbortError'){
+      const err=new Error('Timeout setelah '+Math.round(timeoutMs/1000)+' detik');
+      err.code='timeout';
+      throw err;
+    }
+    throw e;
+  }finally{
+    if(timer) clearTimeout(timer);
+  }
+}
 
 /* ---------- watchlist ---------- */
 function loadWL(){ try{ WATCHLIST=JSON.parse(localStorage.getItem(LS_WL)||'[]'); }catch(e){ WATCHLIST=[]; } }
 function saveWL(){ localStorage.setItem(LS_WL,JSON.stringify(WATCHLIST)); $('#wlCount').textContent=WATCHLIST.length?`(${WATCHLIST.length})`:''; }
+function waspadaCell(r){
+  const t=r&&r.waspada_tingkat;
+  if(t==='tinggi') return '<span class="status-pill bad" title="Waspada tinggi mendiskualifikasi dari peringkat JP">Waspada tinggi</span>';
+  if(t) return `<span class="status-pill warn" title="${esc((r.flag_waspada||[]).join(' · ')||'waspada')}">Waspada ${esc(t)}</span>`;
+  return '<span class="status-pill ok">Tidak ada</span>';
+}
 function renderWL(){
-  const cols=['kode','skor','sinyal','harga','chg_pct','rsi','per','pbv','roe','der'];
-  const map={kode:'Kode',skor:'Skor',sinyal:'Sinyal',harga:'Harga',chg_pct:'Chg%',rsi:'RSI',per:'PER',pbv:'PBV',roe:'ROE',der:'DER'};
-  $('#wlThead').innerHTML=cols.map(c=>`<th class="${c==='kode'?'stick':''}">${map[c]}</th>`).join('')+'<th>Aksi</th>';
+  const cols=['kode','jp','skor','sinyal','diskon','harga','chg_pct','alert'];
+  const map={kode:'Kode',jp:'Skor JP',skor:'Momentum',sinyal:'Sinyal',diskon:'Diskon/Over',harga:'Harga',chg_pct:'Chg%',alert:'Alert'};
+  const head=$('#wlThead');
+  if(head) head.innerHTML=cols.map(c=>`<th class="${c==='kode'?'stick':''}">${map[c]}</th>`).join('')+'<th>Aksi</th>';
+  const body=$('#wlBody'), cards=$('#wlCards');
   if(!WATCHLIST.length){
-    $('#wlBody').innerHTML=`<tr><td colspan="${cols.length+1}" class="empty">Watchlist masih kosong. Tambahkan kode emiten di atas.</td></tr>`;
-    $('#wlInfo').textContent=''; return;
+    if(body) body.innerHTML=`<tr><td colspan="${cols.length+1}" class="empty">Watchlist masih kosong. Tambahkan kode emiten di atas.</td></tr>`;
+    if(cards) cards.innerHTML='<div class="note" style="padding:8px 2px">Watchlist masih kosong.</div>';
+    const info=$('#wlInfo'); if(info) info.textContent=''; return;
   }
   const rows=WATCHLIST.map(k=>cari(k)||{kode:k,_missing:true});
-  $('#wlBody').innerHTML=rows.map(r=>{
-    if(r._missing) return `<tr><td class="stick"><span class="kode">${esc(r.kode)}</span></td>
-      <td colspan="${cols.length}" class="na">tidak ada di universe screening</td>
-      <td><button data-del="${esc(r.kode)}">Hapus</button></td></tr>`;
-    const cells=cols.map(c=>{
-      let v='';
-      if(c==='kode') v=`<span class="kode">${esc(r.kode)}</span>`;
-      else if(c==='skor') v=skorCell(r.skor);
-      else if(c==='sinyal') v=sinyalPill(r.sinyal);
-      else if(c==='harga') v=r.harga!=null?nf(r.harga,0):'<span class="na">–</span>';
-      else if(c==='chg_pct') v=pct(r.chg_pct);
-      else if(c==='rsi') v=r.rsi!=null?num(r.rsi,1):'<span class="na">–</span>';
-      else if(c==='per') v=ratio(r.per,1);
-      else if(c==='pbv') v=ratio(r.pbv,2);
-      else if(c==='roe') v=roePct(r.roe);
-      else if(c==='der') v=ratio(r.der,2);
-      return `<td class="${c==='kode'?'stick':''}">${v}</td>`;
+  if(body){
+    body.innerHTML=rows.map(r=>{
+      if(r._missing) return `<tr><td class="stick"><span class="kode">${esc(r.kode)}</span></td>
+        <td colspan="${cols.length}" class="na">tidak ada di universe screening</td>
+        <td><button data-del="${esc(r.kode)}">Hapus</button></td></tr>`;
+      const cells=cols.map(c=>{
+        let v='';
+        if(c==='kode') v=`<span class="kode" data-jp="${esc(r.kode)}" title="Buka Kartu Investasi" style="cursor:pointer">${esc(r.kode)}</span>`;
+        else if(c==='jp') v=jpScoreCell(r.skor_jp);
+        else if(c==='skor') v=skorCell(r.skor);
+        else if(c==='sinyal') v=sinyalPill(r.sinyal);
+        else if(c==='diskon') v=jpValuasiCell(r);
+        else if(c==='harga') v=r.harga!=null?nf(r.harga,0):'<span class="na">–</span>';
+        else if(c==='chg_pct') v=pct(r.chg_pct);
+        else if(c==='alert') v=waspadaCell(r);
+        return `<td class="${c==='kode'?'stick':''}">${v}</td>`;
+      }).join('');
+      return `<tr>${cells}<td><button data-del="${esc(r.kode)}">Hapus</button></td></tr>`;
     }).join('');
-    return `<tr>${cells}<td><button data-del="${esc(r.kode)}">Hapus</button></td></tr>`;
-  }).join('');
-  $$('#wlBody button[data-del]').forEach(b=>b.onclick=()=>{
+    $$('#wlBody [data-jp]').forEach(el=>el.onclick=()=>bukaDetailJP(el.dataset.jp));
+  }
+  if(cards){
+    cards.innerHTML=rows.map(r=>{
+      if(r._missing) return `<div class="wl-mcard"><div class="wl-mcard-top"><b>${esc(r.kode)}</b><button data-del="${esc(r.kode)}">Hapus</button></div><div class="note">tidak ada di universe screening</div></div>`;
+      return `<div class="wl-mcard">
+        <div class="wl-mcard-top"><div><span class="kode" data-jp="${esc(r.kode)}" style="cursor:pointer">${esc(r.kode)}</span>
+          <div class="note" style="font-size:10.5px">${esc(r.nama||'')}</div></div>
+          <div style="text-align:right">${jpScoreCell(r.skor_jp)}<div class="note" style="font-size:9.5px">Skor JP</div></div></div>
+        <div class="wl-mcard-metrics">
+          <div><span>Momentum</span><b>${skorCell(r.skor)}</b></div>
+          <div><span>Harga</span><b>${r.harga!=null?'Rp'+nf(r.harga,0):'–'}</b></div>
+          <div><span>Chg</span><b>${pct(r.chg_pct)}</b></div>
+        </div>
+        <div class="jp-mcard-row" style="margin-top:7px"><span>${sinyalPill(r.sinyal)||'<span class="na">sinyal n/a</span>'}</span>${jpValuasiBadge(r)}</div>
+        <div class="jp-mcard-foot"><span>${waspadaCell(r)}</span><button data-del="${esc(r.kode)}">Hapus</button></div>
+      </div>`;
+    }).join('');
+    $$('#wlCards [data-jp]').forEach(el=>el.onclick=()=>bukaDetailJP(el.dataset.jp));
+  }
+  $$('#wlBody button[data-del],#wlCards button[data-del]').forEach(b=>b.onclick=()=>{
     WATCHLIST=WATCHLIST.filter(x=>x!==b.dataset.del); saveWL(); renderWL();
   });
-  $('#wlInfo').textContent=`${WATCHLIST.length} emiten dipantau · disimpan lokal di perangkat ini`;
+  const info=$('#wlInfo');
+  if(info) info.textContent=`${WATCHLIST.length} emiten dipantau · disimpan lokal di perangkat ini · Skor JP dan momentum adalah dua skor terpisah`;
 }
 
 /* ---------- J4: akurasi nyata Skor JP ---------- */
@@ -3209,40 +3582,79 @@ function renderAkurasiJP(j){
     cat.innerHTML=(j.catatan||[]).map(x=>'• '+esc(x)).join('<br>');
   }
 }
-async function loadAkurasiJP(){
+let AKURASI_LOADING=false;
+async function loadAkurasiJP(force=false){
+  if(AKURASI_LOADING) return;
+  if(AKURASI_JP&&!force){ renderAkurasiJP(AKURASI_JP); return; }
+  AKURASI_LOADING=true;
   const info=$('#jpAkurasiInfo');
+  if(info&&!AKURASI_JP) info.innerHTML='<div class="skeleton-lines" aria-hidden="true"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>';
   try{
-    const j=await fetchJson(AKURASI_JP_URL);
+    const j=await fetchJson(AKURASI_JP_URL,20000);
     AKURASI_JP=j;
     renderAkurasiJP(j);
   }catch(e){
-    if(info) info.innerHTML='Data akurasi JP belum tersedia (<code>data/akurasi_jp.json</code>). '
-      +'Pipeline perlu menjalankan tahap J4; akurasi tidak diisi dengan angka palsu.';
-    const body=$('#jpAkurasiBody');
-    if(body) body.innerHTML='<tr><td colspan="9" class="empty">Belum ada data akurasi JP.</td></tr>';
-    const cat=$('#jpAkurasiCatatan');
-    if(cat) cat.textContent='';
-    const box=$('#jpAkurasiRingkas');
-    if(box) box.innerHTML='';
+    const msg=String(e&&e.message||e);
+    if(AKURASI_JP){
+      renderAkurasiJP(AKURASI_JP);
+      if(info) info.innerHTML += '<br><span class="meta-warn">⚠️ Gagal memperbarui akurasi JP; data lama tetap ditampilkan. '
+        +esc(msg)+' <button class="retry-inline" id="akurasiRetry">Coba lagi</button></span>';
+    }else if(info){
+      info.innerHTML='Data akurasi JP belum tersedia (<code>data/akurasi_jp.json</code>). '
+        +esc(msg)+' — pipeline perlu menjalankan tahap J4; akurasi tidak diisi dengan angka palsu. '
+        +'<button class="retry-inline" id="akurasiRetry">Coba lagi</button>';
+      const body=$('#jpAkurasiBody');
+      if(body) body.innerHTML='<tr><td colspan="9" class="empty">Belum ada data akurasi JP.</td></tr>';
+      const cat=$('#jpAkurasiCatatan');
+      if(cat) cat.textContent='';
+      const box=$('#jpAkurasiRingkas');
+      if(box) box.innerHTML='';
+    }
+    const btn=$('#akurasiRetry'); if(btn) btn.onclick=()=>loadAkurasiJP(true);
+  }finally{
+    AKURASI_LOADING=false;
   }
 }
 
 /* ---------- backtest ---------- */
-async function loadBacktest(){
+let BT_LOADING=false, BT_LOADED=false;
+function btErrorHtml(msg){
+  return '⚠️ Backtest tidak bisa dihitung: '+esc(msg)
+    +' <button class="retry-inline" id="btRetry">Coba lagi</button>';
+}
+async function loadBacktest(force=false){
   /* (Kelompok C) Sumber utama = data/backtest.json yang dihitung pipeline
      dari history.json, dengan IHSG sebagai pembanding pada tanggal yang sama.
      Fallback ke snapshot harian lama HANYA kalau backtest.json belum ada,
      supaya fitur lama tidak hilang di deployment yang belum menjalankan
      pipeline versi baru. */
+  if(BT_LOADING) return;
+  if(BT_LOADED&&!force&&BT) return;
+  BT_LOADING=true;
+  const info=$('#btInfo');
+  if(info&&!BT) info.innerHTML='<div class="skeleton-lines" aria-hidden="true"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>';
   try{
-    const bt = await fetchJson(BACKTEST_URL).catch(()=>null);
+    const bt = await fetchJson(BACKTEST_URL,20000);
     if(bt && bt.per_sinyal && Object.keys(bt.per_sinyal).length){
+      BT=bt; BT_LOADED=true;
       renderBacktest(bt);
       return;
     }
     await loadBacktestSnapshot();
+    BT_LOADED=true;
   }catch(e){
-    $('#btInfo').textContent='Backtest tidak bisa dihitung: '+e.message;
+    const msg=String(e&&e.message||e);
+    if(BT){
+      renderBacktest(BT);
+      const el=$('#btInfo');
+      if(el) el.innerHTML += '<br><span class="meta-warn">⚠️ Gagal memperbarui backtest; data lama tetap ditampilkan. '
+        +esc(msg)+' <button class="retry-inline" id="btRetry">Coba lagi</button></span>';
+    }else if(info){
+      info.innerHTML=btErrorHtml(msg);
+    }
+    const btn=$('#btRetry'); if(btn) btn.onclick=()=>loadBacktest(true);
+  }finally{
+    BT_LOADING=false;
   }
 }
 
@@ -3385,10 +3797,18 @@ function renderBacktest(bt){
 
   /* catatan risiko dari pipeline, ditampilkan apa adanya */
   const risiko = Array.isArray(bt.catatan_risiko) ? bt.catatan_risiko : [];
+  const limitHtml = '<div class="note" style="margin-top:9px"><b>Keterbatasan yang harus dibaca:</b> '
+    + 'return dihitung close→close dan sinyal dianggap dieksekusi pada close yang sama, '
+    + 'belum ada biaya transaksi/spread/slippage/pajak; universe memakai emiten yang masih ada '
+    + 'sekarang sehingga ada potensi survivorship bias; history hanya menyimpan close, sehingga '
+    + 'label support/resistance historis bisa berbeda dari label live yang memakai high/low. '
+    + 'Tidak ada klaim bahwa strategi ini menguntungkan di masa depan.</div>';
   if(risiko.length){
     $('#btCatatan').innerHTML =
       '<b>Yang perlu diwaspadai:</b><ul style="margin:6px 0 0 18px;padding:0">' +
-      risiko.map(r=>`<li>${esc(r)}</li>`).join('') + '</ul>';
+      risiko.map(r=>`<li>${esc(r)}</li>`).join('') + '</ul>' + limitHtml;
+  }else{
+    $('#btCatatan').innerHTML = '<div class="note">Catatan risiko pipeline tidak tersedia pada data ini.</div>'+limitHtml;
   }
 }
 
@@ -3445,7 +3865,8 @@ async function loadBacktestSnapshot(){
     $('#btSkorBody').innerHTML='<tr><td colspan="10" style="text-align:left">Tidak tersedia di mode cadangan.</td></tr>';
     $('#btSkorInfo').textContent='';
   }catch(e){
-    $('#btInfo').textContent='Backtest tidak bisa dihitung: '+e.message;
+    $('#btInfo').innerHTML=btErrorHtml(String(e&&e.message||e));
+    const btn=$('#btRetry'); if(btn) btn.onclick=()=>loadBacktest(true);
   }
 }
 
@@ -3454,28 +3875,44 @@ function renderRisiko(){
   const modal=+$('#rkModal').value||0, risk=+$('#rkRisk').value||0;
   const entry=+$('#rkEntry').value||0, cut=+$('#rkCut').value||0, tgt=+$('#rkTarget').value||0;
   const out=$('#rkOut');
-  if(!modal||!entry||!cut||entry<=cut){
-    out.innerHTML=`<div class="note">Isi modal, entry, dan cut loss (cut loss harus lebih rendah dari entry).</div>`; return;
+  if(!out) return;
+  const errs=[];
+  if(!(modal>0)) errs.push('Modal total harus lebih dari 0.');
+  if(!(risk>0&&risk<=100)) errs.push('Risiko per transaksi harus >0% dan ≤100%.');
+  if(!(entry>0)) errs.push('Harga entry harus lebih dari 0.');
+  if(!(cut>0)) errs.push('Harga cut loss harus lebih dari 0.');
+  if(entry>0&&cut>0&&cut>=entry) errs.push('Harga cut loss harus lebih rendah dari harga entry.');
+  if(errs.length){
+    out.innerHTML=`<div class="warnbox" style="margin-top:0">${errs.map(esc).join('<br>')}</div>
+      <div class="note" style="margin-top:7px">Kalkulator tidak menghitung posisi bila input belum valid.</div>`;
+    return;
   }
   const risikoRp=modal*risk/100;
   const perSaham=entry-cut;
-  const lot=Math.floor(risikoRp/perSaham/100);      // 1 lot = 100 saham
+  const lotRisiko=Math.floor(risikoRp/perSaham/100);   // 1 lot = 100 saham
+  const lotModal=Math.floor(modal/entry/100);
+  const lot=Math.min(lotRisiko,lotModal);
   const saham=lot*100;
   const nilai=saham*entry;
-  const maksLot=Math.floor(modal/entry/100);
-  const dipakai=nilai/modal*100;
-  const rr=tgt>0?(tgt-entry)/perSaham:null;
+  const dipakai=modal?nilai/modal*100:null;
+  const dibatasiModal=lotRisiko>lotModal;
+  const rr=tgt>entry?(tgt-entry)/perSaham:null;
 
   out.innerHTML=`
     <div class="stat"><span>Risiko maksimal</span><b>Rp ${nf(risikoRp,0)}</b></div>
     <div class="stat"><span>Risiko per saham</span><b>Rp ${nf(perSaham,0)}</b></div>
     <div class="stat"><span>Ukuran posisi</span><b>${nf(lot,0)} lot (${nf(saham,0)} saham)</b></div>
     <div class="stat"><span>Nilai posisi</span><b>Rp ${nf(nilai,0)}</b></div>
-    <div class="stat"><span>% dari modal</span><b>${fx(dipakai,1)}%</b></div>
-    ${maksLot>lot?`<div class="note" style="margin-top:6px">Maksimal mampu ${nf(maksLot,0)} lot dengan modal ini — posisi di atas dibatasi oleh aturan risiko, bukan modal.</div>`:''}
-    ${lot===0?`<div class="disclaimer" style="margin-top:8px">Dengan risiko ${risk}%, modal ini belum cukup untuk 1 lot pada harga tersebut. Naikkan modal, turunkan entry, atau perlebar toleransi risiko.</div>`:''}
+    <div class="stat"><span>% dari modal</span><b>${dipakai!=null?fx(dipakai,1)+'%':'data tidak tersedia'}</b></div>
+    ${dibatasiModal?`<div class="note" style="margin-top:6px">⚠️ Ukuran posisi dibatasi modal: aturan risiko mengizinkan ${nf(lotRisiko,0)} lot,
+      tetapi modal hanya cukup untuk ${nf(lotModal,0)} lot. Nilai posisi tidak melebihi modal.</div>`:''}
+    ${lot===0?`<div class="disclaimer" style="margin-top:8px">Dengan modal dan risiko ini belum cukup untuk 1 lot pada harga tersebut.
+      Naikkan modal, turunkan entry, atau perlebar toleransi risiko. Tidak ada posisi yang dipaksakan.</div>`:''}
     ${rr!=null?`<div class="stat" style="margin-top:8px"><span>Risk/Reward ke harga acuan</span><b>${fx(rr,2)}×</b></div>
       <div class="note">${rr<1.5?'⚠️ R/R di bawah 1,5× — harga acuan terlalu dekat dibanding risiko.':(rr<2?'R/R cukup.':'R/R baik.')}</div>`:''}
+    ${tgt>0&&tgt<=entry?`<div class="note" style="margin-top:7px">Harga acuan R/R harus di atas entry; R/R tidak dihitung.</div>`:''}
+    <div class="disclaimer" style="margin-top:8px">Belum termasuk komisi, levy, spread, slippage, dan pajak.
+      Harga eksekusi nyata bisa berbeda; ini estimasi ukuran posisi, bukan rekomendasi.</div>
   `;
 }
 
@@ -3500,13 +3937,17 @@ const CSV_FMT={
 function unduhCSV(){
   const cols=colsAktif().filter(c=>!c.sticky||c.always);
   const rows=rowsTampil();
-  const head=cols.map(c=>c.t).join(';');
+  const head=cols.map(c=>csvCell(c.t)).join(';');
   const body=rows.map(r=>cols.map(c=>{
     let v=r[c.k];
-    if(v==null) return '';
-    if(CSV_FMT[c.k]){ const s=CSV_FMT[c.k](v); return s==null||s==='NaN'?'':s.replace('.',','); }
-    if(typeof v==='number') return String(v).replace('.',',');
-    return '"'+String(v).replace(/"/g,'""')+'"';
+    if(v==null) return csvCell('');
+    if(CSV_FMT[c.k]){
+      const s=CSV_FMT[c.k](v);
+      if(s==null||s==='NaN') return csvCell('');
+      return csvCell(String(s).replace('.',','));
+    }
+    if(typeof v==='number') return csvCell(String(v).replace('.',','));
+    return csvCell(v);
   }).join(';')).join('\n');
   const csv='\uFEFF'+head+'\n'+body;
   const a=document.createElement('a');
@@ -3555,6 +3996,8 @@ function renderRezim(){
 
 /* ---------- (Insight I2) tab Insight ---------- */
 let INSIGHT_LOADED = false;
+let INSIGHT_LOADING = false;
+let INSIGHT_ERROR = null;
 let INS_SEKTOR_ALL = false;
 
 function insTanggal(iso){
@@ -3575,36 +4018,89 @@ function insTone(t){
   return m[t]||'var(--muted)';
 }
 
-async function loadInsight(){
-  if(INSIGHT_LOADED) return;
-  try{
-    const [raw, ringkas] = await Promise.all([
-      fetchJson(INSIGHT_URL).catch(()=>null),
-      fetchJson(INSIGHT_RINGKAS_URL).catch(()=>null),
-    ]);
-    INSIGHT = raw; INSIGHT_RINGKAS = ringkas;
-  }catch(e){
-    INSIGHT = null; INSIGHT_RINGKAS = null;
+function insightLoadingHtml(){
+  return `<div class="spinner"></div>
+    <div class="note" style="margin-top:8px">Memuat data insight…</div>
+    <div class="skeleton-lines" aria-hidden="true" style="max-width:520px;margin:10px auto 0">
+      <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+    </div>`;
+}
+async function loadInsight(force=false){
+  if(INSIGHT_LOADING) return;
+  if(INSIGHT_LOADED&&!force){ renderInsight(); return; }
+  INSIGHT_LOADING=true;
+  const state=$('#insightState'), body=$('#insightBody');
+  if(!INSIGHT_RINGKAS && state && body){
+    state.style.display='';
+    body.style.display='none';
+    state.innerHTML=insightLoadingHtml();
   }
+  const hasil=await Promise.allSettled([
+    fetchJson(INSIGHT_URL,20000),
+    fetchJson(INSIGHT_RINGKAS_URL,20000),
+  ]);
+  const errs=[];
+  if(hasil[0].status==='fulfilled') INSIGHT=hasil[0].value;
+  else errs.push('breadth/rotasi: '+String(hasil[0].reason&&hasil[0].reason.message||hasil[0].reason));
+  if(hasil[1].status==='fulfilled') INSIGHT_RINGKAS=hasil[1].value;
+  else errs.push('ringkasan/kalender: '+String(hasil[1].reason&&hasil[1].reason.message||hasil[1].reason));
+  INSIGHT_ERROR=errs.length?errs.join(' · '):null;
+  INSIGHT_LOADING=false;
+  if(!INSIGHT_RINGKAS){
+    if(state && body){
+      state.style.display='';
+      body.style.display='none';
+      state.innerHTML=`<div class="note" style="padding:12px 0">Data insight belum tersedia.</div>
+        <div class="note" style="margin-top:5px">${esc(INSIGHT_ERROR||'File insight belum dibuat.')}</div>
+        <button class="primary" id="insightRetry" style="margin-top:10px">↻ Coba lagi</button>
+        <div class="note" style="margin-top:8px">Jika file memang belum ada, jalankan
+          <code>python3 -m idx.insight_data</code> lalu <code>python3 -m idx.insight_ringkas</code>.</div>`;
+      const b=$('#insightRetry'); if(b) b.onclick=()=>loadInsight(true);
+    }
+    return;
+  }
+  INSIGHT_LOADED=true;
   renderInsight();
 }
 
 function renderInsight(){
+  const state=$('#insightState'), body=$('#insightBody');
   if(!INSIGHT_RINGKAS){
-    $('#insightState').style.display='';
-    $('#insightBody').style.display='none';
-    $('#insightState').innerHTML=
-      `<div class="note" style="padding:20px 0">Data insight belum tersedia.<br>`+
-      `Jalankan <code>python3 -m idx.insight_data</code> lalu <code>python3 -m idx.insight_ringkas</code>.</div>`;
+    if(state){ state.style.display=''; state.innerHTML=insightLoadingHtml(); }
+    if(body) body.style.display='none';
     return;
   }
-  $('#insightState').style.display='none';
-  $('#insightBody').style.display='';
+  if(state) state.style.display='none';
+  if(body) body.style.display='';
 
   const R = INSIGHT_RINGKAS;
   const b = (INSIGHT||{}).breadth || {};
-
-  $('#insightTanggal').textContent = 'data per ' + insTanggal(b.tanggal || R.kalender.hari_ini);
+  const tglB=b.tanggal || (R.kalender&&R.kalender.hari_ini) || null;
+  const mainTgl=(DATA&&DATA.tanggal_data)||null;
+  let sesiTertinggal=0;
+  if(tglB&&mainTgl&&tglB<mainTgl){
+    sesiTertinggal=hitungHariBursa(prevBursaDayIso(tglB),prevBursaDayIso(mainTgl));
+  }
+  const tglEl=$('#insightTanggal');
+  if(tglEl){
+    tglEl.innerHTML='data per '+esc(insTanggal(tglB))
+      +(sesiTertinggal>0?` · <span class="meta-warn">tertinggal ${sesiTertinggal} sesi</span>`:'');
+    tglEl.classList.toggle('meta-warn',sesiTertinggal>0);
+  }
+  const warn=$('#insightWarn');
+  if(warn){
+    const pesan=[];
+    if(INSIGHT_ERROR) pesan.push('Sebagian data insight gagal dimuat: '+INSIGHT_ERROR+'.');
+    if(sesiTertinggal>0) pesan.push(`Breadth/rotasi masih memakai data ${insTanggal(tglB)}, lebih lama ${sesiTertinggal} sesi dari data pasar ${insTanggal(mainTgl)}. Angka ini bukan kondisi sesi terbaru.`);
+    if(pesan.length){
+      warn.style.display='block';
+      warn.innerHTML='⚠️ '+pesan.map(esc).join('<br>')
+        +' <button class="retry-inline" id="insightRetry">Coba lagi</button>';
+      const btn=$('#insightRetry'); if(btn) btn.onclick=()=>loadInsight(true);
+    }else{
+      warn.style.display='none'; warn.innerHTML='';
+    }
+  }
   if(R.disclaimer) $('#insDisclaimer').textContent = R.disclaimer;
 
   renderInsPoin(R);
@@ -3665,7 +4161,9 @@ function renderInsBreadth(b, ins){
     return `<div class="stat"><span>${label}</span><b>${nf(v,0)}</b></div>
       <div class="bar"><i style="width:${w}%;background:${cls}"></i></div>`;
   };
-  const total = (b.naik||0)+(b.turun||0)+(b.tetap||0);
+  const vals=[b.naik,b.turun,b.tetap];
+  const total = vals.every(v=>v!=null&&Number.isFinite(Number(v)))
+    ? vals.reduce((s,v)=>s+Number(v),0) : null;
   const pctBar=(label,v)=>{
     if(v==null) return `<div class="stat"><span>${label}</span><span class="na">data tidak tersedia</span></div>`;
     const c = v>=60?'var(--up)':(v<=25?'var(--down)':'var(--accent)');
@@ -3734,8 +4232,18 @@ function renderInsSektor(ins){
 
 function renderInsKalender(R){
   const k = R.kalender||{};
-  const ev = k.events||[];
-  $('#insKalenderNote').textContent = k.catatan||'';
+  const semua = k.events||[];
+  // Jangan tampilkan event yang sudah lewat. Tanggal acuan = tanggal data
+  // pasar utama atau hari ini WIB, mana yang lebih baru.
+  const hariIni=wibParts(new Date()).iso;
+  const cutoff=[(DATA&&DATA.tanggal_data)||null,hariIni].filter(Boolean).sort().pop();
+  const ev=semua.filter(e=>e&&e.tanggal&&e.tanggal>=cutoff);
+  const dibuang=semua.length-ev.length;
+  const noteEl=$('#insKalenderNote');
+  if(noteEl){
+    noteEl.textContent=(k.catatan||'')
+      +(dibuang>0?` · ${dibuang} event lampau tidak ditampilkan.`:'');
+  }
   if(!ev.length){
     $('#insKalender').innerHTML='<div class="note">Tidak ada event mendatang yang tanggalnya bisa diverifikasi otomatis.</div>';
     return;
@@ -3767,6 +4275,7 @@ function renderInsEdukasi(R){
 function renderAll(){
   /* J3: Jangka Panjang adalah tampilan utama; fungsi lama tetap dipanggil
      agar tab Momentum/Trading dan test lama tidak kehilangan perilakunya. */
+  renderMarketBreadth();
   renderKPIJP();
   renderTopJP();
   renderJPFilters();
@@ -3976,12 +4485,33 @@ function renderAlertTab(){
 
 /* ---------- External data (makro & sensitivitas sektor) ---------- */
 let EXTERNAL = null;
+let EXTERNAL_LOADING = false;
+
+function showExternalError(msg){
+  const card=$('#makroCard');
+  if(card){
+    card.style.display='block';
+    const badge=$('#makroTanggal');
+    if(badge){ badge.textContent='Gagal memuat'; badge.classList.add('meta-warn'); }
+    const info=$('#makroInfo');
+    if(info){
+      info.innerHTML='⚠️ Data eksternal gagal dimuat: '+esc(msg||'tidak diketahui')
+        +' <button class="retry-inline" id="extRetry">Coba lagi</button>'
+        +'<br><span class="na">Tidak ada angka makro yang diisi untuk menutupi kegagalan ini.</span>';
+      const b=$('#extRetry'); if(b) b.onclick=()=>loadExternal();
+    }
+    const body=$('#makroBody'); if(body) body.innerHTML='';
+    const ing=$('#makroPengingat'); if(ing) ing.textContent='';
+  }
+  const sc=$('#sensitivitasCard'); if(sc) sc.style.display='none';
+}
 
 async function loadExternal(){
+  if(EXTERNAL_LOADING) return;
+  EXTERNAL_LOADING=true;
+  const lama=EXTERNAL;
   try{
-    const r = await fetch('data/external.json?_='+Date.now(),{cache:'no-store'});
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    EXTERNAL = await r.json();
+    EXTERNAL = await fetchJson('data/external.json',20000);
     // (Review 30 Okt, fix 1) Guard kesegaran: external.json yang lebih lama
     // dari data pasar utama tidak boleh tampil seolah kondisi hari ini.
     const tglExt = EXTERNAL.tanggal_data || null;
@@ -3989,12 +4519,23 @@ async function loadExternal(){
     EXTERNAL.__basi = !!(tglExt && tglData && tglExt < tglData);
     EXTERNAL.__tanggal_data = tglExt;
     EXTERNAL.__tanggal_utama = tglData;
+    EXTERNAL.__error = null;
     renderMakro();
     renderSensitivitas();
   }catch(e){
     console.warn('[IDX] external.json gagal dimuat:', e);
-    $('#makroCard').style.display='none';
-    $('#sensitivitasCard').style.display='none';
+    const msg=String(e&&e.message||e);
+    if(lama){
+      // Pertahankan data lama yang valid, tetapi tandai gagal memperbarui.
+      EXTERNAL=lama;
+      EXTERNAL.__error=msg;
+      renderMakro();
+      renderSensitivitas();
+    }else{
+      showExternalError(msg);
+    }
+  }finally{
+    EXTERNAL_LOADING=false;
   }
 }
 
@@ -4020,14 +4561,32 @@ function renderMakro(){
   const staleTxt = basi
     ? `<br><span class="meta-warn"><b>⚠ Data eksternal basi:</b> ${esc(tglExt||'—')} lebih lama dari data utama ${esc(tglUtama||'—')}. Angka di bawah bukan kondisi hari ini; jangan dipakai sebagai sinyal timing.</span>`
     : '';
+  const errTxt = EXTERNAL.__error
+    ? `<br><span class="meta-warn"><b>⚠ Gagal memperbarui data eksternal:</b> ${esc(EXTERNAL.__error)}. Data lama tetap ditampilkan. <button class="retry-inline" id="extRetry">Coba lagi</button></span>`
+    : '';
   $('#makroInfo').innerHTML = `Sumber: yfinance (via external.json) · Perubahan 1/5/20 sesi vs periode sebelumnya.`
-    + `<br><span class="na">Untuk baris proxy batubara/nikel, kolom 5s/20s adalah <b>return relatif sektor vs IHSG</b>, bukan harga komoditas.</span>`
-    + staleTxt;
+    + `<br><span class="na">Baris IHSG memakai latest.json setelah close bila tersedia; baris lain dari external.json. Untuk baris proxy batubara/nikel, kolom 5s/20s adalah <b>return relatif sektor vs IHSG</b>, bukan harga komoditas.</span>`
+    + staleTxt + errTxt;
+  const extRetry=$('#extRetry'); if(extRetry) extRetry.onclick=()=>loadExternal();
 
   // Indikator dalam urutan yang diinginkan
   const urutan = ['ihsg','usdidr','sp500','minyak','emas','cpo','iron_ore','batubara','nikel'];
   const rows = urutan.map(key=>{
-    const ind = m[key];
+    let ind = m[key];
+    if(key==='ihsg' && DATA && DATA.ringkasan_pasar){
+      const li=DATA.ringkasan_pasar.ihsg||{};
+      const lr=DATA.ringkasan_pasar.rezim_pasar||{};
+      if(li.tersedia&&li.nilai!=null){
+        ind=Object.assign({label:'IHSG',simbol:'^JKSE',mata_uang:'IDR',satuan:'poin indeks'},ind||{},{
+          nilai:li.nilai,
+          chg_1h_pct:li.chg_pct,
+          chg_5h_pct:lr.ihsg_ret_5h_pct!=null?lr.ihsg_ret_5h_pct:(ind&&ind.chg_5h_pct),
+          chg_20h_pct:lr.ihsg_ret_20h_pct!=null?lr.ihsg_ret_20h_pct:(ind&&ind.chg_20h_pct),
+          tanggal_sumber:DATA.tanggal_data||(ind&&ind.tanggal_sumber),
+          sumber:'latest.json'
+        });
+      }
+    }
     if(!ind) return '';
     const tglInd = ind.tanggal_sumber || ind.tanggal_data || tglExt || '—';
     // (Review 30 Okt, fix 7) CPO/iron ore yang lebih lama dari DATA PASAR
@@ -4135,9 +4694,13 @@ function renderSensitivitas(){
   const staleTxt = basi
     ? `<br><span class="meta-warn"><b>⚠ Data sektor basi:</b> ${esc(tgl||'—')} lebih lama dari data utama ${esc(tglUtama||'—')}; bukan kondisi hari ini.</span>`
     : '';
+  const errTxt = EXTERNAL.__error
+    ? `<br><span class="meta-warn"><b>⚠ Gagal memperbarui data sektor:</b> ${esc(EXTERNAL.__error)}. Data lama tetap ditampilkan. <button class="retry-inline" id="extRetrySens">Coba lagi</button></span>`
+    : '';
   $('#sensitivitasInfo').innerHTML = `Rel = Return sektor − Return IHSG (positif = mengungguli IHSG, bukan artinya naik). `
     + `Terurutkan: Rel 20 sesi vs IHSG, terkuat di atas. Min ${minEmiten} emiten. Sumber: ${esc(src)}`
-    + staleTxt;
+    + staleTxt + errTxt;
+  const extRetrySens=$('#extRetrySens'); if(extRetrySens) extRetrySens.onclick=()=>loadExternal();
 
   // (Review 30 Okt, fix 2 & 3) Tabel dan ringkasan memakai definisi yang
   // sama: rel_20h_pct vs IHSG, tanggal data ikut ditampilkan.
@@ -4208,7 +4771,8 @@ function init(){
   if($('#topJPTableLink')) $('#topJPTableLink').onclick=()=>{
     const tab=document.querySelector('.tab[data-tab="jp"]');
     if(tab && !tab.classList.contains('active')) tab.click();
-    const t=$('#jpTbl'); if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+    const t=(window.innerWidth<=760&&$('#jpCards'))?$('#jpCards'):$('#jpTbl');
+    if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
   };
   $('#insSektorToggle').onclick=()=>{ INS_SEKTOR_ALL=!INS_SEKTOR_ALL; renderInsSektor(INSIGHT||{}); };
 

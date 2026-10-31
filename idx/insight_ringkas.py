@@ -114,8 +114,17 @@ def _poin_breadth(insight: Dict[str, Any]) -> Optional[Dict[str, Any]]:
 # ---------------------------------------------------------------------------
 # Poin 2: Rezim pasar
 # ---------------------------------------------------------------------------
-def _poin_rezim(insight: Dict[str, Any], external: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-    r = (external or {}).get("rezim_pasar") or {}
+def _poin_rezim(insight: Dict[str, Any], external: Dict[str, Any],
+                latest: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+    """Pakai rezim dari latest.json bila ada.
+
+    external.json bisa diambil siang hari sebelum penutupan, sedangkan
+    latest.json adalah hasil pipeline setelah close. Memprioritaskan external
+    membuat narasi IHSG di Tab Insight berbeda dari header/ringkasan pasar.
+    """
+    ext_r = (external or {}).get("rezim_pasar") or {}
+    latest_r = (((latest or {}).get("ringkasan_pasar") or {}).get("rezim_pasar") or {})
+    r = latest_r or ext_r
     rezim = r.get("rezim")
     if not rezim:
         return None
@@ -124,6 +133,13 @@ def _poin_rezim(insight: Dict[str, Any], external: Dict[str, Any]) -> Optional[D
     ret5 = r.get("ihsg_ret_5h_pct", ih.get("ret5"))
     ret20 = r.get("ihsg_ret_20h_pct", ih.get("ret20"))
     pemicu = r.get("pemicu") or []
+    ihsg_terakhir = r.get("ihsg_terakhir")
+    if ihsg_terakhir is None:
+        ihsg_terakhir = (((latest or {}).get("ringkasan_pasar") or {}).get("ihsg") or {}).get("nilai")
+    sumber = ("latest.json → ringkasan_pasar.rezim_pasar"
+              if latest_r else "external.json → rezim_pasar")
+    tanggal = ((latest or {}).get("tanggal_data")
+               or (external or {}).get("tanggal_data"))
 
     pemicu_teks = ""
     if pemicu:
@@ -149,11 +165,11 @@ def _poin_rezim(insight: Dict[str, Any], external: Dict[str, Any]) -> Optional[D
             "pasar_stres": r.get("pasar_stres"),
             "ihsg_ret_5h_pct": ret5,
             "ihsg_ret_20h_pct": ret20,
-            "ihsg_terakhir": r.get("ihsg_terakhir"),
+            "ihsg_terakhir": ihsg_terakhir,
             "jumlah_pemicu": len(pemicu),
         },
-        "sumber": "external.json → rezim_pasar (ambang: IHSG −5%/5 sesi, −10%/20 sesi)",
-        "tanggal": (external or {}).get("tanggal_data"),
+        "sumber": sumber + " (ambang: IHSG −5%/5 sesi, −10%/20 sesi)",
+        "tanggal": tanggal,
         "tone": "negatif" if r.get("pasar_stres") else "netral",
     }
 
@@ -589,7 +605,7 @@ def build(insight: Dict[str, Any], latest: Dict[str, Any],
     # Urutan naratif: kondisi hari ini -> rezim -> rotasi -> makro -> risiko -> skor
     for item in (
         _poin_breadth(insight),
-        _poin_rezim(insight, external),
+        _poin_rezim(insight, external, latest),
         _poin_rotasi(insight),
         _poin_volume(insight),
         _poin_makro(external),

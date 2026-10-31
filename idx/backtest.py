@@ -11,10 +11,19 @@ Prinsip yang dipakai:
   * Pembanding IHSG dihitung pada TANGGAL yang sama (bukan offset bar),
     supaya excess return benar-benar "atas/bawah pasar" di periode yang
     sama.
-  * Tidak ada look-ahead: label sinyal di titik i hanya memakai bar
-    <= i, dan return dihitung dari close i ke close i+N.
+  * Tidak ada look-ahead pada LABEL: label sinyal di titik i hanya memakai
+    bar <= i, dan return dihitung dari close i ke close i+N.
+  * Keterbatasan eksekusi: sinyal di close i dan return juga dimulai dari
+    close i, seolah bisa mengeksekusi tepat di close yang sama setelah
+    sinyal diketahui. Ini asumsi optimistis; eksekusi nyata bisa di sesi
+    berikutnya dengan harga/spread berbeda.
   * Emiten/ titik tanpa harga pembanding yang lengkap DIBUANG dari
     agregat, tidak diisi nol.
+  * Universe memakai emiten yang masih ada di history saat ini; emiten
+    yang delisting tidak terwakili (survivorship bias).
+  * history hanya menyimpan close/volume. Close berasal dari yfinance
+    auto_adjust, tetapi backtest tidak menambahkan dividen sebagai kas
+    dan tidak memodelkan biaya transaksi, pajak, spread, atau slippage.
 
 Output: data/backtest.json
 """
@@ -499,7 +508,9 @@ def build(tulis: bool = True, period_ihsg: str = "2y") -> Dict[str, Any]:
         "versi_skema": 1,
         "metode": ("Return dihitung close->close pada horizon SESI BURSA "
                    "(bukan hari kalender). Excess = return emiten - return "
-                   "IHSG pada tanggal yang sama."),
+                   "IHSG pada tanggal yang sama. Sinyal dan entry diasumsikan "
+                   "di close yang sama; belum ada biaya transaksi, spread, "
+                   "slippage, pajak, atau penundaan eksekusi."),
         "pembanding": "IHSG (^JKSE)",
         "sumber_ihsg": r.get("sumber_label") or "yfinance",
         "periode_ihsg": period_ihsg,
@@ -509,9 +520,12 @@ def build(tulis: bool = True, period_ihsg: str = "2y") -> Dict[str, Any]:
         "catatan_risiko": [
             "Backtest memakai harga historis, bukan jaminan hasil ke depan.",
             "Tidak memperhitungkan biaya transaksi, spread, slippage, atau pajak.",
-            "Sinyal dihitung dari data yang sudah tutup; eksekusi nyata bisa beda harga.",
+            "Sinyal dihitung dari data yang sudah tutup; entry diasumsikan di close yang sama, sehingga eksekusi nyata bisa lebih lambat dan beda harga.",
             "Emiten tidak likuid membuat return mudah terdistorsi.",
             "IHSG adalah rata-rata pasar; saham kecil bisa bergerak jauh dari IHSG.",
+            "Universe memakai emiten yang masih ada sekarang; emiten delisting tidak terwakili (survivorship bias).",
+            "History hanya menyimpan close/volume; label support/resistance historis bisa berbeda dari label live yang memakai high/low.",
+            "Close dari yfinance auto_adjust tidak sama dengan kas dividen yang diterima; pajak dan biaya tetap tidak dimodelkan.",
         ],
         **hasil,
         "durasi_detik": round(time.time() - t0, 2),

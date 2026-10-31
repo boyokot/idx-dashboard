@@ -213,6 +213,11 @@ def compute_breadth_snapshot(
     # Pakai approach: ambil latest date per emiten, lalu pilih yang paling sering muncul
     date_counts: Dict[str, int] = {}
     for kode, ed in emas_data.items():
+        # Indeks IHSG disimpan di cache yang sama untuk pembanding, tetapi
+        # BUKAN emiten. Jangan pernah menghitungnya sebagai satu saham di
+        # breadth (bug: total emiten menjadi 917, bukan 916).
+        if str(kode).startswith("^") or str(kode).upper() == "IHSG":
+            continue
         if not ed.get("ok") or not ed.get("dates"):
             continue
         latest_d = ed["dates"][-1]
@@ -232,6 +237,8 @@ def compute_breadth_snapshot(
     vol_ratios = []
 
     for kode, ed in emas_data.items():
+        if str(kode).startswith("^") or str(kode).upper() == "IHSG":
+            continue
         if not ed.get("ok"):
             continue
         dates = ed["dates"]
@@ -367,18 +374,41 @@ def compute_sector_rotation(
 # -----------------------------------------------------------------------------
 # Fungsi utama: build insight data
 # -----------------------------------------------------------------------------
+def _cache_perlu_refresh(entry: Optional[Dict[str, Any]],
+                         target_date: Optional[str]) -> bool:
+    """True bila cache tidak cukup panjang atau tertinggal dari tanggal data.
+
+    Bug lama: cache dianggap segar hanya karena punya >=200 bar. Akibatnya
+    insight.json tidak pernah maju setelah cache pertama terisi. Tanggal
+    terakhir cache sekarang ikut diperiksa.
+    """
+    if not entry or not entry.get("ok"):
+        return True
+    dates = entry.get("dates") or []
+    if len(dates) < 200:
+        return True
+    if target_date and max(dates) < target_date:
+        return True
+    return False
+
+
 def build_insight(
     universe: List[Dict[str, Any]],
     latest_rows: List[Dict[str, Any]],
     force_refresh: bool = False,
     out_file: Optional[str] = None,
     history_file: Optional[str] = None,
+    target_date: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Bangun data insight dari universe.
     - Download history 5y untuk semua emiten (parallel, pakai cache insight_history.json)
     - Hitung breadth, rotasi sektor
     - Simpan ke insight.json + insight_history.json
+
+    target_date: tanggal data pasar utama (latest.json.tanggal_data). Cache
+    yang tanggal terakhirnya lebih lama akan di-fetch ulang, supaya insight
+    tidak tertinggal beberapa sesi.
 
     out_file / history_file: override path output (dipakai smoke test agar tidak
     menimpa artifact produksi).
@@ -399,17 +429,22 @@ def build_insight(
             print(f"[insight] Cache gagal dibaca: {e}", flush=True)
             cache = {}
 
-    # Identifikasi emiten yang perlu di-fetch
+    # Identifikasi emiten yang perlu di-fetch. Cache hanya dipakai bila
+    # panjangnya cukup DAN tanggal terakhirnya sudah mencapai target_date.
     to_fetch = []
+    cache_dipakai = 0
     for item in universe:
         kode = item["kode"]
         sym = f"{kode}.JK"
         cached = cache.get("emiten", {}).get(kode)
-        if cached and cached.get("ok") and len(cached.get("dates", [])) >= 200:
-            continue  # sudah cukup panjang
+        if not _cache_perlu_refresh(cached, target_date):
+            cache_dipakai += 1
+            continue
         to_fetch.append((kode, sym))
 
-    print(f"[insight] Perlu fetch: {len(to_fetch)} / {len(universe)}", flush=True)
+    print(f"[insight] Target tanggal: {target_date or 'tidak ditentukan'} · "
+          f"cache dipakai: {cache_dipakai} · perlu fetch: {len(to_fetch)} / {len(universe)}",
+          flush=True)
 
     # Parallel fetch
     new_data = {}
@@ -443,10 +478,10 @@ def build_insight(
     # IHSG
     ihsg_cache = cache.get("emiten", {}).get("^JKSE") or cache.get("emiten", {}).get("IHSG")
     ihsg_emas = None
-    if ihsg_cache and ihsg_cache.get("ok"):
+    if not _cache_perlu_refresh(ihsg_cache, target_date):
         ihsg_emas = ihsg_cache
     else:
-        print("[insight] Fetch IHSG...", flush=True)
+        print("[insight] Fetch IHSG (cache kosong/tertinggal)...", flush=True)
         ihsg_bars = _yf_history("^JKSE")
         if ihsg_bars:
             ihsg_emas = compute_emas_from_bars(ihsg_bars)
@@ -484,7 +519,9 @@ def build_insight(
             "total_universe": len(universe),
             "emiten_berhistory": emiten_berhistory,
             "emiten_fetch_baru": len(new_data),
+            "emiten_cache_dipakai": cache_dipakai,
             "emiten_bolong": emiten_bolong,
+            "target_tanggal": target_date,
         },
         "breadth": breadth,
         "rotasi_sektor": rotation,
@@ -550,9 +587,13 @@ if __name__ == "__main__":
             universe[:test_n], latest_rows, force_refresh=True,
             out_file=os.path.join(DATA_DIR, "insight_uji.json"),
             history_file=os.path.join(DATA_DIR, "insight_history_uji.json"),
+            target_date=latest.get("tanggal_data"),
         )
         print(json.dumps(res, ensure_ascii=False, indent=2)[:2000])
     else:
-        res = build_insight(universe, latest_rows, force_refresh=force)
+        res = build_insight(
+            universe, latest_rows, force_refresh=force,
+            target_date=latest.get("tanggal_data"),
+        )
         print(f"[insight] selesai: {res['breadth'].get('total_emiten')} emiten, "
               f"{len(res.get('rotasi_sektor') or [])} sektor")

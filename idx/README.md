@@ -125,6 +125,33 @@ Aturan yang **tidak boleh dilanggar** (semua diuji `idx/test_backtest.py`):
 | `excess == rata2 − ihsg_rata2` | Diuji ulang di frontend; kalau tidak sama, tabel menampilkan angka palsu. |
 | Label sinyal dari `scoring.label_sinyal()` | Satu definisi untuk pipeline **dan** backtest, supaya tidak melenceng. |
 
+### Keterbatasan backtest yang dinyatakan terbuka
+
+Backtest ini **bukan** simulasi trading yang siap dieksekusi. Keterbatasan
+berikut ditampilkan di UI dan/atau `backtest.json`, bukan disembunyikan:
+
+- **Eksekusi di close yang sama.** Sinyal dihitung dari close sesi *i* dan
+  return juga dimulai dari close *i*. Ini mengasumsikan bisa membeli tepat
+  di harga close setelah sinyal diketahui. Eksekusi nyata bisa terjadi di
+  sesi berikutnya dengan harga, spread, dan antrean yang berbeda.
+- **Belum ada biaya.** Komisi, levy, spread, slippage, dan pajak tidak
+  dimodelkan. Return kotor karena itu cenderung lebih tinggi dari hasil
+  bersih.
+- **Survivorship bias.** Universe diambil dari emiten yang masih ada di
+  `history.json` saat ini; emiten yang sudah delisting tidak terwakili.
+- **Corporate actions.** `history.json` menyimpan close dari yfinance
+  `auto_adjust=True`, bukan arus kas dividen yang diterima investor. Split
+  dan dividen memengaruhi seri secara retrospektif; pajak dan biaya tetap
+  tidak dimodelkan.
+- **Keterbatasan data historis.** `history.json` hanya menyimpan close dan
+  volume (bukan high/low/open). Label support/resistance historis bisa
+  berbeda dari label live yang memakai high/low.
+- **Publication timing.** Tidak ada model jam publikasi berita/laporan;
+  sinyal murni dihitung dari bar historis yang sudah tersedia.
+- **Sampel dan rezim.** Hasil per periode anomali dilaporkan terpisah,
+  tetapi tetap bukan bukti performa masa depan. Sampel kecil atau satu
+  rezim pasar tidak bisa digeneralisasi.
+
 `^JKSE` dan simbol berakhiran `.JK` **tidak** ditambah suffix `.JK` lagi
 (bug lama: `^JKSE.JK` tidak ada). Prioritas: `get_market_index()` untuk KPI,
 `yfinance_history()` untuk seri harian backtest.
@@ -132,6 +159,41 @@ Aturan yang **tidak boleh dilanggar** (semua diuji `idx/test_backtest.py`):
 Kalau backtest gagal, pipeline tetap mempublikasikan `latest.json` — backtest
 hanya pelengkap, bukan syarat. Frontend punya fallback ke snapshot harian lama
 kalau `backtest.json` belum ada, jadi fitur lama tidak hilang.
+
+## Status data & kesegaran insight
+
+Dashboard menampilkan status eksplisit di header: **Data terbaru**,
+**Kedaluwarsa N sesi**, **Parsial** (sebagian emiten tanpa harga/fundamental),
+**Pembaruan gagal**, atau **Memuat**. Tanggal data dan sumber utama juga
+ditampilkan. Emiten tanpa data tidak dihitung sebagai 0 dan tidak dianggap
+stagnan.
+
+Aturan frontend:
+
+- Fetch utama memakai timeout dan memeriksa status HTTP, content-type JSON,
+  serta bentuk payload. Error jaringan, timeout, rate limit (429), 404, 5xx,
+  dan JSON rusak menghasilkan pesan yang berbeda.
+- Jika refresh gagal setelah data valid pernah tampil, **data lama tetap
+  ditampilkan** dengan peringatan non-blocking dan tombol “Coba lagi”.
+  Data lama tidak ditimpa diam-diam.
+- Insight memakai skeleton saat memuat, retry saat gagal, dan peringatan bila
+  tanggal breadth/rotasi lebih lama dari `latest.json.tanggal_data`.
+  Event kalender yang sudah lewat tidak ditampilkan di UI.
+- Watchlist disimpan di `localStorage`; tidak dikirim ke server.
+
+### Cache insight
+
+`idx/insight_data.py` memakai `data/insight_history.json` sebagai cache.
+Cache hanya boleh dipakai bila panjangnya cukup **dan** tanggal terakhirnya
+mencapai `latest.json.tanggal_data`. Bug lama hanya memeriksa `len(dates) >=
+200`, sehingga cache tidak pernah diperbarui setelah pertama terisi. Perbaikan
+ini diverifikasi lewat audit UI (peringatan basi + filter kalender) dan
+menghasilkan `insight.json` dengan tanggal yang sama dengan data pasar.
+IHSG disimpan di cache yang sama tetapi **tidak** dihitung sebagai emiten
+dalam breadth; total breadth harus sama dengan jumlah emiten berhistory.
+Narasi rezim di `insight_ringkas.json` memprioritaskan `latest.json`
+(setelah close) agar tidak berbeda dari header dashboard; baris IHSG di
+kartu makro juga memakai `latest.json` bila tersedia.
 
 ## Alert & ringkasan pasar (Kelompok D)
 

@@ -1,9 +1,10 @@
 {
  "files": [
-  "2026-10.json"
+  "2026-10.json",
+  "2026-11.json"
  ],
- "jumlah": 1,
+ "jumlah": 2,
  "terlama": "2026-10",
- "terbaru": "2026-10",
- "diperbarui_pada": "2026-10-30T16:01:10+07:00"
+ "terbaru": "2026-11",
+ "diperbarui_pada": "2026-11-05T18:37:20+07:00"
 }

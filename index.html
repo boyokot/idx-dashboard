@@ -10,12 +10,14 @@
   --bg:#f5f6f8; --card:#fff; --text:#1a1d23; --muted:#6b7280; --border:#e3e6ea;
   --up:#0a8f4a; --down:#d92b3a; --warn:#b45309; --warnbg:#fef3c7;
   --accent:#2563eb; --accent-soft:#dbeafe; --shadow:0 1px 3px rgba(0,0,0,.07);
+  --ma20:#b45309; --ma50:#7c3aed;
   --sticky:#fafbfc;
 }
 [data-theme="dark"]{
   --bg:#0e1116; --card:#161b22; --text:#e6edf3; --muted:#8b949e; --border:#2d333b;
   --up:#3fb950; --down:#f85149; --warn:#d29922; --warnbg:#3a2d09;
   --accent:#58a6ff; --accent-soft:#132a45; --shadow:0 1px 3px rgba(0,0,0,.4);
+  --ma20:#e0a020; --ma50:#a78bfa;
   --sticky:#1c2129;
 }
 *{box-sizing:border-box}
@@ -27,7 +29,7 @@ h1{font-size:19px;margin:0 0 2px}
 .sub{color:var(--muted);font-size:12px}
 .meta{color:var(--muted);font-size:11px;margin-top:2px;line-height:1.5}
 .meta b{color:inherit;font-weight:600}
-.meta-warn{color:#e0a800}
+.meta-warn{color:var(--warn)}
 .meta-bad{color:#e5484d;font-weight:600}
 .hdr-right{display:flex;gap:8px;align-items:center;flex-shrink:0}
 button{font:inherit;cursor:pointer;border:1px solid var(--border);background:var(--card);
@@ -35,6 +37,10 @@ button{font:inherit;cursor:pointer;border:1px solid var(--border);background:var
 button:hover{border-color:var(--accent);color:var(--accent)}
 button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 button.primary:hover{opacity:.9;color:#fff}
+button:focus-visible,[href]:focus-visible,input:focus-visible,
+select:focus-visible,textarea:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px;
+}
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;
   box-shadow:var(--shadow);padding:14px;margin-bottom:14px}
 
@@ -577,28 +583,28 @@ button.primary:hover{background:linear-gradient(135deg,#1e40af,#1d4ed8);color:#f
 .pager-info{font-size:11.5px;line-height:1.45;color:var(--muted)}
 .pager-info b{color:var(--text);font-weight:700}
 .pager-controls{display:flex;align-items:center;gap:5px}
-.pager-controls button{height:30px;padding:4px 9px;border-radius:7px;font-size:11.5px}
+.pager-controls button{min-width:32px;height:32px;padding:4px 9px;border-radius:7px;font-size:11.5px}
 .pager-controls select{
-  height:30px;padding:3px 7px;border-radius:7px;font-size:11.5px;background:var(--card);
+  height:32px;padding:3px 7px;border-radius:7px;font-size:11.5px;background:var(--card);
 }
 #jpPageNum{min-width:54px;text-align:center;color:var(--muted);font-size:11.5px;font-variant-numeric:tabular-nums}
 #jpPrev:disabled,#jpNext:disabled{opacity:.42;cursor:not-allowed;background:var(--card)}
 .jp-row-off{display:none}
 .info-btn{
-  display:inline-grid;place-items:center;width:18px;height:18px;padding:0;
+  display:inline-grid;place-items:center;width:24px;height:24px;padding:0;
   border:1px solid color-mix(in srgb,var(--border) 80%,var(--muted));border-radius:50%;
   background:var(--card);color:var(--muted);font-size:10px;font-weight:800;line-height:1;
   cursor:pointer;box-shadow:none;
 }
-.info-btn svg{width:11px;height:11px;display:block}
+.info-btn svg{width:13px;height:13px;display:block}
 .info-btn:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
 .kpi>.info-btn{position:absolute;top:10px;right:10px;z-index:2}
 .kpi-head{padding-right:20px}
 th .info-btn{
-  position:static;display:inline-flex;width:14px;height:14px;margin-left:4px;
+  position:static;display:inline-flex;width:20px;height:20px;margin-left:4px;
   vertical-align:middle;font-size:8px;
 }
-th .info-btn svg{width:9px;height:9px}
+th .info-btn svg{width:11px;height:11px}
 .indicator-info-drawer{max-width:520px}
 .info-question{
   margin:12px 0 8px;padding:10px 12px;border-radius:9px;
@@ -734,6 +740,12 @@ table,.kpi .v,.stat b,.jp-score,.jp-value-badge{font-variant-numeric:tabular-num
   .wl-cards-mobile{display:grid;grid-template-columns:1fr;gap:8px}
   .mb-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .status-pill{font-size:9.5px;padding:2px 6px}
+  .info-btn{width:28px;height:28px}
+  .info-btn svg{width:14px;height:14px}
+  th .info-btn{width:24px;height:24px}
+  th .info-btn svg{width:12px;height:12px}
+  .pager-controls button{min-width:36px;height:36px;padding:4px 10px}
+  .pager-controls select{height:36px}
   .retry-inline,#wlCards button[data-del],#wlBody button[data-del]{min-height:32px;padding:5px 9px}
   .wrap{padding:0 12px 28px}
   header{padding:11px 0;margin-bottom:12px}
@@ -1517,6 +1529,59 @@ function bindInfoButtons(root){
   });
 }
 
+/* ---------- fokus modal (aksesibilitas keyboard) ----------
+   Saat overlay dibuka, fokus dipindahkan ke kontrol pertama di dalam modal;
+   Tab/Shift+Tab tidak boleh keluar ke halaman di belakang. Saat ditutup,
+   fokus dikembalikan ke elemen pemicu. Tidak mengubah alur buka/tutup lama. */
+const MODAL_FOKUS_SEBELUM = new WeakMap();
+function modalFocusable(m){
+  return Array.from(m.querySelectorAll(
+    'button:not([disabled]), [href], input:not([disabled]), '+
+    'select:not([disabled]), textarea:not([disabled]), '+
+    '[tabindex]:not([tabindex="-1"])'
+  )).filter(el=>{
+    const r=el.getBoundingClientRect();
+    return (r.width>0||r.height>0) && getComputedStyle(el).visibility!=='hidden';
+  });
+}
+function pasangFokusModal(){
+  $$('.overlay').forEach(m=>{
+    new MutationObserver(muts=>{
+      for(const mut of muts){
+        const el=mut.target;
+        if(!el.classList.contains('overlay')) continue;
+        if(el.classList.contains('show')){
+          if(MODAL_FOKUS_SEBELUM.has(el)) continue;
+          MODAL_FOKUS_SEBELUM.set(el, document.activeElement);
+          setTimeout(()=>{
+            const f=modalFocusable(el);
+            if(f.length) f[0].focus();
+          },0);
+        }else if(MODAL_FOKUS_SEBELUM.has(el)){
+          const prev=MODAL_FOKUS_SEBELUM.get(el);
+          MODAL_FOKUS_SEBELUM.delete(el);
+          if(prev && document.contains(prev) && typeof prev.focus==='function'){
+            prev.focus();
+          }
+        }
+      }
+    }).observe(m,{attributes:true,attributeFilter:['class']});
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.key!=='Tab') return;
+    const m=$$('.overlay.show').slice(-1)[0];
+    if(!m) return;
+    const f=modalFocusable(m);
+    if(!f.length) return;
+    const aktif=document.activeElement;
+    if(e.shiftKey && (aktif===f[0] || !m.contains(aktif))){
+      e.preventDefault(); f[f.length-1].focus();
+    }else if(!e.shiftKey && (aktif===f[f.length-1] || !m.contains(aktif))){
+      e.preventDefault(); f[0].focus();
+    }
+  });
+}
+
 /* ---------- (Review 21 Okt) sel kosong yang bisa dijelaskan ----------
    Sebelumnya setiap sel tanpa data hanya menampilkan "–" tanpa keterangan,
    sehingga tidak bisa dibedakan antara "sumber tidak melaporkan",
@@ -1609,9 +1674,15 @@ function initTema(){
     if((localStorage.getItem(LS_THEME)||'auto')==='auto') terapkanTema('auto');
   });
   $('#btnTheme').onclick = () => {
-    const order=['auto','light','dark'];
-    let cur=localStorage.getItem(LS_THEME)||'auto';
-    const nx=order[(order.indexOf(cur)+1)%3];
+    // Dari `auto`, klik pertama harus mengubah tampilan. Kalau sistem sedang
+    // terang, `auto -> light` tidak terlihat berubah; karena itu langsung
+    // pilih tema efektif yang berlawanan, lalu cycle light/dark/auto.
+    const cur=localStorage.getItem(LS_THEME)||'auto';
+    const mq=window.matchMedia('(prefers-color-scheme: dark)');
+    let nx;
+    if(cur==='auto') nx=mq.matches?'light':'dark';
+    else if(cur==='light') nx='dark';
+    else nx='auto';
     localStorage.setItem(LS_THEME,nx); terapkanTema(nx);
   };
 }
@@ -1733,12 +1804,33 @@ function renderMetaSkema(j){
   const sd=j.sumber_data_ringkas||null;
   if(sd && sd.harga){
     const utama=Object.keys(sd.harga).sort((a,b)=>sd.harga[b]-sd.harga[a])[0];
-    const n=sd.harga[utama]||0;
-    const tot=sd.emiten_total||0;
+    const n=Number(sd.harga[utama]||0);
+    const tot=Number(sd.emiten_total||j.jumlah_emiten||0);
+    const hargaTersedia=Number(sd.harga_tersedia!=null?sd.harga_tersedia:n);
+    const fundTersedia=Number(sd.fundamental_tersedia!=null?sd.fundamental_tersedia:NaN);
+    const sesiIni=Number(sd.harga_sesi_ini!=null?sd.harga_sesi_ini:NaN);
+    const tertinggal=Number(sd.harga_tertinggal!=null?sd.harga_tertinggal:0);
     parts.push('Sumber: '+esc(utama)+' '+nf(n)+'/'+nf(tot)+' emiten');
+    if(Number.isFinite(fundTersedia) && tot){
+      parts.push('Fundamental <b>'+nf(fundTersedia)+'/'+nf(tot)+'</b>');
+    }
+    if(sd.harga_tanpa_fundamental>0){
+      parts.push(nf(sd.harga_tanpa_fundamental)+' harga tanpa PER/ROE');
+    }
+    if(Number.isFinite(sesiIni) && tot){
+      parts.push('Harga sesi ini <b>'+nf(sesiIni)+'/'+nf(tot)+'</b>');
+    }
+    if(tertinggal>0){
+      parts.push('<span class="meta-warn" title="Harga terakhir emiten ini lebih lama dari tanggal data utama; tidak dihitung sebagai breadth sesi ini">'+
+        nf(tertinggal)+' harga tertinggal</span>');
+    }
     if(sd.emiten_tanpa_data>0){
       parts.push('<span class="meta-warn">'+nf(sd.emiten_tanpa_data)+
         ' emiten tanpa data</span>');
+    }
+    if(sd.harga_tersedia!=null && hargaTersedia && tot && hargaTersedia<tot && !sd.emiten_tanpa_data){
+      parts.push('<span class="meta-warn">'+nf(tot-hargaTersedia)+
+        ' tanpa harga</span>');
     }
   }else if(j.sumber_utama){
     parts.push('Sumber: '+esc(j.sumber_utama));
@@ -1852,10 +1944,19 @@ function renderDataStatus(j,stale,gagal=false){
   }
   const tanpa=Number(sd.emiten_tanpa_data||0);
   const total=Number(sd.emiten_total||j.jumlah_emiten||0);
+  const harga=Number(sd.harga_tersedia!=null?sd.harga_tersedia:j.jumlah_ada_harga||0);
+  const fund=Number(sd.fundamental_tersedia!=null?sd.fundamental_tersedia:j.jumlah_ada_fundamental||0);
+  const sesi=Number(sd.harga_sesi_ini!=null?sd.harga_sesi_ini:j.jumlah_harga_sesi_ini||0);
+  const tertinggal=Number(sd.harga_tertinggal!=null?sd.harga_tertinggal:j.jumlah_harga_tertinggal||0);
   if(tanpa>0){
-    parts.push(`<span class="status-pill warn" title="Emiten tanpa harga/fundamental; tidak diisi 0">Parsial · ${nf(tanpa)} tanpa data</span>`);
-  }else if(total){
+    parts.push(`<span class="status-pill warn" title="Emiten tanpa harga dan tanpa PER/ROE; tidak diisi 0">Parsial · ${nf(tanpa)} tanpa data</span>`);
+  }else if(total && harga>=total && fund>=total && (!sesi || sesi>=total)){
     parts.push('<span class="status-pill ok">Cakupan lengkap</span>');
+  }else if(total){
+    parts.push(`<span class="status-pill warn" title="Harga ${nf(harga)}/${nf(total)} · fundamental ${nf(fund)}/${nf(total)}">Parsial · cakupan data</span>`);
+  }
+  if(tertinggal>0){
+    parts.push(`<span class="status-pill warn" title="Harga terakhir lebih lama dari tanggal data utama; tidak dihitung sebagai breadth sesi ini">${nf(tertinggal)} harga tertinggal</span>`);
   }
   const bs=statusBursaSekarang();
   parts.push(`<span class="status-pill ${bs.open?'ok':'info'}" title="Jam bursa WIB; data dashboard bisa tertinggal satu sesi">${bs.label}</span>`);
@@ -1889,7 +1990,17 @@ function renderMarketBreadth(){
   const e=DATA.emiten||[];
   const mp=DATA.ringkasan_pasar||{};
   const ihsg=mp.ihsg||{};
-  const rows=e.filter(r=>r.chg_pct!=null&&Number.isFinite(Number(r.chg_pct)));
+  const tgl=DATA.tanggal_data||'–';
+  const allRows=e.filter(r=>r.chg_pct!=null&&Number.isFinite(Number(r.chg_pct)));
+  // Breadth sesi ini hanya dari harga yang tanggalnya sama dengan tanggal
+  // data utama. Harga yang lebih lama tidak boleh dihitung seolah-olah
+  // perubahan hari ini (dan tidak dianggap stagnan/0).
+  const punyaTanggal=allRows.some(r=>r.tanggal_harga);
+  const rowsSesi=punyaTanggal
+    ? allRows.filter(r=>!r.tanggal_harga||String(r.tanggal_harga).slice(0,10)===String(tgl).slice(0,10))
+    : allRows;
+  const rows=rowsSesi.length?rowsSesi:allRows;
+  const tertinggal=punyaTanggal?Math.max(0,allRows.length-rows.length):0;
   const up=rows.filter(r=>Number(r.chg_pct)>0).length;
   const down=rows.filter(r=>Number(r.chg_pct)<0).length;
   const flat=rows.length-up-down;
@@ -1897,14 +2008,14 @@ function renderMarketBreadth(){
   const pctUp=total?up/total*100:null;
   const pctDown=total?down/total*100:null;
   const pctFlat=total?flat/total*100:null;
-  const nilaiRows=e.filter(r=>r.nilai_transaksi!=null&&Number.isFinite(Number(r.nilai_transaksi)));
+  const nilaiRows=e.filter(r=>r.nilai_transaksi!=null&&Number.isFinite(Number(r.nilai_transaksi))
+    && (!punyaTanggal||!r.tanggal_harga||String(r.tanggal_harga).slice(0,10)===String(tgl).slice(0,10)));
   const nilai=nilaiRows.length?nilaiRows.reduce((s,r)=>s+Number(r.nilai_transaksi),0):null;
   const kuat=mp.sektor_terkuat||null, lemah=mp.sektor_terlemah||null;
-  const tgl=DATA.tanggal_data||'–';
   const ihsgVal=ihsg.tersedia&&ihsg.nilai!=null?nf(ihsg.nilai,2):'data tidak tersedia';
   const ihsgChg=ihsg.tersedia?pct(ihsg.chg_pct):'<span class="na">data tidak tersedia</span>';
   const breadthTxt=total?`${nf(up)} naik / ${nf(down)} turun`:'data tidak tersedia';
-  const breadthSub=total?`${nf(flat)} stagnan · ${nf(total)} emiten berdata`:'tidak ada emiten dengan perubahan harga';
+  const breadthSub=total?`${nf(flat)} stagnan · ${nf(total)} emiten berharga sesi ini`:'tidak ada emiten dengan perubahan harga';
   const bar=total?`<div class="mb-bar" title="Naik ${up} · turun ${down} · stagnan ${flat}">
       <i style="width:${pctUp}%;background:var(--up)"></i>
       <i style="width:${pctFlat}%;background:var(--muted)"></i>
@@ -1935,7 +2046,9 @@ function renderMarketBreadth(){
         <div class="s">akumulasi ${nf(nilaiRows.length)} emiten berharga; bukan total pasar</div></div>
     </div>
     <div class="note" style="margin-top:7px">Breadth hanya menghitung emiten yang punya perubahan harga.
-      Emiten tanpa data tidak dianggap stagnan dan tidak diisi 0. Klik tab Alert untuk rincian rezim dan waspada.</div>`;
+      Emiten tanpa data tidak dianggap stagnan dan tidak diisi 0.
+      ${tertinggal>0?`<span class="meta-warn">${nf(tertinggal)} emiten dengan harga lebih lama tidak dihitung pada breadth sesi ini.</span> `:''}
+      Klik tab Alert untuk rincian rezim dan waspada.</div>`;
 }
 
 function renderTop10(){
@@ -2804,14 +2917,18 @@ function bukaDetailJP(kode){
     <canvas id="chart" width="820" height="280" style="width:100%;height:auto"></canvas>
     <div class="legend">
       <span><i style="background:var(--accent)"></i>Harga (close)</span>
-      <span><i style="background:#e0a020"></i>MA20</span>
-      <span><i style="background:#8b5cf6"></i>MA50</span>
+      <span><i style="background:var(--ma20)"></i>MA20</span>
+      <span><i style="background:var(--ma50)"></i>MA50</span>
       <span><i style="background:var(--muted)"></i>Volume</span>
       <span class="na" id="chartInfo">–</span>
     </div>
 
     <div class="note" style="margin-top:14px">Diperbarui: ${esc(r.diperbarui_pada||'–')} ·
-      Sumber harga: ${esc(r.sumber_harga||'–')} · Sumber fundamental: ${esc(r.sumber_fundamental||'–')}</div>
+      Sumber harga: ${esc(r.sumber_harga||'–')} · Sumber fundamental: ${esc(r.sumber_fundamental||'–')}
+      ${((DATA.skor_jp_meta||{}).sumber_data||{}).fundamental_tanggal_data_utama
+        ?` · Fundamental per ${esc(DATA.skor_jp_meta.sumber_data.fundamental_tanggal_data_utama)}`:''}
+      ${r.tanggal_harga&&DATA.tanggal_data&&String(r.tanggal_harga).slice(0,10)!==String(DATA.tanggal_data).slice(0,10)
+        ?` · <span class="meta-warn">harga terakhir ${esc(r.tanggal_harga)}, bukan ${esc(DATA.tanggal_data)}</span>`:''}</div>
     <div class="disclaimer">Kartu Investasi adalah alat screening dan pemantauan, bukan rekomendasi beli/jual.
       Tidak ada target harga tunggal dan tidak ada klaim kepastian. Diskon/overprice adalah valuasi relatif,
       bukan target harga. Timing dan penanda risiko tidak dipakai untuk menambah atau mengurangi Skor JP.
@@ -3180,8 +3297,8 @@ function bukaDetail(kode){
       <canvas id="chart" width="820" height="280" style="width:100%;height:auto"></canvas>
       <div class="legend">
         <span><i style="background:var(--accent)"></i>Harga (close)</span>
-        <span><i style="background:#e0a020"></i>MA20</span>
-        <span><i style="background:#8b5cf6"></i>MA50</span>
+        <span><i style="background:var(--ma20)"></i>MA20</span>
+        <span><i style="background:var(--ma50)"></i>MA50</span>
         <span><i style="background:var(--muted)"></i>Volume</span>
         <span class="na" id="chartInfo">–</span>
       </div>
@@ -3214,6 +3331,8 @@ function bukaDetail(kode){
 
     <div style="margin-top:14px" class="note">
       Diperbarui: ${esc(r.diperbarui_pada||'–')} · Sumber harga: ${esc(r.sumber_harga||'–')} · Sumber fundamental: ${esc(r.sumber_fundamental||'–')}
+      ${r.tanggal_harga&&DATA.tanggal_data&&String(r.tanggal_harga).slice(0,10)!==String(DATA.tanggal_data).slice(0,10)
+        ?` · <span class="meta-warn">harga terakhir ${esc(r.tanggal_harga)}, bukan ${esc(DATA.tanggal_data)}</span>`:''}
     </div>
     <div class="disclaimer">Screening momentum otomatis, bukan rekomendasi beli/jual.
       Tidak ada target harga tunggal dan tidak ada klaim kepastian.</div>
@@ -3382,8 +3501,8 @@ async function gambarChart(kode){
     }
     ctx.stroke();
   };
-  garis(ma50,'#8b5cf6');
-  garis(ma20,'#e0a020');
+  garis(ma50,getCss('--ma50'));
+  garis(ma20,getCss('--ma20'));
   garis(closes,getCss('--accent'));
 
   /* ── volume bars ── */
@@ -3661,9 +3780,12 @@ async function loadBacktest(force=false){
 function renderBacktest(bt){
   const cak = bt.cakupan || {};
   const per = bt.horizon_sesi || [5,10,20];
+  const ph = bt.periode_history || {};
   $('#btInfo').innerHTML =
     `Dihitung dari <b>${fx(cak.titik_dihitung||0,0)}</b> titik sinyal pada ` +
     `<b>${fx(cak.emiten_dipakai||0,0)}</b> emiten (dari ${fx(cak.emiten_history||0,0)} yang punya riwayat harga). ` +
+    (ph.mulai&&ph.selesai?`Rentang history: <b>${esc(ph.mulai)} → ${esc(ph.selesai)}</b>`+
+      (ph.sesi_maks_per_emiten?` (maks ${fx(ph.sesi_maks_per_emiten,0)} sesi/emiten)`:``)+`. `:'') +
     `<b>Rata-rata</b> = return <b>mentah</b> emiten (bukan excess); ` +
     `<b>Excess</b> = emiten − IHSG pada tanggal yang sama` +
     (cak.titik_tanpa_ihsg ? `; ${fx(cak.titik_tanpa_ihsg,0)} titik dibuang karena IHSG tidak tersedia di tanggal itu` : '') +
@@ -4180,6 +4302,7 @@ function renderInsBreadth(b, ins){
     ${pctBar('Di atas MA200', b.pct_above_ma200)}
     <div class="stat"><span>Rasio volume vs rata-rata 20 sesi</span>
       <b>${b.median_volume_ratio!=null?fx(b.median_volume_ratio,2)+'×':'–'}</b></div>
+    ${b.emiten_dilewati>0?`<div class="note">${nf(b.emiten_dilewati)} emiten dengan harga lebih lama dari ${insTanggal(b.tanggal)} tidak dihitung (bukan dianggap stagnan).</div>`:''}
     ${insSumber('insight.json → breadth, '+insTanggal(b.tanggal)+' · history 5 tahun yfinance')}
   `;
 }
@@ -4558,9 +4681,16 @@ function renderMakro(){
     ? `external.json (${tglExt}) lebih lama dari data pasar utama (${tglUtama}); angka makro bukan kondisi hari ini.`
     : 'Tanggal data external.json';
 
-  const staleTxt = basi
+  const kes=EXTERNAL.kesegaran||{};
+  const nBasi=Number(kes.jumlah_basi||0);
+  const itemBasi=(Array.isArray(kes.item_basi)?kes.item_basi:[])
+    .map(x=>typeof x==='string'?x:((x&&(x.label||x.kunci))||'')).filter(Boolean);
+  const staleTxt = (basi
     ? `<br><span class="meta-warn"><b>⚠ Data eksternal basi:</b> ${esc(tglExt||'—')} lebih lama dari data utama ${esc(tglUtama||'—')}. Angka di bawah bukan kondisi hari ini; jangan dipakai sebagai sinyal timing.</span>`
-    : '';
+    : '')
+    + (nBasi>0
+      ? `<br><span class="meta-warn" title="${esc(itemBasi.join(', '))}">⚠ ${nf(nBasi)} item bertanggal lebih lama dari acuan${itemBasi.length?': '+esc(itemBasi.join(', ')):''}.</span>`
+      : '');
   const errTxt = EXTERNAL.__error
     ? `<br><span class="meta-warn"><b>⚠ Gagal memperbarui data eksternal:</b> ${esc(EXTERNAL.__error)}. Data lama tetap ditampilkan. <button class="retry-inline" id="extRetry">Coba lagi</button></span>`
     : '';
@@ -4737,6 +4867,7 @@ function renderSensitivitas(){
 
 function init(){
   initTema();
+  pasangFokusModal();
   try{ HIDDEN_COLS=new Set(JSON.parse(localStorage.getItem(LS_COLS)||'[]')); }catch(e){ HIDDEN_COLS=new Set(); }
   loadWL(); saveWL();
   renderColsPanel();

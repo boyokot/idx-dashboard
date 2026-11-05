@@ -1,15 +1,16 @@
 {
  "versi": "1.0.0",
- "dihitung_pada": "2026-10-30T18:04:04+07:00",
+ "dihitung_pada": "2026-11-05T18:37:20+07:00",
  "status": "belum_cukup_data",
  "snapshot": {
   "files": [
-   "2026-10.json"
+   "2026-10.json",
+   "2026-11.json"
   ],
-  "jumlah": 1,
+  "jumlah": 2,
   "terlama": "2026-10",
-  "terbaru": "2026-10",
-  "diperbarui_pada": "2026-10-30T18:04:04+07:00"
+  "terbaru": "2026-11",
+  "diperbarui_pada": "2026-11-05T18:37:20+07:00"
  },
  "horizon_bulan": [
   3,
@@ -38,6 +39,27 @@
    "target": "2027-10",
    "status": "belum_ada",
    "alasan": "snapshot 2027-10 belum tersedia"
+  },
+  {
+   "mulai": "2026-11",
+   "horizon_bulan": 3,
+   "target": "2027-02",
+   "status": "belum_ada",
+   "alasan": "snapshot 2027-02 belum tersedia"
+  },
+  {
+   "mulai": "2026-11",
+   "horizon_bulan": 6,
+   "target": "2027-05",
+   "status": "belum_ada",
+   "alasan": "snapshot 2027-05 belum tersedia"
+  },
+  {
+   "mulai": "2026-11",
+   "horizon_bulan": 12,
+   "target": "2027-11",
+   "status": "belum_ada",
+   "alasan": "snapshot 2027-11 belum tersedia"
   }
  ],
  "ringkasan": [],
@@ -46,7 +68,8 @@
   "Top 20 = peringkat_jp 1–20 pada snapshot awal; harga awal/akhir adalah close pada tanggal data snapshot.",
   "Pembanding IHSG memakai level IHSG pada snapshot yang sama. Rata-rata sektor = rata-rata return emiten satu sektor pada snapshot; minimal 3 emiten.",
   "Tidak ada klaim akurasi sebelum horizon 3/6/12 bulan benar-benar tersedia. Sampel kecil tidak bisa digeneralisasi.",
-  "Harga snapshot bukan harga eksekusi; biaya transaksi, slippage, dan dividen tidak dihitung."
+  "Harga snapshot bukan harga eksekusi; biaya transaksi, slippage, dan dividen tidak dihitung.",
+  "Return menyesuaikan split bila riwayat split tersedia di harga_jp.json; dividen tidak disesuaikan."
  ],
  "metode": "snapshot bulanan -> return Top 20 vs IHSG dan rata-rata sektor; hanya pasangan bulan yang sudah ada"
 }
